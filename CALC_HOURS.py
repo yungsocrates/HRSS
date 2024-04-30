@@ -2,16 +2,20 @@ import pandas as pd
 import tkinter as tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 
-# Function to select a file using Tkinter file dialog
 def select_file():
+    """
+    Function to select a file using Tkinter file dialog.
+    """
     root = tk.Tk()
     root.withdraw()
     file_path = askopenfilename()
     root.destroy()
     return file_path
 
-# Function to process the data and calculate hours for each school year
 def process_and_calculate_hours(file_path, start_year, end_year):
+    """
+    Function to process the data and calculate hours for each school year.
+    """
     # Read file data into pandas dataframe
     df = pd.read_csv(file_path, names=['1', '2', '3', 'EIS ID', 'EMPL ID', 'SSN', 'PR LST N', 'PR FIR N',
                                        'SVC DATE', 'LOC', 'TITLE', 'JOB', 'SVC HRS', 'SVC MINS'], skiprows=21,
@@ -46,8 +50,10 @@ def process_and_calculate_hours(file_path, start_year, end_year):
 
     return output_dfs
 
-# Function to get start and end years from the user
 def get_start_end_years():
+    """
+    Function to get start and end years from the user.
+    """
     start_year, end_year = None, None
 
     def submit():
@@ -76,8 +82,10 @@ def get_start_end_years():
 
     return start_year, end_year
 
-# Function to display the output in a Tkinter window
 def display_output(output_df):
+    """
+    Function to display the output in a Tkinter window.
+    """
     root = tk.Tk()
     root.title("Output")
     
@@ -89,8 +97,10 @@ def display_output(output_df):
     
     root.mainloop()
 
-# Main function
 def main():
+    """
+    Main function to orchestrate the workflow.
+    """
     # Get start and end years from user
     start_year, end_year = get_start_end_years()
     
