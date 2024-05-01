@@ -20,16 +20,16 @@ def read_and_process_data(file_path, school_year):
     # Read the CSV file
     df = pd.read_csv(file_path, encoding='latin1', sep=',')
     
-    # Filter the data to include only finalized staff and completed authorized start dates
-    df = df[(df['Finalized on Payroll?'] == 'Y') & (df['Authorized Start Date'] != 'Not Complete')]
+    # Filter the data to include only finalized staff and completed Last Notification Dates
+    df = df[(df['Finalized on Payroll?'] == 'Y') & (df['Last Notification Date'] != 'Not Complete')]
     
-    # Convert 'Authorized Start Date' column to datetime format
-    df['Authorized Start Date'] = pd.to_datetime(df['Authorized Start Date'], format='%m/%d/%Y')
+    # Convert 'Last Notification Date' column to datetime format
+    df['Last Notification Date'] = pd.to_datetime(df['Last Notification Date'], format = 'mixed')
     
     # Filter data for the specified school year
     start_date = f'{school_year}-09-01'  # Start of the school year
     end_date = f'{school_year + 1}-06-30'  # End of the school year
-    df = df[(df['Authorized Start Date'] > start_date) & (df['Authorized Start Date'] < end_date)]
+    df = df[(df['Last Notification Date'] > start_date) & (df['Last Notification Date'] < end_date)]
     return df
 
 def plot_number_of_hires(df, school_year):
@@ -37,11 +37,11 @@ def plot_number_of_hires(df, school_year):
     Plot the number of hires over time.
     """
     # Count the number of hires for each date and sort by date
-    ts = df['Authorized Start Date'].value_counts().sort_index()
+    ts = df['Last Notification Date'].value_counts().sort_index()
     
     # Create the plot
     plt.figure(figsize=(10, 6))  # Adjust figure size
-    ax = ts.plot(kind='line', marker='o', color='k')  # Customize plot
+    ax = ts.plot(style = 'o-', color = 'b')  # Customize plot
     ax.set_ylabel('Number of Hires')
     ax.set_xlabel('Date')
     ax.set_title(f'SPA New Hires in {school_year}')
