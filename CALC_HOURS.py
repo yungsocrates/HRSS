@@ -89,7 +89,7 @@ def display_output(output_df):
     root = tk.Tk()
     root.title("Output")
     
-    table = tk.Text(root, height=10, width=100)
+    table = tk.Text(root, height=10, width=75)
     table.grid(row=0, column=0, padx=25, pady=25)
 
     # Insert the output DataFrame into the Text widget
