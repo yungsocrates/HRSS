@@ -25,15 +25,15 @@ def filter_and_process_data(file_path):
         df = df[df['Payment Source'] != 'Waived']
 
         # Filter dataframes for each workshop type
-        cawksp = df[((df['Workshop Name'] == 'Child Abuse Workshop') | (df['Workshop Name'] == 'Child Abuse Workshop (New Program)'))]
-        save = df[df['Workshop Name'] == 'School Violence Prevention Workshop']
-        dasa = df[df['Workshop Name'] == 'Dignity for All Students Act (DASA)']
-        autism = df[df['Workshop Name'] == 'Autism Workshop']
-        subt = df[df['Workshop Name'] == 'Sub Teacher Online Training']
-        subp = df[df['Workshop Name'] == 'Sub Paraprofessional Online Training']
+        CAWKSP = df[((df['Workshop Name'] == 'Child Abuse Workshop') | (df['Workshop Name'] == 'Child Abuse Workshop (New Program)'))]
+        SAVE = df[df['Workshop Name'] == 'School Violence Prevention Workshop']
+        DASA = df[df['Workshop Name'] == 'Dignity for All Students Act (DASA)']
+        AUTISM = df[df['Workshop Name'] == 'AUTISM Workshop']
+        SUBT = df[df['Workshop Name'] == 'Sub Teacher Online Training']
+        SUBP = df[df['Workshop Name'] == 'Sub Paraprofessional Online Training']
 
         # Store filtered dataframes in a dictionary
-        ws_dict = {'cawksp': cawksp, 'save': save, 'dasa': dasa, 'autism': autism, 'subt': subt, 'subp': subp}
+        ws_dict = {'CAWKSP': CAWKSP, 'SAVE': SAVE, 'DASA': DASA, 'AUTISM': AUTISM, 'SUBT': SUBT, 'SUBP': SUBP}
 
         return ws_dict
     except Exception as e:

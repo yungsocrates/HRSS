@@ -121,7 +121,7 @@ def main():
         print(output_df)
         print('------------------------------------------------------------')
         
-        # Save output to a CSV file
+        # save output to a CSV file
         output_file = asksaveasfilename()
         if output_file:
             output_df.to_csv(output_file + '.csv', sep=',', index=False)
