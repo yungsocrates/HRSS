@@ -91,12 +91,18 @@ def plot_number_of_workshops_by_date(ws_dict):
         plt.show()
     except Exception as e:
         raise ValueError("Error plotting workshops:", e)
-    
+
 def plot_number_of_workshops_by_counts(ws_dict, shm_ws_dict):
     """
     Plot the number of each workshop completed on SHM vs completed on TSN
     """
     try: 
+        # Filter ws_dict by shm_ws_dict SSNs
+        for k, v in shm_ws_dict.items():
+            df = ws_dict[k]
+            df = df[df['SSN'].isin(v['SSN'])]
+            ws_dict[k] = df
+
         # Initialize dictionaries to store workshop counts for each type
         ws_count_dict = {}
         shm_ws_count_dict = {}
@@ -123,23 +129,24 @@ def plot_number_of_workshops_by_counts(ws_dict, shm_ws_dict):
 
         # Create figure and axis for plotting
         fig = plt.figure()
-        ax = fig.add_subplot(111)  # Corrected to `subplots` instead of `subplot`
+        ax = fig.add_subplot(111)
+        plt.title(label = 'Workshops Completed via TSN')
         
         # Plot bars for TSN and SHM workshop counts
         TSN_bars = ax.bar(bar_locs, TSN, width, color='b')
-        SHM_bars = ax.bar(bar_locs + width, SHM, width, color='g')
+        SHM_bars = ax.bar(bar_locs + width, SHM, width, color='r')
         
         # Set labels and legend
         ax.set_ylabel('Number of Workshops Completed')
-        ax.set_xticks(bar_locs + width)
+        ax.set_xticks(bar_locs +0.5*width)
         ax.set_xticklabels(('Child Abuse', 'School Violence', 'Dignity for All Students'))
-        ax.legend((TSN_bars[0], SHM_bars[0]), ('Completed Through TSN', 'Overall Completed'))
+        ax.legend((TSN_bars[0], SHM_bars[0]), ('Completed Through TSN', 'Overall Completed'), loc = 'lower right')
 
         # Function to add labels on top of each bar
         def autolabel(bars):
             for bar in bars:
                 h = bar.get_height()
-                ax.text(bar.get_x() + bar.get_width() / 2, 1.05 * h, '%d' % int(h), ha='center', va='bottom')
+                ax.text(bar.get_x() + bar.get_width() / 2, h, '%d' % int(h), ha='center', va='bottom')
         
         # Call autolabel function for both TSN and SHM bars
         autolabel(TSN_bars)
