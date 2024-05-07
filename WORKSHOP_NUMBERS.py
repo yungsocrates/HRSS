@@ -17,6 +17,12 @@ def select_file():
 def filter_and_process_workshop_data(file_path):
     """
     Read and process the CSV file for workshops filtering out waived payments.
+    
+    Args:
+    file_path (str): The file path of the CSV file containing workshop data.
+    
+    Returns:
+    dict: A dictionary containing filtered dataframes for each workshop type.
     """
     try:
         # Read the CSV file
@@ -26,39 +32,60 @@ def filter_and_process_workshop_data(file_path):
         df = df[df['Payment Source'] != 'Waived']
 
         # Filter dataframes for each workshop type
-        CAWKSP = df[((df['Workshop Name'] == 'Child Abuse Workshop') | (df['Workshop Name'] == 'Child Abuse Workshop (New Program)'))]
-        SAVE = df[df['Workshop Name'] == 'School Violence Prevention Workshop']
-        DASA = df[df['Workshop Name'] == 'Dignity for All Students Act (DASA)']
-        AUTISM = df[df['Workshop Name'] == 'Autism Workshop']
-        SUBT = df[df['Workshop Name'] == 'Sub Teacher Online Training']
-        SUBP = df[df['Workshop Name'] == 'Sub Paraprofessional Online Training']
+        ws_names = {
+            'CAWKSP':'Child Abuse Workshop',
+            'SAVE':'School Violence Prevention Workshop',
+            'DASA':'Dignity for All Students Act (DASA)',
+            'AUTISM':'Autism Workshop',
+            'SUBT':'Sub Teacher Online Training',
+            'SUBP':'Sub Para Online Training',
+        }
 
-        # Store filtered dataframes in a dictionary
-        ws_dict = {'CAWKSP': CAWKSP, 'SAVE': SAVE, 'DASA': DASA, 'AUTISM': AUTISM, 'SUBT': SUBT, 'SUBP': SUBP}
+        ws_dict = {}
+        for k, v in ws_names.items():
+            if k == 'CAWKSP':
+                # Special case for 'Child Abuse Workshop' where we include both old and new program
+                ws_dict[k] = df[((df['Workshop Name'] == v) | (df['Workshop Name'] == f'{v} (New Program)'))]
+            else:
+                # For other workshops, filter based on workshop name only
+                ws_dict[k] = df[(df['Workshop Name'] == v)]
 
         return ws_dict
     except Exception as e:
-        raise ValueError("Error processing data:", e)
-    
+        # Raise an error if any exception occurs during data processing
+        raise ValueError("Error processing TSN data:", e)
+
 def read_and_process_SHM_data(file_path):
     """
     Read and process the CSV file containing SHM new hire data
+    
+    Args:
+    file_path (str): The file path of the CSV file containing SHM new hire data.
+    
+    Returns:
+    dict: A dictionary containing filtered dataframes for each workshop type.
     """
     try:
         # Read the CSV file
-        df = pd.read_csv(file_path, encoding='latin1', sep=',', low_memory = False)
+        df = pd.read_csv(file_path, encoding='latin1', sep=',', low_memory=False)
     
         # Filter out only rows with completed workshops
-        CAWKSP = df[(df['Child Abuse Workshop'] != 'In Process') & (df['Child Abuse Workshop'] != 'Not Started')]
-        SAVE = df[(df['Violence Prevention Workshop'] != 'In Process') & (df['Violence Prevention Workshop'] != 'Not Started')]
-        DASA = df[(df['DASA Workshop'] != 'In Process') & (df['DASA Workshop'] != 'Not Started')]
+        shm_ws_names = {
+            'CAWKSP': 'Child Abuse Workshop',
+            'SAVE': 'Violence Prevention Workshop',
+            'DASA': 'DASA Workshop',
+        }
 
-        # Store filtered dataframes in a dictionary
-        shm_ws_dict = {'CAWKSP': CAWKSP, 'SAVE': SAVE, 'DASA': DASA}
+        shm_ws_dict = {}
+        for k, v in shm_ws_names.items():
+            # Filter out rows where the workshop status is 'Complete'
+            shm_ws_dict[k] = df[df[v] == 'Complete']
 
         return shm_ws_dict
     except Exception as e:
+        # Raise an error if any exception occurs during data processing
         raise ValueError("Error processing SHM data:", e)
+
     
 def plot_number_of_workshops_by_date(ws_dict):
     """
@@ -130,7 +157,7 @@ def plot_number_of_workshops_by_counts(ws_dict, shm_ws_dict):
         # Create figure and axis for plotting
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        plt.title(label = 'Workshops Completed via TSN')
+        plt.title(label='Workshops Completed via TSN')
         
         # Plot bars for TSN and SHM workshop counts
         TSN_bars = ax.bar(bar_locs, TSN, width, color='b')
@@ -140,7 +167,7 @@ def plot_number_of_workshops_by_counts(ws_dict, shm_ws_dict):
         ax.set_ylabel('Number of Workshops Completed')
         ax.set_xticks(bar_locs +0.5*width)
         ax.set_xticklabels(('Child Abuse', 'School Violence', 'Dignity for All Students'))
-        ax.legend((TSN_bars[0], SHM_bars[0]), ('Completed Through TSN', 'Overall Completed'), loc = 'lower right')
+        ax.legend((TSN_bars[0], SHM_bars[0]), ('Completed Through TSN', 'Overall Completed'), loc='lower right')
 
         # Function to add labels on top of each bar
         def autolabel(bars):
@@ -161,24 +188,34 @@ def plot_number_of_workshops_by_counts(ws_dict, shm_ws_dict):
 
 def main():
     try:
-        file_path1 = select_file()
-        file_path2 = select_file()
-        if not file_path1:
+        # Select files
+        file_path1 = select_file()  # Select the first CSV file
+        file_path2 = select_file()  # Select the second CSV file
+
+        # Check if files are selected
+        if not file_path1 or not file_path2:
             print("No file selected. Exiting...")
             return
-        if not file_path2:
-            print("No file selected. Exiting...")
-            return
+
+        # Process workshop data from the first file
         ws_dict = filter_and_process_workshop_data(file_path1)
+
+        # Process SHM data from the second file, using workshop data from the first file
         shm_ws_dict = read_and_process_SHM_data(file_path2)
+
+        # Check if workshop data exists
         if not ws_dict:
             print("No workshops found in the data.")
             return
         if not shm_ws_dict:
             print("No SHM data found.")
+
+        # Plot the number of workshops completed via TSN and SHM
         plot_number_of_workshops_by_counts(ws_dict, shm_ws_dict)
+
     except Exception as e:
         print("An error occurred:", e)
+
 
 if __name__ == "__main__":
     main()
