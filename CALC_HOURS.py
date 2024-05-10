@@ -16,10 +16,26 @@ def process_and_calculate_hours(file_path, start_year, end_year):
     """
     Function to process the data and calculate hours for each school year.
     """
+    # Define column headers
+    col_names = [
+        '1',
+        '2',
+        '3',
+        'EIS ID',
+        'EMPL ID',
+        'SSN',
+        'PR LST N',
+        'PR FIR N',
+        'SVC DATE',
+        'LOC',
+        'TITLE',
+        'JOB',
+        'SVC HRS',
+        'SVC MINS'
+    ]
+
     # Read file data into pandas dataframe
-    df = pd.read_csv(file_path, names=['1', '2', '3', 'EIS ID', 'EMPL ID', 'SSN', 'PR LST N', 'PR FIR N',
-                                       'SVC DATE', 'LOC', 'TITLE', 'JOB', 'SVC HRS', 'SVC MINS'], skiprows=21,
-                     usecols=[i for i in range(3, 14)], sep='\s+')
+    df = pd.read_csv(file_path, names=col_names, skiprows=21, usecols=[i for i in range(3, 14)], sep='\s+')
     
     # Convert NAs to 0 and floats to ints
     df[['EIS ID', 'EMPL ID', 'SVC HRS', 'SVC MINS']] = df[['EIS ID', 'EMPL ID', 'SVC HRS', 'SVC MINS']].fillna(

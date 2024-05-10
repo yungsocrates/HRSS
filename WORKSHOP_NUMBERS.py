@@ -124,7 +124,7 @@ def plot_number_of_workshops_by_counts(ws_dict, shm_ws_dict):
     Plot the number of each workshop completed on SHM vs completed on TSN
     """
     try: 
-        # Filter ws_dict by shm_ws_dict SSNs
+        # Filter ws_dict by shm_ws_dict SSNs (i.e. vlookup)
         for k, v in shm_ws_dict.items():
             df = ws_dict[k]
             df = df[df['SSN'].isin(v['SSN'])]
