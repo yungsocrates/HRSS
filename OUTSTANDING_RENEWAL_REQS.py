@@ -103,7 +103,6 @@ if __name__ == "__main__":
         'SubHub Training':'Substitute Teacher/Paraprofessional Online Training',
         'Processing Fee':'Processing Fee',
         'DASA Workshop':'DASA Workshop',
-        #'TEACH':'TEACH Profile',
         'Bachelor Degree':'Bachelor\'s Degree',
         'High School Diploma':'High School Diploma',
         'Autism Workshop':'Autism Workshop'
