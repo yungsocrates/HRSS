@@ -1,0 +1,394 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>NYCDOE Jobs Report - Queens</title>
+        <style>
+            body { font-family: Verdana, sans-serif; margin: 20px; }
+            h1 { color: #2E86AB; text-align: center; }
+            h2 { color: #A61E1E; border-bottom: 2px solid #ccc; }
+            .table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+            .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+            .table th { background-color: #f2f2f2; font-weight: bold; }
+            .pie-container { display: flex; flex-wrap: wrap; justify-content: space-around; }
+            .navigation { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        </style>
+    </head>
+    <body>
+        <div class="navigation">
+            <a href="../index.html">← Back to Overall Summary</a>
+        </div>
+        
+        <h1>NYCDOE Substitute Paraprofessional Jobs Report</h1>
+        <h2>Borough: Queens</h2>
+        
+        <h3>Summary Statistics</h3>
+        <table border="1" class="dataframe table table-striped" id="summary-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Type_Fill_Status</th>
+      <th>Classification</th>
+      <th>Vacancy_Filled</th>
+      <th>Vacancy_Unfilled</th>
+      <th>Total_Vacancy</th>
+      <th>Vacancy_Fill_Pct</th>
+      <th>Absence_Filled</th>
+      <th>Absence_Unfilled</th>
+      <th>Total_Absence</th>
+      <th>Absence_Fill_Pct</th>
+      <th>Total</th>
+      <th>Overall_Fill_Pct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th></th>
+      <td>ARABIC SPEAKING PARA</td>
+      <td>46</td>
+      <td>9</td>
+      <td>55</td>
+      <td>83.6%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>55</td>
+      <td>83.6%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>BENGALI SPEAKING PARA</td>
+      <td>118</td>
+      <td>17</td>
+      <td>135</td>
+      <td>87.4%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>135</td>
+      <td>87.4%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>BURMESE SPEAKING PARA</td>
+      <td>0</td>
+      <td>4</td>
+      <td>4</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>4</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>HAITIAN-CREOLE SPEAKING PARA</td>
+      <td>21</td>
+      <td>0</td>
+      <td>21</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>21</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>HEBREW SPEAKING PARA</td>
+      <td>0</td>
+      <td>21</td>
+      <td>21</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>21</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>JAPANESE SPEAKING PARA</td>
+      <td>0</td>
+      <td>16</td>
+      <td>16</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>16</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>LYFE PARA - Work with INFANTS and TODDLERS</td>
+      <td>47</td>
+      <td>54</td>
+      <td>101</td>
+      <td>46.5%</td>
+      <td>1</td>
+      <td>27</td>
+      <td>28</td>
+      <td>3.6%</td>
+      <td>129</td>
+      <td>37.2%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>MANDARIN SPEAKING PARA</td>
+      <td>264</td>
+      <td>52</td>
+      <td>316</td>
+      <td>83.5%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>316</td>
+      <td>83.5%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>NEPALI SPEAKING PARA</td>
+      <td>0</td>
+      <td>9</td>
+      <td>9</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>9</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>PARAPROFESSIONAL</td>
+      <td>36,699</td>
+      <td>2,386</td>
+      <td>39,085</td>
+      <td>93.9%</td>
+      <td>1,898</td>
+      <td>3,180</td>
+      <td>5,078</td>
+      <td>37.4%</td>
+      <td>44,163</td>
+      <td>87.4%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>PASHTO SPEAKING PARA</td>
+      <td>0</td>
+      <td>21</td>
+      <td>21</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>21</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>POLISH SPEAKING PARA</td>
+      <td>0</td>
+      <td>9</td>
+      <td>9</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>9</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>PORTUGUESE SPEAKING PARA</td>
+      <td>3</td>
+      <td>0</td>
+      <td>3</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>3</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>PUNJABI SPEAKING PARA</td>
+      <td>17</td>
+      <td>0</td>
+      <td>17</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>17</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>RUSSIAN SPEAKING PARA</td>
+      <td>15</td>
+      <td>52</td>
+      <td>67</td>
+      <td>22.4%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>67</td>
+      <td>22.4%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>SPANISH SPEAKING PARA</td>
+      <td>974</td>
+      <td>414</td>
+      <td>1,388</td>
+      <td>70.2%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>1,388</td>
+      <td>70.2%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>TURKISH SPEAKING PARA</td>
+      <td>0</td>
+      <td>20</td>
+      <td>20</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>20</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>URDU SPEAKING PARA</td>
+      <td>2</td>
+      <td>9</td>
+      <td>11</td>
+      <td>18.2%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>11</td>
+      <td>18.2%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>UZBEK SPEAKING PARA</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>1</td>
+      <td>0.0%</td>
+    </tr>
+  </tbody>
+</table>
+        
+        <h3>Jobs by Classification and Type (Bar Chart)</h3>
+        <iframe src="Queens_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
+        
+        <h3>Breakdown by Classification</h3>
+        <div class="pie-container">
+            <iframe src="Queens_ARABIC SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_BENGALI SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_BURMESE SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_HAITIAN-CREOLE SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_HEBREW SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_JAPANESE SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_LYFE PARA - Work with INFANTS and TODDLERS_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_MANDARIN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_NEPALI SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_PARAPROFESSIONAL_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_PASHTO SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_POLISH SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_PORTUGUESE SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_PUNJABI SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_RUSSIAN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_SPANISH SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_TURKISH SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_URDU SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Queens_UZBEK SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+
+        </div>
+        
+        <h3>Key Insights</h3>
+        <ul>
+            <li>Total Jobs: 46,406</li>
+            <li>Total Vacancies: 41,300 (89.0%)</li>
+            <li>Total Absences: 5,106 (11.0%)</li>
+            <li>Overall Fill Rate: 86.4%</li>
+            <li>Vacancy Fill Rate: 92.5%</li>
+            <li>Absence Fill Rate: 37.2%</li>
+            <li>Number of Districts: 10</li>
+            <li>Number of Schools: 347</li>
+        </ul>
+
+        <h3>Comparison: Queens vs. Citywide</h3>
+        <div style="display: flex; justify-content: space-between;">
+            <div style="width: 48%; background-color: #e8f4f8; padding: 15px; border-radius: 5px;">
+                <h4>Citywide Statistics</h4>
+                <ul>
+                    <li>Total Jobs: 205,765</li>
+                    <li>Total Vacancies: 189,693 (92.2%)</li>
+                    <li>Total Absences: 16,072 (7.8%)</li>
+                    <li>Overall Fill Rate: 89.5%</li>
+                    <li>Vacancy Fill Rate: 94.0%</li>
+                    <li>Absence Fill Rate: 36.4%</li>
+                </ul>
+            </div>
+            <div style="width: 48%; background-color: #f0f8e8; padding: 15px; border-radius: 5px;">
+                <h4>This Borough</h4>
+                <ul>
+                    <li>Total Jobs: 46,406</li>
+                    <li>Total Vacancies: 41,300 (89.0%)</li>
+                    <li>Total Absences: 5,106 (11.0%)</li>
+                    <li>Overall Fill Rate: 86.4%</li>
+                    <li>Vacancy Fill Rate: 92.5%</li>
+                    <li>Absence Fill Rate: 37.2%</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>Individual District Reports</h3>
+        <ul>
+            <li><a href="../District_24/24_report.html">District 24 Report</a> - 5479 total jobs</li>
+<li><a href="../District_25/25_report.html">District 25 Report</a> - 3370 total jobs</li>
+<li><a href="../District_26/26_report.html">District 26 Report</a> - 2452 total jobs</li>
+<li><a href="../District_27/27_report.html">District 27 Report</a> - 6004 total jobs</li>
+<li><a href="../District_28/28_report.html">District 28 Report</a> - 3810 total jobs</li>
+<li><a href="../District_29/29_report.html">District 29 Report</a> - 3987 total jobs</li>
+<li><a href="../District_30/30_report.html">District 30 Report</a> - 3932 total jobs</li>
+<li><a href="../District_62/62_report.html">District 62 Report</a> - 21382 total jobs</li>
+<li><a href="../District_79/79_report.html">District 79 Report</a> - 299 total jobs</li>
+<li><a href="../District_97/97_report.html">District 97 Report</a> - 50149 total jobs</li>
+
+        </ul>
+    </body>
+    </html>
+    

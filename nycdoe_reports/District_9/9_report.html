@@ -1,0 +1,217 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>NYCDOE Jobs Report - District 9</title>
+        <style>
+            body { font-family: Verdana, sans-serif; margin: 20px; }
+            h1 { color: #2E86AB; text-align: center; }
+            h2 { color: #A61E1E; border-bottom: 2px solid #ccc; }
+            .table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+            .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+            .table th { background-color: #f2f2f2; font-weight: bold; }
+            .pie-container { display: flex; flex-wrap: wrap; justify-content: space-around; }
+            .navigation { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        </style>
+    </head>
+    <body>
+        <div class="navigation">
+            <a href="../index.html">← Back to Overall Summary</a> | 
+            <a href="../Borough_Bronx/Bronx_report.html">← Back to Bronx</a>
+        </div>
+        
+        <h1>NYCDOE Substitute Paraprofessional Jobs Report</h1>
+        <h2>District: 9</h2>
+        <h3>Summary Statistics</h3>
+        <table border="1" class="dataframe table table-striped" id="summary-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Type_Fill_Status</th>
+      <th>Classification</th>
+      <th>Vacancy_Filled</th>
+      <th>Vacancy_Unfilled</th>
+      <th>Total_Vacancy</th>
+      <th>Vacancy_Fill_Pct</th>
+      <th>Absence_Filled</th>
+      <th>Absence_Unfilled</th>
+      <th>Total_Absence</th>
+      <th>Absence_Fill_Pct</th>
+      <th>Total</th>
+      <th>Overall_Fill_Pct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th></th>
+      <td>ARABIC SPEAKING PARA</td>
+      <td>12</td>
+      <td>10</td>
+      <td>22</td>
+      <td>54.5%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>22</td>
+      <td>54.5%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>BENGALI SPEAKING PARA</td>
+      <td>5</td>
+      <td>14</td>
+      <td>19</td>
+      <td>26.3%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>19</td>
+      <td>26.3%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>PARAPROFESSIONAL</td>
+      <td>4,534</td>
+      <td>210</td>
+      <td>4,744</td>
+      <td>95.6%</td>
+      <td>37</td>
+      <td>82</td>
+      <td>119</td>
+      <td>31.1%</td>
+      <td>4,863</td>
+      <td>94.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>SPANISH SPEAKING PARA</td>
+      <td>288</td>
+      <td>76</td>
+      <td>364</td>
+      <td>79.1%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>364</td>
+      <td>79.1%</td>
+    </tr>
+  </tbody>
+</table>
+        
+        <h3>Jobs by Classification and Type (Bar Chart)</h3>
+        <iframe src="9_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
+        
+        <h3>Breakdown by Classification</h3>
+        <div class="pie-container">
+            <iframe src="9_ARABIC SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="9_BENGALI SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="9_PARAPROFESSIONAL_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="9_SPANISH SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+
+        </div>
+        
+        <h3>Key Insights</h3>
+        <ul>
+            <li>Total Jobs: 5,268</li>
+            <li>Total Vacancies: 5,149 (97.7%)</li>
+            <li>Total Absences: 119 (2.3%)</li>
+            <li>Overall Fill Rate: 92.6%</li>
+            <li>Vacancy Fill Rate: 94.0%</li>
+            <li>Absence Fill Rate: 31.1%</li>
+            <li>Number of Schools: 58</li>
+        </ul>
+
+        <h3>Comparison: District vs. Citywide</h3>
+        <div style="display: flex; justify-content: space-between;">
+            <div style="width: 48%; background-color: #e8f4f8; padding: 15px; border-radius: 5px;">
+                <h4>Citywide Statistics</h4>
+                <ul>
+                    <li>Total Jobs: 205,765</li>
+                    <li>Total Vacancies: 189,693 (92.2%)</li>
+                    <li>Total Absences: 16,072 (7.8%)</li>
+                    <li>Overall Fill Rate: 89.5%</li>
+                    <li>Vacancy Fill Rate: 94.0%</li>
+                    <li>Absence Fill Rate: 36.4%</li>
+                </ul>
+            </div>
+            <div style="width: 48%; background-color: #f0f8e8; padding: 15px; border-radius: 5px;">
+                <h4>This District</h4>
+                <ul>
+                    <li>Total Jobs: 5,268</li>
+                    <li>Total Vacancies: 5,149 (97.7%)</li>
+                    <li>Total Absences: 119 (2.3%)</li>
+                    <li>Overall Fill Rate: 92.6%</li>
+                    <li>Vacancy Fill Rate: 94.0%</li>
+                    <li>Absence Fill Rate: 31.1%</li>
+                </ul>
+            </div>
+        </div>
+        
+        
+        <h3>Individual School Reports</h3>
+        <ul>
+            <li><a href="Schools/School_X004/X004_report.html">X004</a> - 262 total jobs</li>
+<li><a href="Schools/School_X011/X011_report.html">X011</a> - 28 total jobs</li>
+<li><a href="Schools/School_X022/X022_report.html">X022</a> - 105 total jobs</li>
+<li><a href="Schools/School_X028/X028_report.html">X028</a> - 181 total jobs</li>
+<li><a href="Schools/School_X035/X035_report.html">X035</a> - 169 total jobs</li>
+<li><a href="Schools/School_X042/X042_report.html">X042</a> - 265 total jobs</li>
+<li><a href="Schools/School_X053/X053_report.html">X053</a> - 135 total jobs</li>
+<li><a href="Schools/School_X055/X055_report.html">X055</a> - 47 total jobs</li>
+<li><a href="Schools/School_X058/X058_report.html">X058</a> - 42 total jobs</li>
+<li><a href="Schools/School_X063/X063_report.html">X063</a> - 68 total jobs</li>
+<li><a href="Schools/School_X070/X070_report.html">X070</a> - 224 total jobs</li>
+<li><a href="Schools/School_X109/X109_report.html">X109</a> - 291 total jobs</li>
+<li><a href="Schools/School_X110/X110_report.html">X110</a> - 21 total jobs</li>
+<li><a href="Schools/School_X114/X114_report.html">X114</a> - 327 total jobs</li>
+<li><a href="Schools/School_X117/X117_report.html">X117</a> - 71 total jobs</li>
+<li><a href="Schools/School_X126/X126_report.html">X126</a> - 54 total jobs</li>
+<li><a href="Schools/School_X128/X128_report.html">X128</a> - 51 total jobs</li>
+<li><a href="Schools/School_X132/X132_report.html">X132</a> - 128 total jobs</li>
+<li><a href="Schools/School_X163/X163_report.html">X163</a> - 118 total jobs</li>
+<li><a href="Schools/School_X199/X199_report.html">X199</a> - 87 total jobs</li>
+<li><a href="Schools/School_X204/X204_report.html">X204</a> - 120 total jobs</li>
+<li><a href="Schools/School_X215/X215_report.html">X215</a> - 84 total jobs</li>
+<li><a href="Schools/School_X218/X218_report.html">X218</a> - 170 total jobs</li>
+<li><a href="Schools/School_X219/X219_report.html">X219</a> - 42 total jobs</li>
+<li><a href="Schools/School_X227/X227_report.html">X227</a> - 53 total jobs</li>
+<li><a href="Schools/School_X229/X229_report.html">X229</a> - 21 total jobs</li>
+<li><a href="Schools/School_X231/X231_report.html">X231</a> - 63 total jobs</li>
+<li><a href="Schools/School_X232/X232_report.html">X232</a> - 21 total jobs</li>
+<li><a href="Schools/School_X236/X236_report.html">X236</a> - 23 total jobs</li>
+<li><a href="Schools/School_X241/X241_report.html">X241</a> - 105 total jobs</li>
+<li><a href="Schools/School_X250/X250_report.html">X250</a> - 9 total jobs</li>
+<li><a href="Schools/School_X263/X263_report.html">X263</a> - 42 total jobs</li>
+<li><a href="Schools/School_X274/X274_report.html">X274</a> - 5 total jobs</li>
+<li><a href="Schools/School_X294/X294_report.html">X294</a> - 99 total jobs</li>
+<li><a href="Schools/School_X297/X297_report.html">X297</a> - 21 total jobs</li>
+<li><a href="Schools/School_X303/X303_report.html">X303</a> - 54 total jobs</li>
+<li><a href="Schools/School_X311/X311_report.html">X311</a> - 105 total jobs</li>
+<li><a href="Schools/School_X327/X327_report.html">X327</a> - 81 total jobs</li>
+<li><a href="Schools/School_X328/X328_report.html">X328</a> - 21 total jobs</li>
+<li><a href="Schools/School_X329/X329_report.html">X329</a> - 63 total jobs</li>
+<li><a href="Schools/School_X339/X339_report.html">X339</a> - 42 total jobs</li>
+<li><a href="Schools/School_X361/X361_report.html">X361</a> - 84 total jobs</li>
+<li><a href="Schools/School_X365/X365_report.html">X365</a> - 24 total jobs</li>
+<li><a href="Schools/School_X403/X403_report.html">X403</a> - 32 total jobs</li>
+<li><a href="Schools/School_X412/X412_report.html">X412</a> - 21 total jobs</li>
+<li><a href="Schools/School_X413/X413_report.html">X413</a> - 33 total jobs</li>
+<li><a href="Schools/School_X443/X443_report.html">X443</a> - 147 total jobs</li>
+<li><a href="Schools/School_X449/X449_report.html">X449</a> - 86 total jobs</li>
+<li><a href="Schools/School_X454/X454_report.html">X454</a> - 54 total jobs</li>
+<li><a href="Schools/School_X457/X457_report.html">X457</a> - 80 total jobs</li>
+<li><a href="Schools/School_X505/X505_report.html">X505</a> - 105 total jobs</li>
+<li><a href="Schools/School_X517/X517_report.html">X517</a> - 29 total jobs</li>
+<li><a href="Schools/School_X525/X525_report.html">X525</a> - 38 total jobs</li>
+<li><a href="Schools/School_X543/X543_report.html">X543</a> - 42 total jobs</li>
+<li><a href="Schools/School_X555/X555_report.html">X555</a> - 144 total jobs</li>
+<li><a href="Schools/School_X568/X568_report.html">X568</a> - 11 total jobs</li>
+<li><a href="Schools/School_X593/X593_report.html">X593</a> - 47 total jobs</li>
+<li><a href="Schools/School_XP09/XP09_report.html">XP09</a> - 373 total jobs</li>
+
+        </ul>
+    </body>
+    </html>
+    

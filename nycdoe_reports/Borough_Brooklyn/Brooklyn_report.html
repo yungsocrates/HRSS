@@ -1,0 +1,458 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>NYCDOE Jobs Report - Brooklyn</title>
+        <style>
+            body { font-family: Verdana, sans-serif; margin: 20px; }
+            h1 { color: #2E86AB; text-align: center; }
+            h2 { color: #A61E1E; border-bottom: 2px solid #ccc; }
+            .table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+            .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+            .table th { background-color: #f2f2f2; font-weight: bold; }
+            .pie-container { display: flex; flex-wrap: wrap; justify-content: space-around; }
+            .navigation { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        </style>
+    </head>
+    <body>
+        <div class="navigation">
+            <a href="../index.html">← Back to Overall Summary</a>
+        </div>
+        
+        <h1>NYCDOE Substitute Paraprofessional Jobs Report</h1>
+        <h2>Borough: Brooklyn</h2>
+        
+        <h3>Summary Statistics</h3>
+        <table border="1" class="dataframe table table-striped" id="summary-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Type_Fill_Status</th>
+      <th>Classification</th>
+      <th>Vacancy_Filled</th>
+      <th>Vacancy_Unfilled</th>
+      <th>Total_Vacancy</th>
+      <th>Vacancy_Fill_Pct</th>
+      <th>Absence_Filled</th>
+      <th>Absence_Unfilled</th>
+      <th>Total_Absence</th>
+      <th>Absence_Fill_Pct</th>
+      <th>Total</th>
+      <th>Overall_Fill_Pct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th></th>
+      <td>ARABIC SPEAKING PARA</td>
+      <td>271</td>
+      <td>36</td>
+      <td>307</td>
+      <td>88.3%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>307</td>
+      <td>88.3%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>BENGALI SPEAKING PARA</td>
+      <td>45</td>
+      <td>5</td>
+      <td>50</td>
+      <td>90.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>50</td>
+      <td>90.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>CANTONESE SPEAKING PARA</td>
+      <td>65</td>
+      <td>56</td>
+      <td>121</td>
+      <td>53.7%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>121</td>
+      <td>53.7%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>FRENCH SPEAKING PARA</td>
+      <td>0</td>
+      <td>21</td>
+      <td>21</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>21</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>FULANI SPEAKING PARA</td>
+      <td>21</td>
+      <td>40</td>
+      <td>61</td>
+      <td>34.4%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>61</td>
+      <td>34.4%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>GA SPEAKING PARA</td>
+      <td>0</td>
+      <td>21</td>
+      <td>21</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>21</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>GEORGIAN SPEAKING PARA</td>
+      <td>0</td>
+      <td>3</td>
+      <td>3</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>3</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>HAITIAN-CREOLE SPEAKING PARA</td>
+      <td>123</td>
+      <td>16</td>
+      <td>139</td>
+      <td>88.5%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>139</td>
+      <td>88.5%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>JAPANESE SPEAKING PARA</td>
+      <td>6</td>
+      <td>0</td>
+      <td>6</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>6</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>KOREAN SPEAKING PARA</td>
+      <td>0</td>
+      <td>10</td>
+      <td>10</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>10</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>LATIN SPEAKING PARA</td>
+      <td>0</td>
+      <td>8</td>
+      <td>8</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>8</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>MANDARIN SPEAKING PARA</td>
+      <td>172</td>
+      <td>82</td>
+      <td>254</td>
+      <td>67.7%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>254</td>
+      <td>67.7%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>PARAPROFESSIONAL</td>
+      <td>57,967</td>
+      <td>2,496</td>
+      <td>60,463</td>
+      <td>95.9%</td>
+      <td>1,400</td>
+      <td>2,563</td>
+      <td>3,963</td>
+      <td>35.3%</td>
+      <td>64,426</td>
+      <td>92.1%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>PASHTO SPEAKING PARA</td>
+      <td>0</td>
+      <td>5</td>
+      <td>5</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>5</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>POLISH SPEAKING PARA</td>
+      <td>4</td>
+      <td>17</td>
+      <td>21</td>
+      <td>19.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>21</td>
+      <td>19.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>RUSSIAN SPEAKING PARA</td>
+      <td>91</td>
+      <td>105</td>
+      <td>196</td>
+      <td>46.4%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>196</td>
+      <td>46.4%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>SIGN LANGUAGE SPEAKING PARA</td>
+      <td>21</td>
+      <td>0</td>
+      <td>21</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>21</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>SPANISH SPEAKING PARA</td>
+      <td>1,073</td>
+      <td>490</td>
+      <td>1,563</td>
+      <td>68.7%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>1,563</td>
+      <td>68.7%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>TAJIK SPEAKING PARA</td>
+      <td>0</td>
+      <td>21</td>
+      <td>21</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>21</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>TWI SPEAKING PARA</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>2</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>UKRAINIAN SPEAKING PARA</td>
+      <td>0</td>
+      <td>44</td>
+      <td>44</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>44</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>URDU SPEAKING PARA</td>
+      <td>5</td>
+      <td>24</td>
+      <td>29</td>
+      <td>17.2%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>29</td>
+      <td>17.2%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>UZBEK SPEAKING PARA</td>
+      <td>19</td>
+      <td>45</td>
+      <td>64</td>
+      <td>29.7%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>64</td>
+      <td>29.7%</td>
+    </tr>
+  </tbody>
+</table>
+        
+        <h3>Jobs by Classification and Type (Bar Chart)</h3>
+        <iframe src="Brooklyn_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
+        
+        <h3>Breakdown by Classification</h3>
+        <div class="pie-container">
+            <iframe src="Brooklyn_ARABIC SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_BENGALI SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_CANTONESE SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_FRENCH SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_FULANI SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_GA SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_GEORGIAN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_HAITIAN-CREOLE SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_JAPANESE SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_KOREAN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_LATIN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_MANDARIN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_PARAPROFESSIONAL_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_PASHTO SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_POLISH SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_RUSSIAN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_SIGN LANGUAGE SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_SPANISH SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_TAJIK SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_TWI SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_UKRAINIAN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_URDU SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Brooklyn_UZBEK SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+
+        </div>
+        
+        <h3>Key Insights</h3>
+        <ul>
+            <li>Total Jobs: 67,393</li>
+            <li>Total Vacancies: 63,430 (94.1%)</li>
+            <li>Total Absences: 3,963 (5.9%)</li>
+            <li>Overall Fill Rate: 90.9%</li>
+            <li>Vacancy Fill Rate: 94.4%</li>
+            <li>Absence Fill Rate: 35.3%</li>
+            <li>Number of Districts: 15</li>
+            <li>Number of Schools: 442</li>
+        </ul>
+
+        <h3>Comparison: Brooklyn vs. Citywide</h3>
+        <div style="display: flex; justify-content: space-between;">
+            <div style="width: 48%; background-color: #e8f4f8; padding: 15px; border-radius: 5px;">
+                <h4>Citywide Statistics</h4>
+                <ul>
+                    <li>Total Jobs: 205,765</li>
+                    <li>Total Vacancies: 189,693 (92.2%)</li>
+                    <li>Total Absences: 16,072 (7.8%)</li>
+                    <li>Overall Fill Rate: 89.5%</li>
+                    <li>Vacancy Fill Rate: 94.0%</li>
+                    <li>Absence Fill Rate: 36.4%</li>
+                </ul>
+            </div>
+            <div style="width: 48%; background-color: #f0f8e8; padding: 15px; border-radius: 5px;">
+                <h4>This Borough</h4>
+                <ul>
+                    <li>Total Jobs: 67,393</li>
+                    <li>Total Vacancies: 63,430 (94.1%)</li>
+                    <li>Total Absences: 3,963 (5.9%)</li>
+                    <li>Overall Fill Rate: 90.9%</li>
+                    <li>Vacancy Fill Rate: 94.4%</li>
+                    <li>Absence Fill Rate: 35.3%</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>Individual District Reports</h3>
+        <ul>
+            <li><a href="../District_13/13_report.html">District 13 Report</a> - 3228 total jobs</li>
+<li><a href="../District_14/14_report.html">District 14 Report</a> - 2509 total jobs</li>
+<li><a href="../District_15/15_report.html">District 15 Report</a> - 5278 total jobs</li>
+<li><a href="../District_16/16_report.html">District 16 Report</a> - 1487 total jobs</li>
+<li><a href="../District_17/17_report.html">District 17 Report</a> - 5370 total jobs</li>
+<li><a href="../District_18/18_report.html">District 18 Report</a> - 3901 total jobs</li>
+<li><a href="../District_19/19_report.html">District 19 Report</a> - 4632 total jobs</li>
+<li><a href="../District_20/20_report.html">District 20 Report</a> - 5407 total jobs</li>
+<li><a href="../District_21/21_report.html">District 21 Report</a> - 5468 total jobs</li>
+<li><a href="../District_22/22_report.html">District 22 Report</a> - 5247 total jobs</li>
+<li><a href="../District_23/23_report.html">District 23 Report</a> - 3160 total jobs</li>
+<li><a href="../District_32/32_report.html">District 32 Report</a> - 1583 total jobs</li>
+<li><a href="../District_62/62_report.html">District 62 Report</a> - 21382 total jobs</li>
+<li><a href="../District_97/97_report.html">District 97 Report</a> - 50149 total jobs</li>
+
+        </ul>
+    </body>
+    </html>
+    

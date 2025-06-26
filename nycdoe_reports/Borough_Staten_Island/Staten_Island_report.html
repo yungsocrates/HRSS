@@ -1,0 +1,237 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>NYCDOE Jobs Report - Staten Island</title>
+        <style>
+            body { font-family: Verdana, sans-serif; margin: 20px; }
+            h1 { color: #2E86AB; text-align: center; }
+            h2 { color: #A61E1E; border-bottom: 2px solid #ccc; }
+            .table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+            .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+            .table th { background-color: #f2f2f2; font-weight: bold; }
+            .pie-container { display: flex; flex-wrap: wrap; justify-content: space-around; }
+            .navigation { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        </style>
+    </head>
+    <body>
+        <div class="navigation">
+            <a href="../index.html">← Back to Overall Summary</a>
+        </div>
+        
+        <h1>NYCDOE Substitute Paraprofessional Jobs Report</h1>
+        <h2>Borough: Staten Island</h2>
+        
+        <h3>Summary Statistics</h3>
+        <table border="1" class="dataframe table table-striped" id="summary-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Type_Fill_Status</th>
+      <th>Classification</th>
+      <th>Vacancy_Filled</th>
+      <th>Vacancy_Unfilled</th>
+      <th>Total_Vacancy</th>
+      <th>Vacancy_Fill_Pct</th>
+      <th>Absence_Filled</th>
+      <th>Absence_Unfilled</th>
+      <th>Total_Absence</th>
+      <th>Absence_Fill_Pct</th>
+      <th>Total</th>
+      <th>Overall_Fill_Pct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th></th>
+      <td>ABAZA SPEAKING PARA</td>
+      <td>0</td>
+      <td>20</td>
+      <td>20</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>20</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>ALBANIAN SPEAKING PARA</td>
+      <td>42</td>
+      <td>0</td>
+      <td>42</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>42</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>ARABIC SPEAKING PARA</td>
+      <td>21</td>
+      <td>0</td>
+      <td>21</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>21</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>MANDARIN SPEAKING PARA</td>
+      <td>64</td>
+      <td>54</td>
+      <td>118</td>
+      <td>54.2%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>118</td>
+      <td>54.2%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>PARAPROFESSIONAL</td>
+      <td>11,465</td>
+      <td>339</td>
+      <td>11,804</td>
+      <td>97.1%</td>
+      <td>1,098</td>
+      <td>827</td>
+      <td>1,925</td>
+      <td>57.0%</td>
+      <td>13,729</td>
+      <td>91.5%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>RUSSIAN SPEAKING PARA</td>
+      <td>42</td>
+      <td>26</td>
+      <td>68</td>
+      <td>61.8%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>68</td>
+      <td>61.8%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>SPANISH SPEAKING PARA</td>
+      <td>135</td>
+      <td>32</td>
+      <td>167</td>
+      <td>80.8%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>167</td>
+      <td>80.8%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>UKRAINIAN SPEAKING PARA</td>
+      <td>0</td>
+      <td>21</td>
+      <td>21</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>21</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>URDU SPEAKING PARA</td>
+      <td>5</td>
+      <td>1</td>
+      <td>6</td>
+      <td>83.3%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>6</td>
+      <td>83.3%</td>
+    </tr>
+  </tbody>
+</table>
+        
+        <h3>Jobs by Classification and Type (Bar Chart)</h3>
+        <iframe src="Staten_Island_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
+        
+        <h3>Breakdown by Classification</h3>
+        <div class="pie-container">
+            <iframe src="Staten_Island_ABAZA SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Staten_Island_ALBANIAN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Staten_Island_ARABIC SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Staten_Island_MANDARIN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Staten_Island_PARAPROFESSIONAL_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Staten_Island_RUSSIAN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Staten_Island_SPANISH SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Staten_Island_UKRAINIAN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+<iframe src="Staten_Island_URDU SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
+
+        </div>
+        
+        <h3>Key Insights</h3>
+        <ul>
+            <li>Total Jobs: 14,192</li>
+            <li>Total Vacancies: 12,267 (86.4%)</li>
+            <li>Total Absences: 1,925 (13.6%)</li>
+            <li>Overall Fill Rate: 90.7%</li>
+            <li>Vacancy Fill Rate: 96.0%</li>
+            <li>Absence Fill Rate: 57.0%</li>
+            <li>Number of Districts: 3</li>
+            <li>Number of Schools: 73</li>
+        </ul>
+
+        <h3>Comparison: Staten Island vs. Citywide</h3>
+        <div style="display: flex; justify-content: space-between;">
+            <div style="width: 48%; background-color: #e8f4f8; padding: 15px; border-radius: 5px;">
+                <h4>Citywide Statistics</h4>
+                <ul>
+                    <li>Total Jobs: 205,765</li>
+                    <li>Total Vacancies: 189,693 (92.2%)</li>
+                    <li>Total Absences: 16,072 (7.8%)</li>
+                    <li>Overall Fill Rate: 89.5%</li>
+                    <li>Vacancy Fill Rate: 94.0%</li>
+                    <li>Absence Fill Rate: 36.4%</li>
+                </ul>
+            </div>
+            <div style="width: 48%; background-color: #f0f8e8; padding: 15px; border-radius: 5px;">
+                <h4>This Borough</h4>
+                <ul>
+                    <li>Total Jobs: 14,192</li>
+                    <li>Total Vacancies: 12,267 (86.4%)</li>
+                    <li>Total Absences: 1,925 (13.6%)</li>
+                    <li>Overall Fill Rate: 90.7%</li>
+                    <li>Vacancy Fill Rate: 96.0%</li>
+                    <li>Absence Fill Rate: 57.0%</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>Individual District Reports</h3>
+        <ul>
+            <li><a href="../District_31/31_report.html">District 31 Report</a> - 8449 total jobs</li>
+<li><a href="../District_62/62_report.html">District 62 Report</a> - 21382 total jobs</li>
+<li><a href="../District_97/97_report.html">District 97 Report</a> - 50149 total jobs</li>
+
+        </ul>
+    </body>
+    </html>
+    
