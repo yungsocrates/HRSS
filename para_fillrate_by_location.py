@@ -305,6 +305,7 @@ def create_school_report(district, location, location_clean, school_data, output
     <html>
     <head>
         <title>NYCDOE Jobs Report - {location}</title>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
         <style>
             body {{ font-family: Verdana, sans-serif; margin: 20px; }}
             h1 {{ color: #2E86AB; text-align: center; }}
@@ -316,6 +317,13 @@ def create_school_report(district, location, location_clean, school_data, output
             .navigation {{ background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }}
             .summary-box {{ background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }}
         </style>
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function() {{
+                $('.table').DataTable({{paging: false, searching: false, info: false, order: []}});
+            }});
+        </script>
     </head>
     <body>
         <div class="navigation">
@@ -340,7 +348,6 @@ def create_school_report(district, location, location_clean, school_data, output
     </body>
     </html>
     """
-    
     # Save main report
     report_file = os.path.join(school_dir, f'{location_clean}_report.html')
     with open(report_file, 'w', encoding='utf-8') as f:
@@ -509,6 +516,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     <html>
     <head>
         <title>NYCDOE Jobs Report - District {int(district)}</title>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
         <style>
             body {{ font-family: Verdana, sans-serif; margin: 20px; }}
             h1 {{ color: #2E86AB; text-align: center; }}
@@ -519,6 +527,13 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
             .pie-container {{ display: flex; flex-wrap: wrap; justify-content: space-around; }}
             .navigation {{ background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }}
         </style>
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function() {{
+                $('.table').DataTable({{paging: false, searching: false, info: false, order: []}});
+            }});
+        </script>
     </head>
     <body>
         <div class="navigation">
@@ -742,6 +757,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
     <html>
     <head>
         <title>NYCDOE Jobs Report - {borough}</title>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
         <style>
             body {{ font-family: Verdana, sans-serif; margin: 20px; }}
             h1 {{ color: #2E86AB; text-align: center; }}
@@ -752,6 +768,13 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
             .pie-container {{ display: flex; flex-wrap: wrap; justify-content: space-around; }}
             .navigation {{ background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }}
         </style>
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function() {{
+                $('.table').DataTable({{paging: false, searching: false, info: false, order: []}});
+            }});
+        </script>
     </head>
     <body>
         <div class="navigation">
@@ -780,9 +803,9 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
                     <li>Total Jobs: {overall_stats['Total']:,}</li>
                     <li>Total Vacancies: {overall_stats['Total_Vacancy']:,} ({(overall_stats['Total_Vacancy'] / overall_stats['Total'] * 100) if overall_stats['Total'] > 0 else 0:.1f}%)</li>
                     <li>Total Absences: {overall_stats['Total_Absence']:,} ({(overall_stats['Total_Absence'] / overall_stats['Total'] * 100) if overall_stats['Total'] > 0 else 0:.1f}%)</li>
-                    <li>Overall Fill Rate: {overall_stats['Overall_Fill_Pct']:.1f}%</li>
-                    <li>Vacancy Fill Rate: {overall_stats['Vacancy_Fill_Pct']:.1f}%</li>
-                    <li>Absence Fill Rate: {overall_stats['Absence_Fill_Pct']:.1f}%</li>
+                    <li>Overall Fill Rate: {((overall_stats['Vacancy_Filled'] + overall_stats['Absence_Filled']) / overall_stats['Total'] * 100) if overall_stats['Total'] > 0 else 0:.1f}%</li>
+                    <li>Vacancy Fill Rate: {(overall_stats['Vacancy_Filled'] / overall_stats['Total_Vacancy'] * 100) if overall_stats['Total_Vacancy'] > 0 else 0:.1f}%</li>
+                    <li>Absence Fill Rate: {(overall_stats['Absence_Filled'] / overall_stats['Total_Absence'] * 100) if overall_stats['Total_Absence'] > 0 else 0:.1f}%</li>
                     <li>Number of Schools: {len(df['Location'].unique())}</li>
                 </ul>
             </div>
@@ -964,6 +987,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
     <html>
     <head>
         <title>NYCDOE Jobs Dashboard - Overall Summary</title>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
         <style>
             body {{ font-family: Verdana, sans-serif; margin: 20px; }}
             h1 {{ color: #2E86AB; text-align: center; }}
@@ -973,6 +997,13 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
             .table th {{ background-color: #f2f2f2; font-weight: bold; }}
             .summary-box {{ background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }}
         </style>
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function() {{
+                $('.table').DataTable({{paging: false, searching: false, info: false, order: []}});
+            }});
+        </script>
     </head>
     <body>
         <h1>NYCDOE Substitute Paraprofessional Jobs Dashboard</h1>

@@ -3,6 +3,7 @@
     <html>
     <head>
         <title>NYCDOE Jobs Report - K507</title>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
         <style>
             body { font-family: Verdana, sans-serif; margin: 20px; }
             h1 { color: #2E86AB; text-align: center; }
@@ -14,6 +15,13 @@
             .navigation { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }
             .summary-box { background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }
         </style>
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('.table').DataTable({paging: false, searching: false, info: false, order: []});
+            });
+        </script>
     </head>
     <body>
         <div class="navigation">
