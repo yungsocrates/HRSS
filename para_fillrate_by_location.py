@@ -1,11 +1,37 @@
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.offline as pyo
 import numpy as np
 import os
 import re
+import time
+
+# === GLOBAL CONSTANTS ===
+DISPLAY_COLS = [
+    'Classification', 'Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 'Vacancy_Fill_Pct',
+    'Absence_Filled', 'Absence_Unfilled', 'Total_Absence', 'Absence_Fill_Pct', 'Total', 'Overall_Fill_Pct'
+]
+
+DISPLAY_COLS_RENAME = {
+    'Classification': 'Classification',
+    'Vacancy_Filled': 'Vacancy Filled',
+    'Vacancy_Unfilled': 'Vacancy Unfilled',
+    'Total_Vacancy': 'Total Vacancy',
+    'Vacancy_Fill_Pct': 'Vacancy Fill %',
+    'Absence_Filled': 'Absence Filled',
+    'Absence_Unfilled': 'Absence Unfilled',
+    'Total_Absence': 'Total Absence',
+    'Absence_Fill_Pct': 'Absence Fill %',
+    'Total': 'Total',
+    'Overall_Fill_Pct': 'Overall Fill %'
+}
+
+def format_pct(x):
+    return f"{x:.1f}%" if isinstance(x, (int, float)) else x
+
+def format_int(x):
+    return f"{int(x):,}" if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else x
 
 def load_and_process_data(csv_file_path):
     """
@@ -83,7 +109,12 @@ def create_summary_stats(df, group_cols):
         columns='Type_Fill_Status',
         values='Count',
         fill_value=0
-    ).reset_index()
+    )
+    # Flatten columns if pivot_table creates a MultiIndex
+    if isinstance(summary_pivot.columns, pd.MultiIndex):
+        summary_pivot.columns = summary_pivot.columns.get_level_values(-1)
+    summary_pivot = summary_pivot.reset_index()
+    summary_pivot.columns.name = None
     
     # Ensure all possible columns exist
     expected_cols = ['Vacancy_Filled', 'Vacancy_Unfilled', 'Absence_Filled', 'Absence_Unfilled']
@@ -112,7 +143,17 @@ def create_summary_stats(df, group_cols):
         ((summary_pivot['Vacancy_Filled'] + summary_pivot['Absence_Filled']) / summary_pivot['Total'] * 100).round(1),
         0
     )
-    
+
+    # Remove 'Type_Fill_Status' if present
+    if 'Type_Fill_Status' in summary_pivot.columns:
+        summary_pivot = summary_pivot.drop(columns=['Type_Fill_Status'])
+
+    # Only keep the columns needed for display
+    display_cols = group_cols + [
+        'Classification', 'Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 'Vacancy_Fill_Pct',
+        'Absence_Filled', 'Absence_Unfilled', 'Total_Absence', 'Absence_Fill_Pct', 'Total', 'Overall_Fill_Pct'
+    ]
+    summary_pivot = summary_pivot[[col for col in display_cols if col in summary_pivot.columns]]
     return summary_pivot
 
 def clean_classification_for_display(classification):
@@ -130,27 +171,40 @@ def create_school_report(district, location, location_clean, school_data, output
     os.makedirs(school_dir, exist_ok=True)
     
     # Create summary table as HTML
-    display_cols = ['Classification', 'Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 'Vacancy_Fill_Pct',
-                   'Absence_Filled', 'Absence_Unfilled', 'Total_Absence', 'Absence_Fill_Pct', 'Total', 'Overall_Fill_Pct']
-    
-    table_html = school_data[display_cols].to_html(
-    index=False,
-    table_id='summary-table',
-    classes='table table-striped',
-    formatters={
-        col: (lambda x: f"{x:.1f}%" if isinstance(x, (int, float)) else x) if 'Pct' in col else (lambda x: f"{int(x):,}" if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else x)
-        for col in display_cols
-    }
-)
+    table_html = df_with_pretty_columns(school_data[DISPLAY_COLS]).to_html(
+        index=False,
+        table_id='summary-table',
+        classes='table table-striped',
+        formatters={
+            DISPLAY_COLS_RENAME.get(col, col): format_pct if 'Pct' in col else format_int
+            for col in DISPLAY_COLS
+        }
+    )
 
     
+    # --- Key Insights Section ---
+    # Compute key metrics for the summary box (use first row, as school_data is per school)
+    key_row = school_data.iloc[0]
+    key_insights_html = f'''
+    <div class="summary-box">
+        <h3>Key Insights</h3>
+        <ul>
+            <li><strong>Total Jobs:</strong> {format_int(school_data["Total"].sum())}</li>
+            <li><strong>Total Vacancies:</strong> {format_int(school_data["Total_Vacancy"].sum())} ({format_pct((school_data["Total_Vacancy"].sum()/school_data["Total"].sum()*100) if school_data["Total"].sum() > 0 else 0)})</li>
+            <li><strong>Total Absences:</strong> {format_int(school_data["Total_Absence"].sum())} ({format_pct((school_data["Total_Absence"].sum()/school_data["Total"].sum()*100) if school_data["Total"].sum() > 0 else 0)})</li>
+            <li><strong>Overall Fill Rate:</strong> {format_pct((school_data["Vacancy_Filled"].sum() + school_data["Absence_Filled"].sum())/school_data["Total"].sum()*100 if school_data["Total"].sum() > 0 else 0)}</li>
+            <li><strong>Vacancy Fill Rate:</strong> {format_pct((school_data["Vacancy_Filled"].sum()/school_data["Total_Vacancy"].sum()*100) if school_data["Total_Vacancy"].sum() > 0 else 0)}</li>
+            <li><strong>Absence Fill Rate:</strong> {format_pct((school_data["Absence_Filled"].sum()/school_data["Total_Absence"].sum()*100) if school_data["Total_Absence"].sum() > 0 else 0)}</li>
+            <li><strong>Classifications:</strong> {', '.join(school_data['Classification'].unique())}</li>
+        </ul>
+    </div>
+    '''
     # Create grouped bar chart
     fig_bar = go.Figure()
-    
     # Add bars for each category
     fig_bar.add_trace(go.Bar(
         name='Vacancy Filled',
-        x=[clean_classification_for_display(x) for x in school_data['Classification']],
+        x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Vacancy_Filled'],
         marker_color='darkgreen',
         text=school_data['Vacancy_Filled'],
@@ -159,7 +213,7 @@ def create_school_report(district, location, location_clean, school_data, output
     
     fig_bar.add_trace(go.Bar(
         name='Vacancy Unfilled',
-        x=[clean_classification_for_display(x) for x in school_data['Classification']],
+        x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Vacancy_Unfilled'],
         marker_color='lightcoral',
         text=school_data['Vacancy_Unfilled'],
@@ -168,7 +222,7 @@ def create_school_report(district, location, location_clean, school_data, output
     
     fig_bar.add_trace(go.Bar(
         name='Absence Filled',
-        x=[clean_classification_for_display(x) for x in school_data['Classification']],
+        x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Absence_Filled'],
         marker_color='forestgreen',
         text=school_data['Absence_Filled'],
@@ -177,7 +231,7 @@ def create_school_report(district, location, location_clean, school_data, output
     
     fig_bar.add_trace(go.Bar(
         name='Absence Unfilled',
-        x=[clean_classification_for_display(x) for x in school_data['Classification']],
+        x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Absence_Unfilled'],
         marker_color='red',
         text=school_data['Absence_Unfilled'],
@@ -201,6 +255,9 @@ def create_school_report(district, location, location_clean, school_data, output
     pie_charts_html = ""
     for idx, (_, row) in enumerate(school_data.iterrows()):
         if row['Total'] > 0:  # Only create pie chart if there are jobs
+            # Sanitize both location_clean and classification for filename
+            safe_location = re.sub(r'[<>:"/\\|?*]', '_', str(location_clean))
+            safe_classification = re.sub(r'[<>:"/\\|?*]', '_', str(row['Classification']))
             pie_fig = go.Figure(data=[go.Pie(
                 labels=['Vacancy Filled', 'Vacancy Unfilled', 'Absence Filled', 'Absence Unfilled'],
                 values=[row['Vacancy_Filled'], row['Vacancy_Unfilled'], row['Absence_Filled'], row['Absence_Unfilled']],
@@ -214,11 +271,34 @@ def create_school_report(district, location, location_clean, school_data, output
                 showlegend=True
             )
             
-            pie_file = os.path.join(school_dir, f'{location_clean}_{row["Classification"].replace("/", "_")}_pie.html')
+            pie_file = os.path.join(school_dir, f'{safe_location}_{safe_classification}_pie.html')
             pyo.plot(pie_fig, filename=pie_file, auto_open=False)
             
             pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="420" frameborder="0"></iframe>\n'
     
+    # Calculate key insights for the school
+    total_jobs = int(school_data['Total'].sum())
+    total_vacancy = int(school_data['Total_Vacancy'].sum())
+    total_absence = int(school_data['Total_Absence'].sum())
+    vacancy_filled = int(school_data['Vacancy_Filled'].sum())
+    absence_filled = int(school_data['Absence_Filled'].sum())
+    overall_fill_pct = (vacancy_filled + absence_filled) / total_jobs * 100 if total_jobs > 0 else 0
+    vacancy_fill_pct = (vacancy_filled / total_vacancy * 100) if total_vacancy > 0 else 0
+    absence_fill_pct = (absence_filled / total_absence * 100) if total_absence > 0 else 0
+
+    key_insights_html = f"""
+        <div class=\"summary-box\" style=\"background-color:#f8f9fa;padding:15px;border-radius:5px;margin:10px 0;\">
+            <h3>Key Insights</h3>
+            <ul>
+                <li><strong>Total Jobs:</strong> {total_jobs}</li>
+                <li><strong>Total Vacancies:</strong> {total_vacancy} ({(total_vacancy/total_jobs*100) if total_jobs > 0 else 0:.1f}%)</li>
+                <li><strong>Total Absences:</strong> {total_absence} ({(total_absence/total_jobs*100) if total_jobs > 0 else 0:.1f}%)</li>
+                <li><strong>Overall Fill Rate:</strong> {overall_fill_pct:.1f}%</li>
+                <li><strong>Vacancy Fill Rate:</strong> {vacancy_fill_pct:.1f}%</li>
+                <li><strong>Absence Fill Rate:</strong> {absence_fill_pct:.1f}%</li>
+            </ul>
+        </div>
+    """
     # Create comprehensive HTML report
     html_content = f"""
     <!DOCTYPE html>
@@ -234,6 +314,7 @@ def create_school_report(district, location, location_clean, school_data, output
             .table th {{ background-color: #f2f2f2; font-weight: bold; }}
             .pie-container {{ display: flex; flex-wrap: wrap; justify-content: space-around; }}
             .navigation {{ background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }}
+            .summary-box {{ background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }}
         </style>
     </head>
     <body>
@@ -244,7 +325,7 @@ def create_school_report(district, location, location_clean, school_data, output
         
         <h1>NYCDOE Substitute Paraprofessional Jobs Report</h1>
         <h2>School: {location} (District {int(district)})</h2>
-        
+        {key_insights_html}
         <h3>Summary Statistics</h3>
         {table_html}
         
@@ -282,27 +363,22 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     borough_data = create_summary_stats(df[df['Borough'] == district_borough], ['Borough'])
     
     # Create summary table as HTML
-    display_cols = ['Classification', 'Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 'Vacancy_Fill_Pct',
-                   'Absence_Filled', 'Absence_Unfilled', 'Total_Absence', 'Absence_Fill_Pct', 'Total', 'Overall_Fill_Pct']
-    
-    table_html = district_data[display_cols].to_html(
-    index=False,
-    table_id='summary-table',
-    classes='table table-striped',
-    formatters={
-        col: (lambda x: f"{x:.1f}%" if isinstance(x, (int, float)) else x) if 'Pct' in col else (lambda x: f"{int(x):,}" if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else x)
-        for col in display_cols
-    }
-)
+    table_html = df_with_pretty_columns(district_data[DISPLAY_COLS]).to_html(
+        index=False,
+        table_id='summary-table',
+        classes='table table-striped',
+        formatters={
+            DISPLAY_COLS_RENAME.get(col, col): format_pct if 'Pct' in col else format_int
+            for col in DISPLAY_COLS
+        }
+    )
 
     
     # Create grouped bar chart
     fig_bar = go.Figure()
-    
-    # Add bars for each category
     fig_bar.add_trace(go.Bar(
         name='Vacancy Filled',
-        x=[clean_classification_for_display(x) for x in district_data['Classification']],
+        x=district_data['Classification'].apply(clean_classification_for_display),
         y=district_data['Vacancy_Filled'],
         marker_color='darkgreen',
         text=district_data['Vacancy_Filled'],
@@ -311,7 +387,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     
     fig_bar.add_trace(go.Bar(
         name='Vacancy Unfilled',
-        x=[clean_classification_for_display(x) for x in district_data['Classification']],
+        x=district_data['Classification'].apply(clean_classification_for_display),
         y=district_data['Vacancy_Unfilled'],
         marker_color='lightcoral',
         text=district_data['Vacancy_Unfilled'],
@@ -320,7 +396,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     
     fig_bar.add_trace(go.Bar(
         name='Absence Filled',
-        x=[clean_classification_for_display(x) for x in district_data['Classification']],
+        x=district_data['Classification'].apply(clean_classification_for_display),
         y=district_data['Absence_Filled'],
         marker_color='forestgreen',
         text=district_data['Absence_Filled'],
@@ -329,7 +405,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     
     fig_bar.add_trace(go.Bar(
         name='Absence Unfilled',
-        x=[clean_classification_for_display(x) for x in district_data['Classification']],
+        x=district_data['Classification'].apply(clean_classification_for_display),
         y=district_data['Absence_Unfilled'],
         marker_color='red',
         text=district_data['Absence_Unfilled'],
@@ -529,26 +605,22 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
     os.makedirs(borough_dir, exist_ok=True)
     
     # Create summary table as HTML
-    display_cols = ['Classification', 'Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 'Vacancy_Fill_Pct',
-                   'Absence_Filled', 'Absence_Unfilled', 'Total_Absence', 'Absence_Fill_Pct', 'Total', 'Overall_Fill_Pct']
-    
-    table_html = borough_data[display_cols].to_html(
+    table_html = df_with_pretty_columns(borough_data[DISPLAY_COLS]).to_html(
         index=False,
         table_id='summary-table',
         classes='table table-striped',
         formatters={
-            col: (lambda x: f"{x:.1f}%" if isinstance(x, (int, float)) else x) if 'Pct' in col else (lambda x: f"{int(x):,}" if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else x)
-            for col in display_cols
+            DISPLAY_COLS_RENAME.get(col, col): format_pct if 'Pct' in col else format_int
+            for col in DISPLAY_COLS
         }
     )
     
     # Create grouped bar chart
     fig_bar = go.Figure()
-    
     # Add bars for each category
     fig_bar.add_trace(go.Bar(
         name='Vacancy Filled',
-        x=[clean_classification_for_display(x) for x in borough_data['Classification']],
+        x=borough_data['Classification'].apply(clean_classification_for_display),
         y=borough_data['Vacancy_Filled'],
         marker_color='darkgreen',
         text=borough_data['Vacancy_Filled'],
@@ -557,7 +629,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
     
     fig_bar.add_trace(go.Bar(
         name='Vacancy Unfilled',
-        x=[clean_classification_for_display(x) for x in borough_data['Classification']],
+        x=borough_data['Classification'].apply(clean_classification_for_display),
         y=borough_data['Vacancy_Unfilled'],
         marker_color='lightcoral',
         text=borough_data['Vacancy_Unfilled'],
@@ -566,7 +638,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
     
     fig_bar.add_trace(go.Bar(
         name='Absence Filled',
-        x=[clean_classification_for_display(x) for x in borough_data['Classification']],
+        x=borough_data['Classification'].apply(clean_classification_for_display),
         y=borough_data['Absence_Filled'],
         marker_color='forestgreen',
         text=borough_data['Absence_Filled'],
@@ -575,7 +647,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
     
     fig_bar.add_trace(go.Bar(
         name='Absence Unfilled',
-        x=[clean_classification_for_display(x) for x in borough_data['Classification']],
+        x=borough_data['Classification'].apply(clean_classification_for_display),
         y=borough_data['Absence_Unfilled'],
         marker_color='red',
         text=borough_data['Absence_Unfilled'],
@@ -873,7 +945,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
             borough_data = borough_stats[borough_stats['Borough'] == borough]
             if not borough_data.empty:
                 total_jobs = borough_data['Total'].sum()
-                borough_name_clean = borough.replace(' ', '_')
+                borough_name_clean = borough.replace(' ', '_').replace('/', '_')
                 borough_links += f'<li><a href="Borough_{borough_name_clean}/{borough_name_clean}_report.html">{borough} Report</a> - {int(total_jobs)} total jobs</li>\n'
     
     
@@ -923,28 +995,23 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
         <iframe src="overall_summary_chart.html" width="1420" height="520" frameborder="0"></iframe>
         
         <h3>Summary by Classification (All Districts)</h3>
-        {overall_stats[display_cols].to_html(
+        {df_with_pretty_columns(overall_stats[display_cols]).to_html(
     index=False,
     classes='table',
     formatters={
-        col: (lambda x: f"{x:.1f}%" if isinstance(x, (int, float)) else x) if 'Pct' in col else (lambda x: f"{int(x):,}" if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else x)
+        DISPLAY_COLS_RENAME.get(col, col): format_pct if 'Pct' in col else format_int
         for col in display_cols
     }
-)
-}
+)}
         
         <h3>Summary by District</h3>
-        {district_summary[['District'] + display_cols[1:]].sort_values('District').to_html(
+        {district_summary[['District'] + display_cols[1:]].sort_values('District').rename(columns=DISPLAY_COLS_RENAME).to_html(
     index=False,
     classes='table',
     formatters={
         'District': lambda x: f"{int(x)}",
         **{
-            col: (
-                lambda x: f"{x:.1f}%" if isinstance(x, (int, float)) else x
-            ) if 'Pct' in col else (
-                lambda x: f"{int(x):,}" if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else x
-            )
+            DISPLAY_COLS_RENAME.get(col, col): format_pct if 'Pct' in col else format_int
             for col in display_cols
         }
     }
@@ -967,6 +1034,12 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
     
     return index_file
 
+def df_with_pretty_columns(df):
+    """
+    Return a copy of df with columns renamed for display.
+    """
+    return df.rename(columns=DISPLAY_COLS_RENAME)
+
 def main():
     """
     Main function to generate static reports
@@ -975,6 +1048,7 @@ def main():
     csv_file_path = 'Fill Rate Data/mayjobs.csv'
     output_directory = 'nycdoe_reports'
     
+    start_time = time.time()
     try:
         # Create output directory
         os.makedirs(output_directory, exist_ok=True)
@@ -982,7 +1056,10 @@ def main():
         # Load and process data
         df = load_and_process_data(csv_file_path)
         summary_stats = create_summary_stats(df, ['District'])
-        
+        # Remove 'Type_Fill_Status' if present
+        if 'Type_Fill_Status' in summary_stats.columns:
+            summary_stats = summary_stats.drop(columns=['Type_Fill_Status'])
+
         # Convert to int to avoid float display issues
         int_cols = ['Vacancy_Filled', 'Vacancy_Unfilled', 'Absence_Filled', 'Absence_Unfilled', 
                    'Total_Vacancy', 'Total_Absence', 'Total']
@@ -991,7 +1068,8 @@ def main():
 
         #Create borough-level statistics
         borough_stats = create_borough_summary_stats(df)
-        
+        if 'Type_Fill_Status' in borough_stats.columns:
+            borough_stats = borough_stats.drop(columns=['Type_Fill_Status'])
         # Create reports for each District
         districts = sorted(df['District'].unique())
         report_files = []
@@ -1025,6 +1103,9 @@ def main():
         print(f"Individual District reports: {len(report_files)} files created")
         print(f"Individual School reports: {len(all_school_reports)} files created")
         print(f"Open '{index_file}' in your web browser to view the dashboard")
+        
+        elapsed = time.time() - start_time
+        print(f"Total run time: {elapsed:.2f} seconds")
         
     except FileNotFoundError:
         print(f"Error: Could not find file '{csv_file_path}'")

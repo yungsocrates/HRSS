@@ -12,6 +12,7 @@
             .table th { background-color: #f2f2f2; font-weight: bold; }
             .pie-container { display: flex; flex-wrap: wrap; justify-content: space-around; }
             .navigation { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }
+            .summary-box { background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }
         </style>
     </head>
     <body>
@@ -23,27 +24,37 @@
         <h1>NYCDOE Substitute Paraprofessional Jobs Report</h1>
         <h2>School: Q177 (District 62)</h2>
         
+        <div class="summary-box" style="background-color:#f8f9fa;padding:15px;border-radius:5px;margin:10px 0;">
+            <h3>Key Insights</h3>
+            <ul>
+                <li><strong>Total Jobs:</strong> 791</li>
+                <li><strong>Total Vacancies:</strong> 737 (93.2%)</li>
+                <li><strong>Total Absences:</strong> 54 (6.8%)</li>
+                <li><strong>Overall Fill Rate:</strong> 87.1%</li>
+                <li><strong>Vacancy Fill Rate:</strong> 91.5%</li>
+                <li><strong>Absence Fill Rate:</strong> 27.8%</li>
+            </ul>
+        </div>
+    
         <h3>Summary Statistics</h3>
         <table border="1" class="dataframe table table-striped" id="summary-table">
   <thead>
     <tr style="text-align: right;">
-      <th>Type_Fill_Status</th>
       <th>Classification</th>
-      <th>Vacancy_Filled</th>
-      <th>Vacancy_Unfilled</th>
-      <th>Total_Vacancy</th>
-      <th>Vacancy_Fill_Pct</th>
-      <th>Absence_Filled</th>
-      <th>Absence_Unfilled</th>
-      <th>Total_Absence</th>
-      <th>Absence_Fill_Pct</th>
+      <th>Vacancy Filled</th>
+      <th>Vacancy Unfilled</th>
+      <th>Total Vacancy</th>
+      <th>Vacancy Fill %</th>
+      <th>Absence Filled</th>
+      <th>Absence Unfilled</th>
+      <th>Total Absence</th>
+      <th>Absence Fill %</th>
       <th>Total</th>
-      <th>Overall_Fill_Pct</th>
+      <th>Overall Fill %</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th></th>
       <td>MANDARIN SPEAKING PARA</td>
       <td>13</td>
       <td>8</td>
@@ -57,7 +68,6 @@
       <td>61.9%</td>
     </tr>
     <tr>
-      <th></th>
       <td>PARAPROFESSIONAL</td>
       <td>661</td>
       <td>36</td>
@@ -71,7 +81,6 @@
       <td>90.0%</td>
     </tr>
     <tr>
-      <th></th>
       <td>POLISH SPEAKING PARA</td>
       <td>0</td>
       <td>9</td>
@@ -85,7 +94,6 @@
       <td>0.0%</td>
     </tr>
     <tr>
-      <th></th>
       <td>SPANISH SPEAKING PARA</td>
       <td>0</td>
       <td>10</td>

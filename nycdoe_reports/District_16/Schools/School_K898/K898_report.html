@@ -12,6 +12,7 @@
             .table th { background-color: #f2f2f2; font-weight: bold; }
             .pie-container { display: flex; flex-wrap: wrap; justify-content: space-around; }
             .navigation { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }
+            .summary-box { background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }
         </style>
     </head>
     <body>
@@ -23,27 +24,37 @@
         <h1>NYCDOE Substitute Paraprofessional Jobs Report</h1>
         <h2>School: K898 (District 16)</h2>
         
+        <div class="summary-box" style="background-color:#f8f9fa;padding:15px;border-radius:5px;margin:10px 0;">
+            <h3>Key Insights</h3>
+            <ul>
+                <li><strong>Total Jobs:</strong> 59</li>
+                <li><strong>Total Vacancies:</strong> 57 (96.6%)</li>
+                <li><strong>Total Absences:</strong> 2 (3.4%)</li>
+                <li><strong>Overall Fill Rate:</strong> 67.8%</li>
+                <li><strong>Vacancy Fill Rate:</strong> 70.2%</li>
+                <li><strong>Absence Fill Rate:</strong> 0.0%</li>
+            </ul>
+        </div>
+    
         <h3>Summary Statistics</h3>
         <table border="1" class="dataframe table table-striped" id="summary-table">
   <thead>
     <tr style="text-align: right;">
-      <th>Type_Fill_Status</th>
       <th>Classification</th>
-      <th>Vacancy_Filled</th>
-      <th>Vacancy_Unfilled</th>
-      <th>Total_Vacancy</th>
-      <th>Vacancy_Fill_Pct</th>
-      <th>Absence_Filled</th>
-      <th>Absence_Unfilled</th>
-      <th>Total_Absence</th>
-      <th>Absence_Fill_Pct</th>
+      <th>Vacancy Filled</th>
+      <th>Vacancy Unfilled</th>
+      <th>Total Vacancy</th>
+      <th>Vacancy Fill %</th>
+      <th>Absence Filled</th>
+      <th>Absence Unfilled</th>
+      <th>Total Absence</th>
+      <th>Absence Fill %</th>
       <th>Total</th>
-      <th>Overall_Fill_Pct</th>
+      <th>Overall Fill %</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th></th>
       <td>PARAPROFESSIONAL</td>
       <td>40</td>
       <td>17</td>
