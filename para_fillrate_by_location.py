@@ -115,6 +115,12 @@ def create_summary_stats(df, group_cols):
     
     return summary_pivot
 
+def clean_classification_for_display(classification):
+    """
+    Clean classification names for display in bar charts
+    """
+    return classification.replace(' SPEAKING PARA', '')
+
 def create_school_report(district, location, location_clean, school_data, output_dir):
     """
     Create a comprehensive report for a single school
@@ -144,7 +150,7 @@ def create_school_report(district, location, location_clean, school_data, output
     # Add bars for each category
     fig_bar.add_trace(go.Bar(
         name='Vacancy Filled',
-        x=school_data['Classification'],
+        x=[clean_classification_for_display(x) for x in school_data['Classification']],
         y=school_data['Vacancy_Filled'],
         marker_color='darkgreen',
         text=school_data['Vacancy_Filled'],
@@ -153,7 +159,7 @@ def create_school_report(district, location, location_clean, school_data, output
     
     fig_bar.add_trace(go.Bar(
         name='Vacancy Unfilled',
-        x=school_data['Classification'],
+        x=[clean_classification_for_display(x) for x in school_data['Classification']],
         y=school_data['Vacancy_Unfilled'],
         marker_color='lightcoral',
         text=school_data['Vacancy_Unfilled'],
@@ -162,7 +168,7 @@ def create_school_report(district, location, location_clean, school_data, output
     
     fig_bar.add_trace(go.Bar(
         name='Absence Filled',
-        x=school_data['Classification'],
+        x=[clean_classification_for_display(x) for x in school_data['Classification']],
         y=school_data['Absence_Filled'],
         marker_color='forestgreen',
         text=school_data['Absence_Filled'],
@@ -171,7 +177,7 @@ def create_school_report(district, location, location_clean, school_data, output
     
     fig_bar.add_trace(go.Bar(
         name='Absence Unfilled',
-        x=school_data['Classification'],
+        x=[clean_classification_for_display(x) for x in school_data['Classification']],
         y=school_data['Absence_Unfilled'],
         marker_color='red',
         text=school_data['Absence_Unfilled'],
@@ -250,15 +256,6 @@ def create_school_report(district, location, location_clean, school_data, output
             {pie_charts_html}
         </div>
         
-        <h3>Key Insights</h3>
-        <ul>
-            <li>Total Jobs: {int(school_data['Total'].sum()):,}</li>
-            <li>Total Vacancies: {int(school_data['Total_Vacancy'].sum()):,} ({(school_data['Total_Vacancy'].sum() / school_data['Total'].sum() * 100) if school_data['Total'].sum() > 0 else 0:.1f}%)</li>
-            <li>Total Absences: {int(school_data['Total_Absence'].sum()):,} ({(school_data['Total_Absence'].sum() / school_data['Total'].sum() * 100) if school_data['Total'].sum() > 0 else 0:.1f}%)</li>
-            <li>Overall Fill Rate: {((school_data['Vacancy_Filled'].sum() + school_data['Absence_Filled'].sum()) / school_data['Total'].sum() * 100) if school_data['Total'].sum() > 0 else 0:.1f}%</li>
-            <li>Vacancy Fill Rate: {(school_data['Vacancy_Filled'].sum() / school_data['Total_Vacancy'].sum() * 100) if school_data['Total_Vacancy'].sum() > 0 else 0:.1f}%</li>
-            <li>Absence Fill Rate: {(school_data['Absence_Filled'].sum() / school_data['Total_Absence'].sum() * 100) if school_data['Total_Absence'].sum() > 0 else 0:.1f}%</li>
-        </ul>
     </body>
     </html>
     """
@@ -277,6 +274,12 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     # Create subfolder for District if it doesn't exist
     district_dir = os.path.join(output_dir, f"District_{int(district)}")
     os.makedirs(district_dir, exist_ok=True)
+    
+    # Get the borough for this district
+    district_borough = df[df['District'] == district]['Borough'].iloc[0]
+    
+    # Get borough data for comparison
+    borough_data = create_summary_stats(df[df['Borough'] == district_borough], ['Borough'])
     
     # Create summary table as HTML
     display_cols = ['Classification', 'Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 'Vacancy_Fill_Pct',
@@ -299,7 +302,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     # Add bars for each category
     fig_bar.add_trace(go.Bar(
         name='Vacancy Filled',
-        x=district_data['Classification'],
+        x=[clean_classification_for_display(x) for x in district_data['Classification']],
         y=district_data['Vacancy_Filled'],
         marker_color='darkgreen',
         text=district_data['Vacancy_Filled'],
@@ -308,7 +311,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     
     fig_bar.add_trace(go.Bar(
         name='Vacancy Unfilled',
-        x=district_data['Classification'],
+        x=[clean_classification_for_display(x) for x in district_data['Classification']],
         y=district_data['Vacancy_Unfilled'],
         marker_color='lightcoral',
         text=district_data['Vacancy_Unfilled'],
@@ -317,7 +320,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     
     fig_bar.add_trace(go.Bar(
         name='Absence Filled',
-        x=district_data['Classification'],
+        x=[clean_classification_for_display(x) for x in district_data['Classification']],
         y=district_data['Absence_Filled'],
         marker_color='forestgreen',
         text=district_data['Absence_Filled'],
@@ -326,7 +329,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     
     fig_bar.add_trace(go.Bar(
         name='Absence Unfilled',
-        x=district_data['Classification'],
+        x=[clean_classification_for_display(x) for x in district_data['Classification']],
         y=district_data['Absence_Unfilled'],
         marker_color='red',
         text=district_data['Absence_Unfilled'],
@@ -460,20 +463,9 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
             {pie_charts_html}
         </div>
         
-        <h3>Key Insights</h3>
-        <ul>
-            <li>Total Jobs: {int(district_data['Total'].sum()):,}</li>
-            <li>Total Vacancies: {int(district_data['Total_Vacancy'].sum()):,} ({(district_data['Total_Vacancy'].sum() / district_data['Total'].sum() * 100) if district_data['Total'].sum() > 0 else 0:.1f}%)</li>
-            <li>Total Absences: {int(district_data['Total_Absence'].sum()):,} ({(district_data['Total_Absence'].sum() / district_data['Total'].sum() * 100) if district_data['Total'].sum() > 0 else 0:.1f}%)</li>
-            <li>Overall Fill Rate: {((district_data['Vacancy_Filled'].sum() + district_data['Absence_Filled'].sum()) / district_data['Total'].sum() * 100) if district_data['Total'].sum() > 0 else 0:.1f}%</li>
-            <li>Vacancy Fill Rate: {(district_data['Vacancy_Filled'].sum() / district_data['Total_Vacancy'].sum() * 100) if district_data['Total_Vacancy'].sum() > 0 else 0:.1f}%</li>
-            <li>Absence Fill Rate: {(district_data['Absence_Filled'].sum() / district_data['Total_Absence'].sum() * 100) if district_data['Total_Absence'].sum() > 0 else 0:.1f}%</li>
-            <li>Number of Schools: {len(district_schools)}</li>
-        </ul>
-
-        <h3>Comparison: District vs. Citywide</h3>
-        <div style="display: flex; justify-content: space-between;">
-            <div style="width: 48%; background-color: #e8f4f8; padding: 15px; border-radius: 5px;">
+        <h3>Comparison: Citywide vs Borough vs District</h3>
+        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+            <div style="width: 31%; background-color: #e8f4f8; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
                 <h4>Citywide Statistics</h4>
                 <ul>
                     <li>Total Jobs: {overall_stats['Total']:,}</li>
@@ -482,10 +474,23 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
                     <li>Overall Fill Rate: {((overall_stats['Vacancy_Filled'] + overall_stats['Absence_Filled']) / overall_stats['Total'] * 100) if overall_stats['Total'] > 0 else 0:.1f}%</li>
                     <li>Vacancy Fill Rate: {(overall_stats['Vacancy_Filled'] / overall_stats['Total_Vacancy'] * 100) if overall_stats['Total_Vacancy'] > 0 else 0:.1f}%</li>
                     <li>Absence Fill Rate: {(overall_stats['Absence_Filled'] / overall_stats['Total_Absence'] * 100) if overall_stats['Total_Absence'] > 0 else 0:.1f}%</li>
+                    <li>Number of Schools: {len(df['Location'].unique())}</li>
                 </ul>
             </div>
-            <div style="width: 48%; background-color: #f0f8e8; padding: 15px; border-radius: 5px;">
-                <h4>This District</h4>
+            <div style="width: 31%; background-color: #f4e8f8; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                <h4>{district_borough} Statistics</h4>
+                <ul>
+                    <li>Total Jobs: {int(borough_data['Total'].sum()):,}</li>
+                    <li>Total Vacancies: {int(borough_data['Total_Vacancy'].sum()):,} ({(borough_data['Total_Vacancy'].sum() / borough_data['Total'].sum() * 100) if borough_data['Total'].sum() > 0 else 0:.1f}%)</li>
+                    <li>Total Absences: {int(borough_data['Total_Absence'].sum()):,} ({(borough_data['Total_Absence'].sum() / borough_data['Total'].sum() * 100) if borough_data['Total'].sum() > 0 else 0:.1f}%)</li>
+                    <li>Overall Fill Rate: {((borough_data['Vacancy_Filled'].sum() + borough_data['Absence_Filled'].sum()) / borough_data['Total'].sum() * 100) if borough_data['Total'].sum() > 0 else 0:.1f}%</li>
+                    <li>Vacancy Fill Rate: {(borough_data['Vacancy_Filled'].sum() / borough_data['Total_Vacancy'].sum() * 100) if borough_data['Total_Vacancy'].sum() > 0 else 0:.1f}%</li>
+                    <li>Absence Fill Rate: {(borough_data['Absence_Filled'].sum() / borough_data['Total_Absence'].sum() * 100) if borough_data['Total_Absence'].sum() > 0 else 0:.1f}%</li>
+                    <li>Number of Schools: {len(df[df['Borough'] == district_borough]['Location'].unique())}</li>
+                </ul>
+            </div>
+            <div style="width: 31%; background-color: #f0f8e8; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                <h4>District {int(district)} Statistics</h4>
                 <ul>
                     <li>Total Jobs: {int(district_data['Total'].sum()):,}</li>
                     <li>Total Vacancies: {int(district_data['Total_Vacancy'].sum()):,} ({(district_data['Total_Vacancy'].sum() / district_data['Total'].sum() * 100) if district_data['Total'].sum() > 0 else 0:.1f}%)</li>
@@ -493,6 +498,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
                     <li>Overall Fill Rate: {((district_data['Vacancy_Filled'].sum() + district_data['Absence_Filled'].sum()) / district_data['Total'].sum() * 100) if district_data['Total'].sum() > 0 else 0:.1f}%</li>
                     <li>Vacancy Fill Rate: {(district_data['Vacancy_Filled'].sum() / district_data['Total_Vacancy'].sum() * 100) if district_data['Total_Vacancy'].sum() > 0 else 0:.1f}%</li>
                     <li>Absence Fill Rate: {(district_data['Absence_Filled'].sum() / district_data['Total_Absence'].sum() * 100) if district_data['Total_Absence'].sum() > 0 else 0:.1f}%</li>
+                    <li>Number of Schools: {len(df[(df['District'] == district)]['Location'].unique())}</li>
                 </ul>
             </div>
         </div>
@@ -542,7 +548,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
     # Add bars for each category
     fig_bar.add_trace(go.Bar(
         name='Vacancy Filled',
-        x=borough_data['Classification'],
+        x=[clean_classification_for_display(x) for x in borough_data['Classification']],
         y=borough_data['Vacancy_Filled'],
         marker_color='darkgreen',
         text=borough_data['Vacancy_Filled'],
@@ -551,7 +557,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
     
     fig_bar.add_trace(go.Bar(
         name='Vacancy Unfilled',
-        x=borough_data['Classification'],
+        x=[clean_classification_for_display(x) for x in borough_data['Classification']],
         y=borough_data['Vacancy_Unfilled'],
         marker_color='lightcoral',
         text=borough_data['Vacancy_Unfilled'],
@@ -560,7 +566,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
     
     fig_bar.add_trace(go.Bar(
         name='Absence Filled',
-        x=borough_data['Classification'],
+        x=[clean_classification_for_display(x) for x in borough_data['Classification']],
         y=borough_data['Absence_Filled'],
         marker_color='forestgreen',
         text=borough_data['Absence_Filled'],
@@ -569,7 +575,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
     
     fig_bar.add_trace(go.Bar(
         name='Absence Unfilled',
-        x=borough_data['Classification'],
+        x=[clean_classification_for_display(x) for x in borough_data['Classification']],
         y=borough_data['Absence_Unfilled'],
         marker_color='red',
         text=borough_data['Absence_Unfilled'],
@@ -694,18 +700,6 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
             {pie_charts_html}
         </div>
         
-        <h3>Key Insights</h3>
-        <ul>
-            <li>Total Jobs: {int(borough_data['Total'].sum()):,}</li>
-            <li>Total Vacancies: {int(borough_data['Total_Vacancy'].sum()):,} ({(borough_data['Total_Vacancy'].sum() / borough_data['Total'].sum() * 100) if borough_data['Total'].sum() > 0 else 0:.1f}%)</li>
-            <li>Total Absences: {int(borough_data['Total_Absence'].sum()):,} ({(borough_data['Total_Absence'].sum() / borough_data['Total'].sum() * 100) if borough_data['Total'].sum() > 0 else 0:.1f}%)</li>
-            <li>Overall Fill Rate: {((borough_data['Vacancy_Filled'].sum() + borough_data['Absence_Filled'].sum()) / borough_data['Total'].sum() * 100) if borough_data['Total'].sum() > 0 else 0:.1f}%</li>
-            <li>Vacancy Fill Rate: {(borough_data['Vacancy_Filled'].sum() / borough_data['Total_Vacancy'].sum() * 100) if borough_data['Total_Vacancy'].sum() > 0 else 0:.1f}%</li>
-            <li>Absence Fill Rate: {(borough_data['Absence_Filled'].sum() / borough_data['Total_Absence'].sum() * 100) if borough_data['Total_Absence'].sum() > 0 else 0:.1f}%</li>
-            <li>Number of Districts: {len(borough_districts)}</li>
-            <li>Number of Schools: {total_schools}</li>
-        </ul>
-
         <h3>Comparison: {borough} vs. Citywide</h3>
         <div style="display: flex; justify-content: space-between;">
             <div style="width: 48%; background-color: #e8f4f8; padding: 15px; border-radius: 5px;">
@@ -717,6 +711,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
                     <li>Overall Fill Rate: {overall_stats['Overall_Fill_Pct']:.1f}%</li>
                     <li>Vacancy Fill Rate: {overall_stats['Vacancy_Fill_Pct']:.1f}%</li>
                     <li>Absence Fill Rate: {overall_stats['Absence_Fill_Pct']:.1f}%</li>
+                    <li>Number of Schools: {len(df['Location'].unique())}</li>
                 </ul>
             </div>
             <div style="width: 48%; background-color: #f0f8e8; padding: 15px; border-radius: 5px;">
@@ -728,6 +723,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
                     <li>Overall Fill Rate: {((borough_data['Vacancy_Filled'].sum() + borough_data['Absence_Filled'].sum()) / borough_data['Total'].sum() * 100) if borough_data['Total'].sum() > 0 else 0:.1f}%</li>
                     <li>Vacancy Fill Rate: {(borough_data['Vacancy_Filled'].sum() / borough_data['Total_Vacancy'].sum() * 100) if borough_data['Total_Vacancy'].sum() > 0 else 0:.1f}%</li>
                     <li>Absence Fill Rate: {(borough_data['Absence_Filled'].sum() / borough_data['Total_Absence'].sum() * 100) if borough_data['Total_Absence'].sum() > 0 else 0:.1f}%</li>
+                    <li>Number of Schools: {len(df[df['Borough'] == borough]['Location'].unique())}</li>
                 </ul>
             </div>
         </div>
@@ -790,7 +786,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
 
     fig_overall.add_trace(go.Bar(
         name='Vacancy Filled',
-        x=filtered_stats['Classification'],
+        x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Vacancy_Filled'],
         marker_color='darkgreen',
         text=filtered_stats['Vacancy_Filled'],
@@ -799,7 +795,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
 
     fig_overall.add_trace(go.Bar(
         name='Vacancy Unfilled',
-        x=filtered_stats['Classification'],
+        x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Vacancy_Unfilled'],
         marker_color='lightcoral',
         text=filtered_stats['Vacancy_Unfilled'],
@@ -808,7 +804,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
 
     fig_overall.add_trace(go.Bar(
         name='Absence Filled',
-        x=filtered_stats['Classification'],
+        x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Absence_Filled'],
         marker_color='forestgreen',
         text=filtered_stats['Absence_Filled'],
@@ -817,7 +813,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
 
     fig_overall.add_trace(go.Bar(
         name='Absence Unfilled',
-        x=filtered_stats['Classification'],
+        x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Absence_Unfilled'],
         marker_color='red',
         text=filtered_stats['Absence_Unfilled'],
