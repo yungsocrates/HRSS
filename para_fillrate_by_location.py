@@ -316,6 +316,9 @@ def create_school_report(district, location, location_clean, school_data, output
             .pie-container {{ display: flex; flex-wrap: wrap; justify-content: space-around; }}
             .navigation {{ background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }}
             .summary-box {{ background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }}
+            .footer {{ background-color: #2E86AB; color: white; text-align: center; padding: 20px; margin-top: 40px; border-radius: 5px; font-size: 14px; }}
+            .footer a {{ color: #FFD700; text-decoration: none; }}
+            .footer a:hover {{ text-decoration: underline; }}
         </style>
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -344,7 +347,12 @@ def create_school_report(district, location, location_clean, school_data, output
         <div class="pie-container">
             {pie_charts_html}
         </div>
-        
+        <div class="footer">
+            <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
+            <div style="margin-bottom:6px;">For internal use only.</div>
+            <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
+            <div style="font-size:13px; color:#e0e0e0;">&copy; {pd.Timestamp.now().year} Property of the NYCDOE</div>
+        </div>
     </body>
     </html>
     """
@@ -365,10 +373,9 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     
     # Get the borough for this district
     district_borough = df[df['District'] == district]['Borough'].iloc[0]
-    
+    borough_name_clean = district_borough.replace(' ', '_').replace('/', '_')
     # Get borough data for comparison
     borough_data = create_summary_stats(df[df['Borough'] == district_borough], ['Borough'])
-    
     # Create summary table as HTML
     table_html = df_with_pretty_columns(district_data[DISPLAY_COLS]).to_html(
         index=False,
@@ -381,6 +388,82 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     )
 
     
+    # --- Summary by School Table ---
+    df_district = df[df['District'] == district]
+    summary_by_school = create_summary_stats(df_district, ['Location'])
+    summary_by_school = summary_by_school.groupby('Location', as_index=False).agg({
+        'Vacancy_Filled': 'sum',
+        'Vacancy_Unfilled': 'sum',
+        'Total_Vacancy': 'sum',
+        'Absence_Filled': 'sum',
+        'Absence_Unfilled': 'sum',
+        'Total_Absence': 'sum',
+        'Total': 'sum'
+    })
+    summary_by_school['Vacancy_Fill_Pct'] = np.where(
+        summary_by_school['Total_Vacancy'] > 0,
+        (summary_by_school['Vacancy_Filled'] / summary_by_school['Total_Vacancy'] * 100).round(1),
+        0
+    )
+    summary_by_school['Absence_Fill_Pct'] = np.where(
+        summary_by_school['Total_Absence'] > 0,
+        (summary_by_school['Absence_Filled'] / summary_by_school['Total_Absence'] * 100).round(1),
+        0
+    )
+    summary_by_school['Overall_Fill_Pct'] = np.where(
+        summary_by_school['Total'] > 0,
+        ((summary_by_school['Vacancy_Filled'] + summary_by_school['Absence_Filled']) / summary_by_school['Total'] * 100).round(1),
+        0
+    )
+    school_display_cols = ['Location', 'Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 'Vacancy_Fill_Pct',
+        'Absence_Filled', 'Absence_Unfilled', 'Total_Absence', 'Absence_Fill_Pct', 'Total', 'Overall_Fill_Pct']
+    summary_by_school = summary_by_school[[col for col in school_display_cols if col in summary_by_school.columns]]
+    summary_by_school_html = df_with_pretty_columns(summary_by_school.rename(columns={'Location': 'School'})).to_html(
+        index=False,
+        classes='table',
+        formatters={
+            'School': str,
+            'Vacancy Filled': format_int,
+            'Vacancy Unfilled': format_int,
+            'Total Vacancy': format_int,
+            'Vacancy Fill %': format_pct,
+            'Absence Filled': format_int,
+            'Absence Unfilled': format_int,
+            'Total Absence': format_int,
+            'Absence Fill %': format_pct,
+            'Total': format_int,
+            'Overall Fill %': format_pct
+        }
+    )
+    # Generate school reports and links
+    district_schools = df[df['District'] == district]['Location'].unique()
+    school_links = ""
+    school_reports = []
+    for location in sorted(district_schools):
+        location_clean = re.sub(r'[<>:"/\\|?*]', '_', location)
+        school_df = df[(df['District'] == district) & (df['Location'] == location)]
+        school_summary = create_summary_stats(school_df, ['District', 'Location'])
+        if not school_summary.empty:
+            school_report = create_school_report(district, location, location_clean, school_summary, output_dir)
+            school_reports.append(school_report)
+            school_links += f'<li><a href="Schools/School_{location_clean}/{location_clean}_report.html">{location}</a> - {school_summary["Total"].sum().astype(int)} total jobs</li>\n'
+    # Calculate summary stats for comparison with district stats
+    overall_totals = summary_stats.agg({
+        'Vacancy_Filled': 'sum',
+        'Vacancy_Unfilled': 'sum',
+        'Absence_Filled': 'sum',
+        'Absence_Unfilled': 'sum',
+        'Total_Vacancy': 'sum',
+        'Total_Absence': 'sum',
+        'Total': 'sum'
+    })
+    overall_stats = {
+        'Total': int(overall_totals['Total']),
+        'Total_Vacancy': int(overall_totals['Total_Vacancy']),
+        'Total_Absence': int(overall_totals['Total_Absence']),
+        'Vacancy_Filled': int(overall_totals['Vacancy_Filled']),
+        'Absence_Filled': int(overall_totals['Absence_Filled'])
+    }
     # Create grouped bar chart
     fig_bar = go.Figure()
     fig_bar.add_trace(go.Bar(
@@ -454,62 +537,29 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
             
             pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="420" frameborder="0"></iframe>\n'
     
-    # Generate school reports and links
-    district_schools = df[df['District'] == district]['Location'].unique()
-    school_links = ""
-    school_reports = []
-    
-    for location in sorted(district_schools):
-        location_clean = re.sub(r'[<>:"/\\|?*]', '_', location)
-        school_df = df[(df['District'] == district) & (df['Location'] == location)]
-        school_summary = create_summary_stats(school_df, ['District', 'Location'])
-        
-        if not school_summary.empty:
-            school_report = create_school_report(district, location, location_clean, school_summary, output_dir)
-            school_reports.append(school_report)
-            school_links += f'<li><a href="Schools/School_{location_clean}/{location_clean}_report.html">{location}</a> - {school_summary["Total"].sum().astype(int)} total jobs</li>\n'
-        
-    
-    district_borough = df[df['District'] == district]['Borough'].iloc[0]
-    borough_name_clean = district_borough.replace(' ', '_')
+    # Calculate key insights for the district
+    total_jobs = int(district_data['Total'].sum())
+    total_vacancy = int(district_data['Total_Vacancy'].sum())
+    total_absence = int(district_data['Total_Absence'].sum())
+    vacancy_filled = int(district_data['Vacancy_Filled'].sum())
+    absence_filled = int(district_data['Absence_Filled'].sum())
+    overall_fill_pct = (vacancy_filled + absence_filled) / total_jobs * 100 if total_jobs > 0 else 0
+    vacancy_fill_pct = (vacancy_filled / total_vacancy * 100) if total_vacancy > 0 else 0
+    absence_fill_pct = (absence_filled / total_absence * 100) if total_absence > 0 else 0
 
-    # Calculate summary stats for comparison with district stats
-    overall_totals = summary_stats.groupby('District').agg({
-        'Vacancy_Filled': 'sum',
-        'Vacancy_Unfilled': 'sum',
-        'Absence_Filled': 'sum',
-        'Absence_Unfilled': 'sum',
-        'Total_Vacancy': 'sum',
-        'Total_Absence': 'sum',
-        'Total': 'sum'
-    }).sum()  # Sum across all districts
-
-    overall_stats = {
-        'Total': int(overall_totals['Total']),
-        'Total_Vacancy': int(overall_totals['Total_Vacancy']),
-        'Total_Absence': int(overall_totals['Total_Absence']),
-        'Vacancy_Filled': int(overall_totals['Vacancy_Filled']),
-        'Absence_Filled': int(overall_totals['Absence_Filled'])
-    }
-    
-    # Recalculate percentages
-    overall_stats['Vacancy_Fill_Pct'] = np.where(
-        overall_stats['Total_Vacancy'] > 0,
-        (overall_stats['Vacancy_Filled'] / overall_stats['Total_Vacancy'] * 100),
-        0
-    )
-    overall_stats['Absence_Fill_Pct'] = np.where(
-        overall_stats['Total_Absence'] > 0,
-        (overall_stats['Absence_Filled'] / overall_stats['Total_Absence'] * 100),
-        0
-    )
-    overall_stats['Overall_Fill_Pct'] = np.where(
-        overall_stats['Total'] > 0,
-        ((overall_stats['Vacancy_Filled'] + overall_stats['Absence_Filled']) / overall_stats['Total'] * 100),
-        0
-    )
-    
-    
+    key_insights_html = f"""
+        <div class=\"summary-box\" style=\"background-color:#f8f9fa;padding:15px;border-radius:5px;margin:10px 0;\">
+            <h3>Key Insights</h3>
+            <ul>
+                <li><strong>Total Jobs:</strong> {total_jobs}</li>
+                <li><strong>Total Vacancies:</strong> {total_vacancy} ({(total_vacancy/total_jobs*100) if total_jobs > 0 else 0:.1f}%)</li>
+                <li><strong>Total Absences:</strong> {total_absence} ({(total_absence/total_jobs*100) if total_jobs > 0 else 0:.1f}%)</li>
+                <li><strong>Overall Fill Rate:</strong> {overall_fill_pct:.1f}%</li>
+                <li><strong>Vacancy Fill Rate:</strong> {vacancy_fill_pct:.1f}%</li>
+                <li><strong>Absence Fill Rate:</strong> {absence_fill_pct:.1f}%</li>
+            </ul>
+        </div>
+    """
     # Create comprehensive HTML report
     html_content = f"""
     <!DOCTYPE html>
@@ -526,6 +576,9 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
             .table th {{ background-color: #f2f2f2; font-weight: bold; }}
             .pie-container {{ display: flex; flex-wrap: wrap; justify-content: space-around; }}
             .navigation {{ background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }}
+            .footer {{ background-color: #2E86AB; color: white; text-align: center; padding: 20px; margin-top: 40px; border-radius: 5px; font-size: 14px; }}
+            .footer a {{ color: #FFD700; text-decoration: none; }}
+            .footer a:hover {{ text-decoration: underline; }}
         </style>
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -545,15 +598,14 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
         <h2>District: {int(district)}</h2>
         <h3>Summary Statistics</h3>
         {table_html}
-        
+        <h3>Summary by School</h3>
+        {summary_by_school_html}
         <h3>Jobs by Classification and Type (Bar Chart)</h3>
         <iframe src="{int(district)}_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
-        
         <h3>Breakdown by Classification</h3>
         <div class="pie-container">
             {pie_charts_html}
         </div>
-        
         <h3>Comparison: Citywide vs Borough vs District</h3>
         <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
             <div style="width: 31%; background-color: #e8f4f8; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
@@ -599,6 +651,12 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
         <ul>
             {school_links}
         </ul>
+        <div class="footer">
+            <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
+            <div style="margin-bottom:6px;">For internal use only.</div>
+            <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
+            <div style="font-size:13px; color:#e0e0e0;">&copy; {pd.Timestamp.now().year} Property of the NYCDOE</div>
+        </div>
     </body>
     </html>
     """
@@ -704,17 +762,61 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
             
             pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="420" frameborder="0"></iframe>\n'
     
+    # --- Summary by District Table ---
+    df_borough = df[df['Borough'] == borough]
+    summary_by_district = create_summary_stats(df_borough, ['District'])
+    summary_by_district = summary_by_district.groupby('District', as_index=False).agg({
+        'Vacancy_Filled': 'sum',
+        'Vacancy_Unfilled': 'sum',
+        'Total_Vacancy': 'sum',
+        'Absence_Filled': 'sum',
+        'Absence_Unfilled': 'sum',
+        'Total_Absence': 'sum',
+        'Total': 'sum'
+    })
+    summary_by_district['Vacancy_Fill_Pct'] = np.where(
+        summary_by_district['Total_Vacancy'] > 0,
+        (summary_by_district['Vacancy_Filled'] / summary_by_district['Total_Vacancy'] * 100).round(1),
+        0
+    )
+    summary_by_district['Absence_Fill_Pct'] = np.where(
+        summary_by_district['Total_Absence'] > 0,
+        (summary_by_district['Absence_Filled'] / summary_by_district['Total_Absence'] * 100).round(1),
+        0
+    )
+    summary_by_district['Overall_Fill_Pct'] = np.where(
+        summary_by_district['Total'] > 0,
+        ((summary_by_district['Vacancy_Filled'] + summary_by_district['Absence_Filled']) / summary_by_district['Total'] * 100).round(1),
+        0
+    )
+    district_display_cols = ['District', 'Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 'Vacancy_Fill_Pct',
+        'Absence_Filled', 'Absence_Unfilled', 'Total_Absence', 'Absence_Fill_Pct', 'Total', 'Overall_Fill_Pct']
+    summary_by_district = summary_by_district[[col for col in district_display_cols if col in summary_by_district.columns]]
+    summary_by_district_html = df_with_pretty_columns(summary_by_district).to_html(
+        index=False,
+        classes='table',
+        formatters={
+            'District': lambda x: f"District {int(x)}" if pd.notna(x) else x,
+            'Vacancy Filled': format_int,
+            'Vacancy Unfilled': format_int,
+            'Total Vacancy': format_int,
+            'Vacancy Fill %': format_pct,
+            'Absence Filled': format_int,
+            'Absence Unfilled': format_int,
+            'Total Absence': format_int,
+            'Absence Fill %': format_pct,
+            'Total': format_int,
+            'Overall Fill %': format_pct
+        }
+    )
     # Get districts in this borough and create links
     borough_districts = sorted(df[df['Borough'] == borough]['District'].unique())
     district_links = ""
-    
     for district in borough_districts:
-        # Get district data for job count
         district_data_subset = summary_stats[summary_stats['District'] == district]
         if not district_data_subset.empty:
             total_jobs = district_data_subset['Total'].sum()
             district_links += f'<li><a href="../District_{int(district)}/{int(district)}_report.html">District {int(district)} Report</a> - {int(total_jobs)} total jobs</li>\n'
-    
     # Calculate summary stats for comparison with citywide stats
     overall_totals = summary_stats.agg({
         'Vacancy_Filled': 'sum',
@@ -725,7 +827,6 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         'Total_Absence': 'sum',
         'Total': 'sum'
     })
-
     overall_stats = {
         'Total': int(overall_totals['Total']),
         'Total_Vacancy': int(overall_totals['Total_Vacancy']),
@@ -733,24 +834,149 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         'Vacancy_Filled': int(overall_totals['Vacancy_Filled']),
         'Absence_Filled': int(overall_totals['Absence_Filled'])
     }
+    # Create grouped bar chart
+    fig_bar = go.Figure()
+    fig_bar.add_trace(go.Bar(
+        name='Vacancy Filled',
+        x=borough_data['Classification'].apply(clean_classification_for_display),
+        y=borough_data['Vacancy_Filled'],
+        marker_color='darkgreen',
+        text=borough_data['Vacancy_Filled'],
+        textposition='auto'
+    ))
     
-    # Recalculate percentages
-    overall_stats['Vacancy_Fill_Pct'] = (
-        (overall_stats['Vacancy_Filled'] / overall_stats['Total_Vacancy'] * 100) 
-        if overall_stats['Total_Vacancy'] > 0 else 0
-    )
-    overall_stats['Absence_Fill_Pct'] = (
-        (overall_stats['Absence_Filled'] / overall_stats['Total_Absence'] * 100) 
-        if overall_stats['Total_Absence'] > 0 else 0
-    )
-    overall_stats['Overall_Fill_Pct'] = (
-        ((overall_stats['Vacancy_Filled'] + overall_stats['Absence_Filled']) / overall_stats['Total'] * 100) 
-        if overall_stats['Total'] > 0 else 0
+    fig_bar.add_trace(go.Bar(
+        name='Vacancy Unfilled',
+        x=borough_data['Classification'].apply(clean_classification_for_display),
+        y=borough_data['Vacancy_Unfilled'],
+        marker_color='lightcoral',
+        text=borough_data['Vacancy_Unfilled'],
+        textposition='auto'
+    ))
+    
+    fig_bar.add_trace(go.Bar(
+        name='Absence Filled',
+        x=borough_data['Classification'].apply(clean_classification_for_display),
+        y=borough_data['Absence_Filled'],
+        marker_color='forestgreen',
+        text=borough_data['Absence_Filled'],
+        textposition='auto'
+    ))
+    
+    fig_bar.add_trace(go.Bar(
+        name='Absence Unfilled',
+        x=borough_data['Classification'].apply(clean_classification_for_display),
+        y=borough_data['Absence_Unfilled'],
+        marker_color='red',
+        text=borough_data['Absence_Unfilled'],
+        textposition='auto'
+    ))
+    
+    fig_bar.update_layout(
+        title=f'Jobs by Classification and Type - {borough}',
+        xaxis_title='Classification',
+        yaxis_title='Number of Jobs',
+        barmode='group',
+        height=500,
+        width=1200
     )
     
-    # Get total schools in borough
-    total_schools = len(df[df['Borough'] == borough]['Location'].unique())
+    # Save bar chart
+    bar_chart_file = os.path.join(borough_dir, f'{borough_clean}_bar_chart.html')
+    pyo.plot(fig_bar, filename=bar_chart_file, auto_open=False)
     
+    # Create pie charts for each classification
+    pie_charts_html = ""
+    for idx, (_, row) in enumerate(borough_data.iterrows()):
+        if row['Total'] > 0:  # Only create pie chart if there are jobs
+            pie_fig = go.Figure(data=[go.Pie(
+                labels=['Vacancy Filled', 'Vacancy Unfilled', 'Absence Filled', 'Absence Unfilled'],
+                values=[row['Vacancy_Filled'], row['Vacancy_Unfilled'], row['Absence_Filled'], row['Absence_Unfilled']],
+                hole=0.3,
+                marker_colors=['darkgreen', 'lightcoral', 'forestgreen', 'red']
+            )])
+            pie_fig.update_layout(
+                title=f"{row['Classification']}<br>({int(row['Total'])} total jobs)",
+                height=400,
+                width=400,
+                showlegend=True
+            )
+            
+            pie_file = os.path.join(borough_dir, f'{borough_clean}_{row["Classification"].replace("/", "_")}_pie.html')
+            pyo.plot(pie_fig, filename=pie_file, auto_open=False)
+            
+            pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="420" frameborder="0"></iframe>\n'
+    
+    # --- Summary by District Table ---
+    df_borough = df[df['Borough'] == borough]
+    summary_by_district = create_summary_stats(df_borough, ['District'])
+    summary_by_district = summary_by_district.groupby('District', as_index=False).agg({
+        'Vacancy_Filled': 'sum',
+        'Vacancy_Unfilled': 'sum',
+        'Total_Vacancy': 'sum',
+        'Absence_Filled': 'sum',
+        'Absence_Unfilled': 'sum',
+        'Total_Absence': 'sum',
+        'Total': 'sum'
+    })
+    summary_by_district['Vacancy_Fill_Pct'] = np.where(
+        summary_by_district['Total_Vacancy'] > 0,
+        (summary_by_district['Vacancy_Filled'] / summary_by_district['Total_Vacancy'] * 100).round(1),
+        0
+    )
+    summary_by_district['Absence_Fill_Pct'] = np.where(
+        summary_by_district['Total_Absence'] > 0,
+        (summary_by_district['Absence_Filled'] / summary_by_district['Total_Absence'] * 100).round(1),
+        0
+    )
+    summary_by_district['Overall_Fill_Pct'] = np.where(
+        summary_by_district['Total'] > 0,
+        ((summary_by_district['Vacancy_Filled'] + summary_by_district['Absence_Filled']) / summary_by_district['Total'] * 100).round(1),
+        0
+    )
+    district_display_cols = ['District', 'Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 'Vacancy_Fill_Pct',
+        'Absence_Filled', 'Absence_Unfilled', 'Total_Absence', 'Absence_Fill_Pct', 'Total', 'Overall_Fill_Pct']
+    summary_by_district = summary_by_district[[col for col in district_display_cols if col in summary_by_district.columns]]
+    summary_by_district_html = df_with_pretty_columns(summary_by_district).to_html(
+        index=False,
+        classes='table',
+        formatters={
+            'District': lambda x: f"District {int(x)}" if pd.notna(x) else x,
+            'Vacancy Filled': format_int,
+            'Vacancy Unfilled': format_int,
+            'Total Vacancy': format_int,
+            'Vacancy Fill %': format_pct,
+            'Absence Filled': format_int,
+            'Absence Unfilled': format_int,
+            'Total Absence': format_int,
+            'Absence Fill %': format_pct,
+            'Total': format_int,
+            'Overall Fill %': format_pct
+        }
+    )
+    # Calculate key insights for the borough
+    total_jobs = int(borough_data['Total'].sum())
+    total_vacancy = int(borough_data['Total_Vacancy'].sum())
+    total_absence = int(borough_data['Total_Absence'].sum())
+    vacancy_filled = int(borough_data['Vacancy_Filled'].sum())
+    absence_filled = int(borough_data['Absence_Filled'].sum())
+    overall_fill_pct = (vacancy_filled + absence_filled) / total_jobs * 100 if total_jobs > 0 else 0
+    vacancy_fill_pct = (vacancy_filled / total_vacancy * 100) if total_vacancy > 0 else 0
+    absence_fill_pct = (absence_filled / total_absence * 100) if total_absence > 0 else 0
+
+    key_insights_html = f"""
+        <div class=\"summary-box\" style=\"background-color:#f8f9fa;padding:15px;border-radius:5px;margin:10px 0;\">
+            <h3>Key Insights</h3>
+            <ul>
+                <li><strong>Total Jobs:</strong> {total_jobs}</li>
+                <li><strong>Total Vacancies:</strong> {total_vacancy} ({(total_vacancy/total_jobs*100) if total_jobs > 0 else 0:.1f}%)</li>
+                <li><strong>Total Absences:</strong> {total_absence} ({(total_absence/total_jobs*100) if total_jobs > 0 else 0:.1f}%)</li>
+                <li><strong>Overall Fill Rate:</strong> {overall_fill_pct:.1f}%</li>
+                <li><strong>Vacancy Fill Rate:</strong> {vacancy_fill_pct:.1f}%</li>
+                <li><strong>Absence Fill Rate:</strong> {absence_fill_pct:.1f}%</li>
+            </ul>
+        </div>
+    """
     # Create comprehensive HTML report
     html_content = f"""
     <!DOCTYPE html>
@@ -767,6 +993,9 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
             .table th {{ background-color: #f2f2f2; font-weight: bold; }}
             .pie-container {{ display: flex; flex-wrap: wrap; justify-content: space-around; }}
             .navigation {{ background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }}
+            .footer {{ background-color: #2E86AB; color: white; text-align: center; padding: 20px; margin-top: 40px; border-radius: 5px; font-size: 14px; }}
+            .footer a {{ color: #FFD700; text-decoration: none; }}
+            .footer a:hover {{ text-decoration: underline; }}
         </style>
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -783,18 +1012,16 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         
         <h1>NYCDOE Substitute Paraprofessional Jobs Report</h1>
         <h2>Borough: {borough}</h2>
-        
         <h3>Summary Statistics</h3>
         {table_html}
-        
+        <h3>Summary by District</h3>
+        {summary_by_district_html}
         <h3>Jobs by Classification and Type (Bar Chart)</h3>
         <iframe src="{borough_clean}_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
-        
         <h3>Breakdown by Classification</h3>
         <div class="pie-container">
             {pie_charts_html}
         </div>
-        
         <h3>Comparison: {borough} vs. Citywide</h3>
         <div style="display: flex; justify-content: space-between;">
             <div style="width: 48%; background-color: #e8f4f8; padding: 15px; border-radius: 5px;">
@@ -827,6 +1054,12 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         <ul>
             {district_links}
         </ul>
+        <div class="footer">
+            <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
+            <div style="margin-bottom:6px;">For internal use only.</div>
+            <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
+            <div style="font-size:13px; color:#e0e0e0;">&copy; {pd.Timestamp.now().year} Property of the NYCDOE</div>
+        </div>
     </body>
     </html>
     """
@@ -996,6 +1229,9 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
             .table th, .table td {{ border: 1px solid #ddd; padding: 8px; text-align: center; }}
             .table th {{ background-color: #f2f2f2; font-weight: bold; }}
             .summary-box {{ background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }}
+            .footer {{ background-color: #2E86AB; color: white; text-align: center; padding: 20px; margin-top: 40px; border-radius: 5px; font-size: 14px; }}
+            .footer a {{ color: #FFD700; text-decoration: none; }}
+            .footer a:hover {{ text-decoration: underline; }}
         </style>
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -1055,6 +1291,12 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
         </ul>
         
         <p><em>Generated from data containing {len(df)} job records</em></p>
+        <div class="footer">
+            <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
+            <div style="margin-bottom:6px;">For internal use only.</div>
+            <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
+            <div style="font-size:13px; color:#e0e0e0;">&copy; {pd.Timestamp.now().year} Property of the NYCDOE</div>
+        </div>
     </body>
     </html>
     """

@@ -13,6 +13,9 @@
             .table th { background-color: #f2f2f2; font-weight: bold; }
             .pie-container { display: flex; flex-wrap: wrap; justify-content: space-around; }
             .navigation { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }
+            .footer { background-color: #2E86AB; color: white; text-align: center; padding: 20px; margin-top: 40px; border-radius: 5px; font-size: 14px; }
+            .footer a { color: #FFD700; text-decoration: none; }
+            .footer a:hover { text-decoration: underline; }
         </style>
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -29,7 +32,6 @@
         
         <h1>NYCDOE Substitute Paraprofessional Jobs Report</h1>
         <h2>Borough: Manhattan</h2>
-        
         <h3>Summary Statistics</h3>
         <table border="1" class="dataframe table table-striped" id="summary-table">
   <thead>
@@ -180,10 +182,132 @@
     </tr>
   </tbody>
 </table>
-        
+        <h3>Summary by District</h3>
+        <table border="1" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>District</th>
+      <th>Vacancy Filled</th>
+      <th>Vacancy Unfilled</th>
+      <th>Total Vacancy</th>
+      <th>Vacancy Fill %</th>
+      <th>Absence Filled</th>
+      <th>Absence Unfilled</th>
+      <th>Total Absence</th>
+      <th>Absence Fill %</th>
+      <th>Total</th>
+      <th>Overall Fill %</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>District 1</td>
+      <td>1,511</td>
+      <td>146</td>
+      <td>1,657</td>
+      <td>91.2%</td>
+      <td>21</td>
+      <td>72</td>
+      <td>93</td>
+      <td>22.6%</td>
+      <td>1,750</td>
+      <td>87.5%</td>
+    </tr>
+    <tr>
+      <td>District 2</td>
+      <td>5,797</td>
+      <td>624</td>
+      <td>6,421</td>
+      <td>90.3%</td>
+      <td>89</td>
+      <td>190</td>
+      <td>279</td>
+      <td>31.9%</td>
+      <td>6,700</td>
+      <td>87.9%</td>
+    </tr>
+    <tr>
+      <td>District 3</td>
+      <td>2,887</td>
+      <td>185</td>
+      <td>3,072</td>
+      <td>94.0%</td>
+      <td>42</td>
+      <td>116</td>
+      <td>158</td>
+      <td>26.6%</td>
+      <td>3,230</td>
+      <td>90.7%</td>
+    </tr>
+    <tr>
+      <td>District 4</td>
+      <td>2,657</td>
+      <td>236</td>
+      <td>2,893</td>
+      <td>91.8%</td>
+      <td>36</td>
+      <td>87</td>
+      <td>123</td>
+      <td>29.3%</td>
+      <td>3,016</td>
+      <td>89.3%</td>
+    </tr>
+    <tr>
+      <td>District 5</td>
+      <td>2,396</td>
+      <td>112</td>
+      <td>2,508</td>
+      <td>95.5%</td>
+      <td>29</td>
+      <td>52</td>
+      <td>81</td>
+      <td>35.8%</td>
+      <td>2,589</td>
+      <td>93.7%</td>
+    </tr>
+    <tr>
+      <td>District 6</td>
+      <td>3,494</td>
+      <td>92</td>
+      <td>3,586</td>
+      <td>97.4%</td>
+      <td>98</td>
+      <td>99</td>
+      <td>197</td>
+      <td>49.7%</td>
+      <td>3,783</td>
+      <td>95.0%</td>
+    </tr>
+    <tr>
+      <td>District 62</td>
+      <td>1,739</td>
+      <td>114</td>
+      <td>1,853</td>
+      <td>93.8%</td>
+      <td>50</td>
+      <td>159</td>
+      <td>209</td>
+      <td>23.9%</td>
+      <td>2,062</td>
+      <td>86.8%</td>
+    </tr>
+    <tr>
+      <td>District 97</td>
+      <td>6,056</td>
+      <td>274</td>
+      <td>6,330</td>
+      <td>95.7%</td>
+      <td>113</td>
+      <td>744</td>
+      <td>857</td>
+      <td>13.2%</td>
+      <td>7,187</td>
+      <td>85.8%</td>
+    </tr>
+  </tbody>
+</table>
         <h3>Jobs by Classification and Type (Bar Chart)</h3>
         <iframe src="Manhattan_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
-        
         <h3>Breakdown by Classification</h3>
         <div class="pie-container">
             <iframe src="Manhattan_ARABIC SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
@@ -198,7 +322,6 @@
 <iframe src="Manhattan_UKRAINIAN SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
 
         </div>
-        
         <h3>Comparison: Manhattan vs. Citywide</h3>
         <div style="display: flex; justify-content: space-between;">
             <div style="width: 48%; background-color: #e8f4f8; padding: 15px; border-radius: 5px;">
@@ -239,6 +362,12 @@
 <li><a href="../District_97/97_report.html">District 97 Report</a> - 50149 total jobs</li>
 
         </ul>
+        <div class="footer">
+            <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
+            <div style="margin-bottom:6px;">For internal use only.</div>
+            <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
+            <div style="font-size:13px; color:#e0e0e0;">&copy; 2025 Property of the NYCDOE</div>
+        </div>
     </body>
     </html>
     

@@ -13,6 +13,9 @@
             .table th { background-color: #f2f2f2; font-weight: bold; }
             .pie-container { display: flex; flex-wrap: wrap; justify-content: space-around; }
             .navigation { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }
+            .footer { background-color: #2E86AB; color: white; text-align: center; padding: 20px; margin-top: 40px; border-radius: 5px; font-size: 14px; }
+            .footer a { color: #FFD700; text-decoration: none; }
+            .footer a:hover { text-decoration: underline; }
         </style>
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -76,17 +79,463 @@
     </tr>
   </tbody>
 </table>
-        
+        <h3>Summary by School</h3>
+        <table border="1" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>School</th>
+      <th>Vacancy Filled</th>
+      <th>Vacancy Unfilled</th>
+      <th>Total Vacancy</th>
+      <th>Vacancy Fill %</th>
+      <th>Absence Filled</th>
+      <th>Absence Unfilled</th>
+      <th>Total Absence</th>
+      <th>Absence Fill %</th>
+      <th>Total</th>
+      <th>Overall Fill %</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>K016</td>
+      <td>52</td>
+      <td>10</td>
+      <td>62</td>
+      <td>83.9%</td>
+      <td>3</td>
+      <td>1</td>
+      <td>4</td>
+      <td>75.0%</td>
+      <td>66</td>
+      <td>83.3%</td>
+    </tr>
+    <tr>
+      <td>K017</td>
+      <td>91</td>
+      <td>3</td>
+      <td>94</td>
+      <td>96.8%</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0%</td>
+      <td>95</td>
+      <td>95.8%</td>
+    </tr>
+    <tr>
+      <td>K018</td>
+      <td>21</td>
+      <td>0</td>
+      <td>21</td>
+      <td>100.0%</td>
+      <td>6</td>
+      <td>4</td>
+      <td>10</td>
+      <td>60.0%</td>
+      <td>31</td>
+      <td>87.1%</td>
+    </tr>
+    <tr>
+      <td>K023</td>
+      <td>80</td>
+      <td>3</td>
+      <td>83</td>
+      <td>96.4%</td>
+      <td>4</td>
+      <td>6</td>
+      <td>10</td>
+      <td>40.0%</td>
+      <td>93</td>
+      <td>90.3%</td>
+    </tr>
+    <tr>
+      <td>K031</td>
+      <td>138</td>
+      <td>25</td>
+      <td>163</td>
+      <td>84.7%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>163</td>
+      <td>84.7%</td>
+    </tr>
+    <tr>
+      <td>K034</td>
+      <td>141</td>
+      <td>7</td>
+      <td>148</td>
+      <td>95.3%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>148</td>
+      <td>95.3%</td>
+    </tr>
+    <tr>
+      <td>K050</td>
+      <td>84</td>
+      <td>0</td>
+      <td>84</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>84</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <td>K059</td>
+      <td>63</td>
+      <td>1</td>
+      <td>64</td>
+      <td>98.4%</td>
+      <td>5</td>
+      <td>2</td>
+      <td>7</td>
+      <td>71.4%</td>
+      <td>71</td>
+      <td>95.8%</td>
+    </tr>
+    <tr>
+      <td>K071</td>
+      <td>58</td>
+      <td>5</td>
+      <td>63</td>
+      <td>92.1%</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0.0%</td>
+      <td>65</td>
+      <td>89.2%</td>
+    </tr>
+    <tr>
+      <td>K084</td>
+      <td>178</td>
+      <td>0</td>
+      <td>178</td>
+      <td>100.0%</td>
+      <td>4</td>
+      <td>2</td>
+      <td>6</td>
+      <td>66.7%</td>
+      <td>184</td>
+      <td>98.9%</td>
+    </tr>
+    <tr>
+      <td>K110</td>
+      <td>23</td>
+      <td>0</td>
+      <td>23</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>23</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <td>K120</td>
+      <td>33</td>
+      <td>0</td>
+      <td>33</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>33</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <td>K126</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>3</td>
+      <td>3</td>
+      <td>0.0%</td>
+      <td>3</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>K132</td>
+      <td>16</td>
+      <td>3</td>
+      <td>19</td>
+      <td>84.2%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>19</td>
+      <td>84.2%</td>
+    </tr>
+    <tr>
+      <td>K147</td>
+      <td>43</td>
+      <td>2</td>
+      <td>45</td>
+      <td>95.6%</td>
+      <td>4</td>
+      <td>1</td>
+      <td>5</td>
+      <td>80.0%</td>
+      <td>50</td>
+      <td>94.0%</td>
+    </tr>
+    <tr>
+      <td>K157</td>
+      <td>19</td>
+      <td>20</td>
+      <td>39</td>
+      <td>48.7%</td>
+      <td>6</td>
+      <td>2</td>
+      <td>8</td>
+      <td>75.0%</td>
+      <td>47</td>
+      <td>53.2%</td>
+    </tr>
+    <tr>
+      <td>K196</td>
+      <td>57</td>
+      <td>0</td>
+      <td>57</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>57</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <td>K250</td>
+      <td>21</td>
+      <td>0</td>
+      <td>21</td>
+      <td>100.0%</td>
+      <td>2</td>
+      <td>7</td>
+      <td>9</td>
+      <td>22.2%</td>
+      <td>30</td>
+      <td>76.7%</td>
+    </tr>
+    <tr>
+      <td>K257</td>
+      <td>99</td>
+      <td>2</td>
+      <td>101</td>
+      <td>98.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>101</td>
+      <td>98.0%</td>
+    </tr>
+    <tr>
+      <td>K297</td>
+      <td>122</td>
+      <td>0</td>
+      <td>122</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>122</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <td>K318</td>
+      <td>111</td>
+      <td>3</td>
+      <td>114</td>
+      <td>97.4%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>114</td>
+      <td>97.4%</td>
+    </tr>
+    <tr>
+      <td>K319</td>
+      <td>18</td>
+      <td>2</td>
+      <td>20</td>
+      <td>90.0%</td>
+      <td>6</td>
+      <td>0</td>
+      <td>6</td>
+      <td>100.0%</td>
+      <td>26</td>
+      <td>92.3%</td>
+    </tr>
+    <tr>
+      <td>K380</td>
+      <td>201</td>
+      <td>0</td>
+      <td>201</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>201</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <td>K414</td>
+      <td>42</td>
+      <td>0</td>
+      <td>42</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0%</td>
+      <td>43</td>
+      <td>97.7%</td>
+    </tr>
+    <tr>
+      <td>K454</td>
+      <td>84</td>
+      <td>0</td>
+      <td>84</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>84</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <td>K474</td>
+      <td>19</td>
+      <td>0</td>
+      <td>19</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>19</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <td>K477</td>
+      <td>92</td>
+      <td>10</td>
+      <td>102</td>
+      <td>90.2%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>102</td>
+      <td>90.2%</td>
+    </tr>
+    <tr>
+      <td>K577</td>
+      <td>16</td>
+      <td>12</td>
+      <td>28</td>
+      <td>57.1%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>28</td>
+      <td>57.1%</td>
+    </tr>
+    <tr>
+      <td>K582</td>
+      <td>95</td>
+      <td>0</td>
+      <td>95</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>95</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <td>K586</td>
+      <td>109</td>
+      <td>37</td>
+      <td>146</td>
+      <td>74.7%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>146</td>
+      <td>74.7%</td>
+    </tr>
+    <tr>
+      <td>K610</td>
+      <td>3</td>
+      <td>1</td>
+      <td>4</td>
+      <td>75.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>4</td>
+      <td>75.0%</td>
+    </tr>
+    <tr>
+      <td>K614</td>
+      <td>139</td>
+      <td>2</td>
+      <td>141</td>
+      <td>98.6%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>141</td>
+      <td>98.6%</td>
+    </tr>
+    <tr>
+      <td>K685</td>
+      <td>20</td>
+      <td>1</td>
+      <td>21</td>
+      <td>95.2%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>21</td>
+      <td>95.2%</td>
+    </tr>
+  </tbody>
+</table>
         <h3>Jobs by Classification and Type (Bar Chart)</h3>
         <iframe src="14_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
-        
         <h3>Breakdown by Classification</h3>
         <div class="pie-container">
             <iframe src="14_PARAPROFESSIONAL_pie.html" width="420" height="420" frameborder="0"></iframe>
 <iframe src="14_SPANISH SPEAKING PARA_pie.html" width="420" height="420" frameborder="0"></iframe>
 
         </div>
-        
         <h3>Comparison: Citywide vs Borough vs District</h3>
         <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
             <div style="width: 31%; background-color: #e8f4f8; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
@@ -165,6 +614,12 @@
 <li><a href="Schools/School_K685/K685_report.html">K685</a> - 21 total jobs</li>
 
         </ul>
+        <div class="footer">
+            <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
+            <div style="margin-bottom:6px;">For internal use only.</div>
+            <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
+            <div style="font-size:13px; color:#e0e0e0;">&copy; 2025 Property of the NYCDOE</div>
+        </div>
     </body>
     </html>
     
