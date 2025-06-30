@@ -28,10 +28,10 @@ DISPLAY_COLS_RENAME = {
 }
 
 def format_pct(x):
-    return f"{x:.1f}%" if isinstance(x, (int, float)) else x
+    return f"{x:.1f}%" if isinstance(x, (int, float)) else str(x)
 
 def format_int(x):
-    return f"{int(x):,}" if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else x
+    return f"{int(x):,}" if pd.notna(x) and str(x).replace('.', '', 1).isdigit() else str(x)
 
 def load_and_process_data(csv_file_path):
     """
@@ -42,6 +42,10 @@ def load_and_process_data(csv_file_path):
     
     # Clean column names (remove extra spaces)
     df.columns = df.columns.str.strip()
+    
+    # Clean Classification names to remove newlines and extra spaces
+    df['Classification'] = df['Classification'].str.replace('\n', ' ').str.replace('\r', ' ').str.strip()
+    df['Classification'] = df['Classification'].str.replace(r'\s+', ' ', regex=True)
     
     # Create District code (ensure it's an integer)
     df['District'] = df['District'].dropna().astype(int)
@@ -207,7 +211,7 @@ def create_school_report(district, location, location_clean, school_data, output
         x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Vacancy_Filled'],
         marker_color='darkgreen',
-        text=school_data['Vacancy_Filled'],
+        text=[f"{val:,}" for val in school_data['Vacancy_Filled']],
         textposition='auto'
     ))
     
@@ -216,7 +220,7 @@ def create_school_report(district, location, location_clean, school_data, output
         x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Vacancy_Unfilled'],
         marker_color='lightcoral',
-        text=school_data['Vacancy_Unfilled'],
+        text=[f"{val:,}" for val in school_data['Vacancy_Unfilled']],
         textposition='auto'
     ))
     
@@ -225,7 +229,7 @@ def create_school_report(district, location, location_clean, school_data, output
         x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Absence_Filled'],
         marker_color='forestgreen',
-        text=school_data['Absence_Filled'],
+        text=[f"{val:,}" for val in school_data['Absence_Filled']],
         textposition='auto'
     ))
     
@@ -234,7 +238,7 @@ def create_school_report(district, location, location_clean, school_data, output
         x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Absence_Unfilled'],
         marker_color='red',
-        text=school_data['Absence_Unfilled'],
+        text=[f"{val:,}" for val in school_data['Absence_Unfilled']],
         textposition='auto'
     ))
     
@@ -262,19 +266,31 @@ def create_school_report(district, location, location_clean, school_data, output
                 labels=['Vacancy Filled', 'Vacancy Unfilled', 'Absence Filled', 'Absence Unfilled'],
                 values=[row['Vacancy_Filled'], row['Vacancy_Unfilled'], row['Absence_Filled'], row['Absence_Unfilled']],
                 hole=0.3,
-                marker_colors=['darkgreen', 'lightcoral', 'forestgreen', 'red']
+                marker_colors=['darkgreen', 'lightcoral', 'forestgreen', 'red'],
+                textinfo='value+percent',
+                textposition='inside',
+                textfont=dict(size=14),
+                texttemplate='%{value:,}<br>%{percent}'
             )])
             pie_fig.update_layout(
-                title=f"{row['Classification']}<br>({int(row['Total'])} total jobs)",
-                height=400,
+                title=dict(
+                    text=f"{row['Classification']}<br>({int(row['Total']):,} total jobs)",
+                    y=0.95,
+                    x=0.5,
+                    xanchor='center',
+                    yanchor='top',
+                    font=dict(size=16)
+                ),
+                height=450,
                 width=400,
-                showlegend=True
+                showlegend=True,
+                margin=dict(t=60, b=40, l=40, r=40)
             )
             
             pie_file = os.path.join(school_dir, f'{safe_location}_{safe_classification}_pie.html')
             pyo.plot(pie_fig, filename=pie_file, auto_open=False)
             
-            pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="420" frameborder="0"></iframe>\n'
+            pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="470" frameborder="0"></iframe>\n'
     
     # Calculate key insights for the school
     total_jobs = int(school_data['Total'].sum())
@@ -347,12 +363,7 @@ def create_school_report(district, location, location_clean, school_data, output
         <div class="pie-container">
             {pie_charts_html}
         </div>
-        <div class="footer">
-            <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
-            <div style="margin-bottom:6px;">For internal use only.</div>
-            <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
-            <div style="font-size:13px; color:#e0e0e0;">&copy; {pd.Timestamp.now().year} Property of the NYCDOE</div>
-        </div>
+        {get_professional_footer()}
     </body>
     </html>
     """
@@ -418,6 +429,8 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     school_display_cols = ['Location', 'Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 'Vacancy_Fill_Pct',
         'Absence_Filled', 'Absence_Unfilled', 'Total_Absence', 'Absence_Fill_Pct', 'Total', 'Overall_Fill_Pct']
     summary_by_school = summary_by_school[[col for col in school_display_cols if col in summary_by_school.columns]]
+    # Sort by school name alphabetically
+    summary_by_school = summary_by_school.sort_values('Location')
     summary_by_school_html = df_with_pretty_columns(summary_by_school.rename(columns={'Location': 'School'})).to_html(
         index=False,
         classes='table',
@@ -471,7 +484,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
         x=district_data['Classification'].apply(clean_classification_for_display),
         y=district_data['Vacancy_Filled'],
         marker_color='darkgreen',
-        text=district_data['Vacancy_Filled'],
+        text=[f"{val:,}" for val in district_data['Vacancy_Filled']],
         textposition='auto'
     ))
     
@@ -480,7 +493,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
         x=district_data['Classification'].apply(clean_classification_for_display),
         y=district_data['Vacancy_Unfilled'],
         marker_color='lightcoral',
-        text=district_data['Vacancy_Unfilled'],
+        text=[f"{val:,}" for val in district_data['Vacancy_Unfilled']],
         textposition='auto'
     ))
     
@@ -489,7 +502,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
         x=district_data['Classification'].apply(clean_classification_for_display),
         y=district_data['Absence_Filled'],
         marker_color='forestgreen',
-        text=district_data['Absence_Filled'],
+        text=[f"{val:,}" for val in district_data['Absence_Filled']],
         textposition='auto'
     ))
     
@@ -498,7 +511,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
         x=district_data['Classification'].apply(clean_classification_for_display),
         y=district_data['Absence_Unfilled'],
         marker_color='red',
-        text=district_data['Absence_Unfilled'],
+        text=[f"{val:,}" for val in district_data['Absence_Unfilled']],
         textposition='auto'
     ))
     
@@ -523,43 +536,33 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
                 labels=['Vacancy Filled', 'Vacancy Unfilled', 'Absence Filled', 'Absence Unfilled'],
                 values=[row['Vacancy_Filled'], row['Vacancy_Unfilled'], row['Absence_Filled'], row['Absence_Unfilled']],
                 hole=0.3,
-                marker_colors=['darkgreen', 'lightcoral', 'forestgreen', 'red']
+                marker_colors=['darkgreen', 'lightcoral', 'forestgreen', 'red'],
+                textinfo='value+percent',
+                textposition='inside',
+                textfont=dict(size=14),
+                texttemplate='%{value:,}<br>%{percent}'
             )])
             pie_fig.update_layout(
-                title=f"{row['Classification']}<br>({int(row['Total'])} total jobs)",
-                height=400,
+                title=dict(
+                    text=f"{row['Classification']}<br>({int(row['Total']):,} total jobs)",
+                    y=0.95,
+                    x=0.5,
+                    xanchor='center',
+                    yanchor='top',
+                    font=dict(size=16)
+                ),
+                height=450,
                 width=400,
-                showlegend=True
+                showlegend=True,
+                margin=dict(t=60, b=40, l=40, r=40)
             )
             
-            pie_file = os.path.join(district_dir, f'{int(district)}_{row["Classification"].replace("/", "_")}_pie.html')
+            safe_classification = re.sub(r'[<>:"/\\|?*\n\r\t ]', '_', str(row["Classification"]))
+            pie_file = os.path.join(district_dir, f'{int(district)}_{safe_classification}_pie.html')
             pyo.plot(pie_fig, filename=pie_file, auto_open=False)
             
-            pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="420" frameborder="0"></iframe>\n'
+            pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="470" frameborder="0"></iframe>\n'
     
-    # Calculate key insights for the district
-    total_jobs = int(district_data['Total'].sum())
-    total_vacancy = int(district_data['Total_Vacancy'].sum())
-    total_absence = int(district_data['Total_Absence'].sum())
-    vacancy_filled = int(district_data['Vacancy_Filled'].sum())
-    absence_filled = int(district_data['Absence_Filled'].sum())
-    overall_fill_pct = (vacancy_filled + absence_filled) / total_jobs * 100 if total_jobs > 0 else 0
-    vacancy_fill_pct = (vacancy_filled / total_vacancy * 100) if total_vacancy > 0 else 0
-    absence_fill_pct = (absence_filled / total_absence * 100) if total_absence > 0 else 0
-
-    key_insights_html = f"""
-        <div class=\"summary-box\" style=\"background-color:#f8f9fa;padding:15px;border-radius:5px;margin:10px 0;\">
-            <h3>Key Insights</h3>
-            <ul>
-                <li><strong>Total Jobs:</strong> {total_jobs}</li>
-                <li><strong>Total Vacancies:</strong> {total_vacancy} ({(total_vacancy/total_jobs*100) if total_jobs > 0 else 0:.1f}%)</li>
-                <li><strong>Total Absences:</strong> {total_absence} ({(total_absence/total_jobs*100) if total_jobs > 0 else 0:.1f}%)</li>
-                <li><strong>Overall Fill Rate:</strong> {overall_fill_pct:.1f}%</li>
-                <li><strong>Vacancy Fill Rate:</strong> {vacancy_fill_pct:.1f}%</li>
-                <li><strong>Absence Fill Rate:</strong> {absence_fill_pct:.1f}%</li>
-            </ul>
-        </div>
-    """
     # Create comprehensive HTML report
     html_content = f"""
     <!DOCTYPE html>
@@ -651,12 +654,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
         <ul>
             {school_links}
         </ul>
-        <div class="footer">
-            <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
-            <div style="margin-bottom:6px;">For internal use only.</div>
-            <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
-            <div style="font-size:13px; color:#e0e0e0;">&copy; {pd.Timestamp.now().year} Property of the NYCDOE</div>
-        </div>
+        {get_professional_footer()}
     </body>
     </html>
     """
@@ -699,7 +697,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         text=borough_data['Vacancy_Filled'],
         textposition='auto'
     ))
-    
+
     fig_bar.add_trace(go.Bar(
         name='Vacancy Unfilled',
         x=borough_data['Classification'].apply(clean_classification_for_display),
@@ -708,7 +706,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         text=borough_data['Vacancy_Unfilled'],
         textposition='auto'
     ))
-    
+
     fig_bar.add_trace(go.Bar(
         name='Absence Filled',
         x=borough_data['Classification'].apply(clean_classification_for_display),
@@ -717,7 +715,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         text=borough_data['Absence_Filled'],
         textposition='auto'
     ))
-    
+
     fig_bar.add_trace(go.Bar(
         name='Absence Unfilled',
         x=borough_data['Classification'].apply(clean_classification_for_display),
@@ -726,7 +724,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         text=borough_data['Absence_Unfilled'],
         textposition='auto'
     ))
-    
+
     fig_bar.update_layout(
         title=f'Jobs by Classification and Type - {borough}',
         xaxis_title='Classification',
@@ -748,19 +746,31 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
                 labels=['Vacancy Filled', 'Vacancy Unfilled', 'Absence Filled', 'Absence Unfilled'],
                 values=[row['Vacancy_Filled'], row['Vacancy_Unfilled'], row['Absence_Filled'], row['Absence_Unfilled']],
                 hole=0.3,
-                marker_colors=['darkgreen', 'lightcoral', 'forestgreen', 'red']
+                marker_colors=['darkgreen', 'lightcoral', 'forestgreen', 'red'],
+                textinfo='value+percent',
+                textposition='inside',
+                textfont=dict(size=14),
+                texttemplate='%{value:,}<br>%{percent}'
             )])
             pie_fig.update_layout(
-                title=f"{row['Classification']}<br>({int(row['Total'])} total jobs)",
-                height=400,
+                title=dict(
+                    text=f"{row['Classification']}<br>({int(row['Total']):,} total jobs)",
+                    y=0.95,
+                    x=0.5,
+                    xanchor='center',
+                    yanchor='top',
+                    font=dict(size=16)
+                ),
+                height=450,
                 width=400,
-                showlegend=True
+                showlegend=True,
+                margin=dict(t=60, b=40, l=40, r=40)
             )
             
             pie_file = os.path.join(borough_dir, f'{borough_clean}_{row["Classification"].replace("/", "_")}_pie.html')
             pyo.plot(pie_fig, filename=pie_file, auto_open=False)
             
-            pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="420" frameborder="0"></iframe>\n'
+            pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="470" frameborder="0"></iframe>\n'
     
     # --- Summary by District Table ---
     df_borough = df[df['Borough'] == borough]
@@ -796,7 +806,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         index=False,
         classes='table',
         formatters={
-            'District': lambda x: f"District {int(x)}" if pd.notna(x) else x,
+            'District': lambda x: f"D{int(x)}" if pd.notna(x) else x,
             'Vacancy Filled': format_int,
             'Vacancy Unfilled': format_int,
             'Total Vacancy': format_int,
@@ -844,7 +854,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         text=borough_data['Vacancy_Filled'],
         textposition='auto'
     ))
-    
+
     fig_bar.add_trace(go.Bar(
         name='Vacancy Unfilled',
         x=borough_data['Classification'].apply(clean_classification_for_display),
@@ -853,7 +863,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         text=borough_data['Vacancy_Unfilled'],
         textposition='auto'
     ))
-    
+
     fig_bar.add_trace(go.Bar(
         name='Absence Filled',
         x=borough_data['Classification'].apply(clean_classification_for_display),
@@ -862,7 +872,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         text=borough_data['Absence_Filled'],
         textposition='auto'
     ))
-    
+
     fig_bar.add_trace(go.Bar(
         name='Absence Unfilled',
         x=borough_data['Classification'].apply(clean_classification_for_display),
@@ -871,7 +881,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         text=borough_data['Absence_Unfilled'],
         textposition='auto'
     ))
-    
+
     fig_bar.update_layout(
         title=f'Jobs by Classification and Type - {borough}',
         xaxis_title='Classification',
@@ -893,19 +903,31 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
                 labels=['Vacancy Filled', 'Vacancy Unfilled', 'Absence Filled', 'Absence Unfilled'],
                 values=[row['Vacancy_Filled'], row['Vacancy_Unfilled'], row['Absence_Filled'], row['Absence_Unfilled']],
                 hole=0.3,
-                marker_colors=['darkgreen', 'lightcoral', 'forestgreen', 'red']
+                marker_colors=['darkgreen', 'lightcoral', 'forestgreen', 'red'],
+                textinfo='value+percent',
+                textposition='inside',
+                textfont=dict(size=14),
+                texttemplate='%{value:,}<br>%{percent}'
             )])
             pie_fig.update_layout(
-                title=f"{row['Classification']}<br>({int(row['Total'])} total jobs)",
-                height=400,
+                title=dict(
+                    text=f"{row['Classification']}<br>({int(row['Total']):,} total jobs)",
+                    y=0.95,
+                    x=0.5,
+                    xanchor='center',
+                    yanchor='top',
+                    font=dict(size=16)
+                ),
+                height=450,
                 width=400,
-                showlegend=True
+                showlegend=True,
+                margin=dict(t=60, b=40, l=40, r=40)
             )
             
             pie_file = os.path.join(borough_dir, f'{borough_clean}_{row["Classification"].replace("/", "_")}_pie.html')
             pyo.plot(pie_fig, filename=pie_file, auto_open=False)
             
-            pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="420" frameborder="0"></iframe>\n'
+            pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="470" frameborder="0"></iframe>\n'
     
     # --- Summary by District Table ---
     df_borough = df[df['Borough'] == borough]
@@ -941,7 +963,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         index=False,
         classes='table',
         formatters={
-            'District': lambda x: f"District {int(x)}" if pd.notna(x) else x,
+            'District': lambda x: f"D{int(x)}" if pd.notna(x) else x,
             'Vacancy Filled': format_int,
             'Vacancy Unfilled': format_int,
             'Total Vacancy': format_int,
@@ -1054,12 +1076,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats):
         <ul>
             {district_links}
         </ul>
-        <div class="footer">
-            <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
-            <div style="margin-bottom:6px;">For internal use only.</div>
-            <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
-            <div style="font-size:13px; color:#e0e0e0;">&copy; {pd.Timestamp.now().year} Property of the NYCDOE</div>
-        </div>
+        {get_professional_footer()}
     </body>
     </html>
     """
@@ -1117,7 +1134,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
         x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Vacancy_Filled'],
         marker_color='darkgreen',
-        text=filtered_stats['Vacancy_Filled'],
+        text=[f"{val:,}" for val in filtered_stats['Vacancy_Filled']],
         textposition='auto'
     ))
 
@@ -1126,7 +1143,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
         x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Vacancy_Unfilled'],
         marker_color='lightcoral',
-        text=filtered_stats['Vacancy_Unfilled'],
+        text=[f"{val:,}" for val in filtered_stats['Vacancy_Unfilled']],
         textposition='auto'
     ))
 
@@ -1135,7 +1152,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
         x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Absence_Filled'],
         marker_color='forestgreen',
-        text=filtered_stats['Absence_Filled'],
+        text=[f"{val:,}" for val in filtered_stats['Absence_Filled']],
         textposition='auto'
     ))
 
@@ -1144,7 +1161,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
         x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Absence_Unfilled'],
         marker_color='red',
-        text=filtered_stats['Absence_Unfilled'],
+        text=[f"{val:,}" for val in filtered_stats['Absence_Unfilled']],
         textposition='auto'
     ))
 
@@ -1276,7 +1293,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
     index=False,
     classes='table',
     formatters={
-        'District': lambda x: f"{int(x)}",
+        'District': lambda x: f"D{int(x)}" if pd.notna(x) else x,
         **{
             DISPLAY_COLS_RENAME.get(col, col): format_pct if 'Pct' in col else format_int
             for col in display_cols
@@ -1291,12 +1308,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
         </ul>
         
         <p><em>Generated from data containing {len(df)} job records</em></p>
-        <div class="footer">
-            <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
-            <div style="margin-bottom:6px;">For internal use only.</div>
-            <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
-            <div style="font-size:13px; color:#e0e0e0;">&copy; {pd.Timestamp.now().year} Property of the NYCDOE</div>
-        </div>
+        {get_professional_footer()}
     </body>
     </html>
     """
@@ -1306,6 +1318,17 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir):
         f.write(html_content)
     
     return index_file
+
+def get_professional_footer():
+    """Return the professional footer HTML"""
+    return f"""
+    <div class="footer">
+        <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
+        <div style="margin-bottom:6px;">For internal use only.</div>
+        <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
+        <div style="font-size:13px; color:#e0e0e0;">&copy; {pd.Timestamp.now().year} Property of the NYCDOE</div>
+    </div>
+    """
 
 def df_with_pretty_columns(df):
     """
@@ -1321,12 +1344,18 @@ def main():
     csv_file_path = 'Fill Rate Data/mayjobs.csv'
     output_directory = 'nycdoe_reports'
     
+   
+
+    
+    
     start_time = time.time()
+    print("Starting report generation...")
     try:
         # Create output directory
         os.makedirs(output_directory, exist_ok=True)
         
         # Load and process data
+        print("Loading and processing data...")
         df = load_and_process_data(csv_file_path)
         summary_stats = create_summary_stats(df, ['District'])
         # Remove 'Type_Fill_Status' if present
@@ -1340,11 +1369,13 @@ def main():
             summary_stats[col] = summary_stats[col].astype(int)
 
         #Create borough-level statistics
+        print("Creating borough-level statistics...")
         borough_stats = create_borough_summary_stats(df)
         if 'Type_Fill_Status' in borough_stats.columns:
             borough_stats = borough_stats.drop(columns=['Type_Fill_Status'])
         # Create reports for each District
         districts = sorted(df['District'].unique())
+        print(f"Creating reports for {len(districts)} districts...")
         report_files = []
         all_school_reports = []
         
@@ -1358,6 +1389,7 @@ def main():
         
         #Create reports for each borough
         boroughs = sorted(df['Borough'].unique())
+        print(f"Creating reports for {len(boroughs)} boroughs...")
         borough_report_files = []
 
         for borough in boroughs:
