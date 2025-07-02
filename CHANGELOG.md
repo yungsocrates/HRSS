@@ -5,6 +5,32 @@ All notable changes to the NYCDOE Paraprofessional Jobs Fill Rate Analytics proj
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2025-07-02
+
+### Added
+- 🔄 **Four-Way Comparison in School Reports**: Replaced "Key Insights" section with comprehensive comparison system
+  - Citywide vs Borough vs District vs School performance comparison
+  - Color-coded comparison cards with distinct styling for each administrative level
+  - Consistent layout matching borough and district reports
+- 🎨 **Enhanced Visual Hierarchy**: Positioned comparison section after pie charts for better flow
+- 📊 **Integer Bar Chart Values**: Fixed bar chart text labels to display clean integers instead of floats
+  - Applied `int()` conversion to all bar chart value displays
+  - Improved readability with comma-separated thousands formatting
+- 🧩 **Alternative Table Layout**: Preserved original table-based comparison as commented code for future reference
+
+### Enhanced
+- 🎯 **Report Consistency**: Unified comparison section layout across all report types
+- 🎨 **School Card Styling**: Added unique orange gradient for school comparison cards
+- 📱 **Responsive Design**: Added mobile-friendly responsive grid for comparison cards
+- 🔧 **Code Organization**: Maintained backward compatibility while implementing new features
+
+### Technical Improvements
+- Updated `create_school_report()` function with new comparison logic
+- Added CSS styles for school comparison cards (`comparison-card.school`)
+- Implemented responsive design for comparison grid on mobile devices
+- Enhanced data calculation functions for multi-level statistics
+- Preserved alternative implementation as documentation
+
 ## [3.2.0] - 2025-07-02
 
 ### Fixed

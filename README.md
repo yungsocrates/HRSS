@@ -23,13 +23,14 @@ This project analyzes substitute paraprofessional job postings and fill rates ac
 - **Citywide Overview**: High-level summary with key performance indicators and data period display
 - **Borough Reports**: Detailed analysis for each NYC borough with modern, elegant styling
 - **District Reports**: Individual district performance with enhanced data presentation and responsive design
-- **School Reports**: Granular analysis for every school with professional layout and improved tables
+- **School Reports**: Granular analysis for every school with professional layout, improved tables, and comprehensive comparison features
 
 ### 📈 Visualizations
 - **Pie Charts**: Distribution of filled/unfilled positions by classification
-- **Bar Charts**: Comparative analysis across different job types
+- **Bar Charts**: Comparative analysis across different job types with integer value displays
 - **Enhanced Summary Tables**: Professional tables with solid-color headers and responsive overflow handling
 - **Trend Analysis**: Fill rate patterns and performance metrics with modern, card-based interface
+- **Comparison Cards**: Four-way comparison system (Citywide vs Borough vs District vs School) with color-coded cards
 - **Date Range Display**: Clear indication of data period on all reports
 
 ### 🎨 Modern Design Features
@@ -38,6 +39,7 @@ This project analyzes substitute paraprofessional job postings and fill rates ac
 - **Enhanced Tables**: Improved readability with solid-color headers and responsive containers
 - **Hover Effects**: Interactive elements with smooth transitions
 - **Professional Styling**: Consistent color scheme and typography throughout
+- **Comparison System**: Visual comparison cards with distinct color coding for different administrative levels
 
 ### 🌐 Multi-language Support
 Specialized tracking for paraprofessional positions requiring:
@@ -108,7 +110,7 @@ The system processes CSV files containing:
 - **District**: School district number
 - **Date/Time Information**: When jobs were posted and filled
 
-## 🎨 Modern UI Features (Version 3.0)
+## 🎨 Modern UI Features (Version 3.1)
 
 ### Design Elements
 - **Responsive Layout**: Mobile-friendly design that works perfectly on all devices
@@ -117,12 +119,19 @@ The system processes CSV files containing:
 - **Interactive Elements**: Smooth hover effects and intuitive user interactions
 - **Solid Color Headers**: Improved table readability with solid primary color headers
 - **Optimized Tables**: Enhanced overflow handling and responsive table design
+- **Comparison Cards**: Color-coded cards for multi-level statistical comparisons
 
 ### Navigation & UX
 - **Breadcrumb Navigation**: Intuitive hierarchical navigation system
 - **Quick Access Links**: Direct navigation to related reports and sections
 - **Table Enhancements**: Sticky headers, improved sorting, and better data presentation
 - **Performance Optimized**: Faster loading with embedded CSS and optimized layouts
+- **Multi-Level Comparison**: School reports now include citywide, borough, district, and school-level performance comparisons
+
+### Chart Improvements
+- **Integer Display**: Bar chart values now display as clean integers instead of decimals
+- **Enhanced Readability**: Improved text positioning and formatting in all charts
+- **Consistent Styling**: Unified chart appearance across all report levels
 
 ### Technical Improvements
 - **Container Width**: Increased from 1400px to 1600px for better data display

@@ -201,7 +201,7 @@ def clean_classification_for_display(classification):
     """
     return classification.replace(' SPEAKING PARA', '')
 
-def create_school_report(district, location, location_clean, school_data, output_dir, date_range_info):
+def create_school_report(district, location, location_clean, school_data, df, summary_stats, output_dir, date_range_info):
     """
     Create a comprehensive report for a single school
     """
@@ -221,23 +221,31 @@ def create_school_report(district, location, location_clean, school_data, output
     )
 
     
-    # --- Key Insights Section ---
-    # Compute key metrics for the summary box (use first row, as school_data is per school)
-    key_row = school_data.iloc[0]
-    key_insights_html = f'''
-    <div class="summary-box">
-        <h3>Key Insights</h3>
-        <ul>
-            <li><strong>Total Jobs:</strong> {format_int(school_data["Total"].sum())}</li>
-            <li><strong>Total Vacancies:</strong> {format_int(school_data["Total_Vacancy"].sum())} ({format_pct((school_data["Total_Vacancy"].sum()/school_data["Total"].sum()*100) if school_data["Total"].sum() > 0 else 0)})</li>
-            <li><strong>Total Absences:</strong> {format_int(school_data["Total_Absence"].sum())} ({format_pct((school_data["Total_Absence"].sum()/school_data["Total"].sum()*100) if school_data["Total"].sum() > 0 else 0)})</li>
-            <li><strong>Overall Fill Rate:</strong> {format_pct((school_data["Vacancy_Filled"].sum() + school_data["Absence_Filled"].sum())/school_data["Total"].sum()*100 if school_data["Total"].sum() > 0 else 0)}</li>
-            <li><strong>Vacancy Fill Rate:</strong> {format_pct((school_data["Vacancy_Filled"].sum()/school_data["Total_Vacancy"].sum()*100) if school_data["Total_Vacancy"].sum() > 0 else 0)}</li>
-            <li><strong>Absence Fill Rate:</strong> {format_pct((school_data["Absence_Filled"].sum()/school_data["Total_Absence"].sum()*100) if school_data["Total_Absence"].sum() > 0 else 0)}</li>
-            <li><strong>Classifications:</strong> {', '.join(school_data['Classification'].unique())}</li>
-        </ul>
-    </div>
-    '''
+    # --- Comparison Data Section ---
+    # Get overall/citywide statistics
+    overall_totals = summary_stats.agg({
+        'Vacancy_Filled': 'sum',
+        'Vacancy_Unfilled': 'sum',
+        'Absence_Filled': 'sum',
+        'Absence_Unfilled': 'sum',
+        'Total_Vacancy': 'sum',
+        'Total_Absence': 'sum',
+        'Total': 'sum'
+    })
+    overall_stats = {
+        'Total': int(overall_totals['Total']),
+        'Total_Vacancy': int(overall_totals['Total_Vacancy']),
+        'Total_Absence': int(overall_totals['Total_Absence']),
+        'Vacancy_Filled': int(overall_totals['Vacancy_Filled']),
+        'Absence_Filled': int(overall_totals['Absence_Filled'])
+    }
+    
+    # Get borough data for this school
+    school_borough = df[df['Location'] == location]['Borough'].iloc[0]
+    borough_data = create_summary_stats(df[df['Borough'] == school_borough], ['Borough'])
+    
+    # Get district data for this school
+    district_data = create_summary_stats(df[df['District'] == district], ['District'])
     # Create grouped bar chart
     fig_bar = go.Figure()
     # Add bars for each category
@@ -246,7 +254,7 @@ def create_school_report(district, location, location_clean, school_data, output
         x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Vacancy_Filled'],
         marker_color='darkgreen',
-        text=[f"{val:,}" for val in school_data['Vacancy_Filled']],
+        text=[f"{int(val):,}" for val in school_data['Vacancy_Filled']],
         textposition='auto'
     ))
     
@@ -255,7 +263,7 @@ def create_school_report(district, location, location_clean, school_data, output
         x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Vacancy_Unfilled'],
         marker_color='lightcoral',
-        text=[f"{val:,}" for val in school_data['Vacancy_Unfilled']],
+        text=[f"{int(val):,}" for val in school_data['Vacancy_Unfilled']],
         textposition='auto'
     ))
     
@@ -264,7 +272,7 @@ def create_school_report(district, location, location_clean, school_data, output
         x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Absence_Filled'],
         marker_color='forestgreen',
-        text=[f"{val:,}" for val in school_data['Absence_Filled']],
+        text=[f"{int(val):,}" for val in school_data['Absence_Filled']],
         textposition='auto'
     ))
     
@@ -273,7 +281,7 @@ def create_school_report(district, location, location_clean, school_data, output
         x=school_data['Classification'].apply(clean_classification_for_display),
         y=school_data['Absence_Unfilled'],
         marker_color='red',
-        text=[f"{val:,}" for val in school_data['Absence_Unfilled']],
+        text=[f"{int(val):,}" for val in school_data['Absence_Unfilled']],
         textposition='auto'
     ))
     
@@ -350,28 +358,216 @@ def create_school_report(district, location, location_clean, school_data, output
             
             pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="470" frameborder="0"></iframe>\n'
     
-    # Calculate key insights for the school
-    total_jobs = int(school_data['Total'].sum())
-    total_vacancy = int(school_data['Total_Vacancy'].sum())
-    total_absence = int(school_data['Total_Absence'].sum())
-    vacancy_filled = int(school_data['Vacancy_Filled'].sum())
-    absence_filled = int(school_data['Absence_Filled'].sum())
-    overall_fill_pct = (vacancy_filled + absence_filled) / total_jobs * 100 if total_jobs > 0 else 0
-    vacancy_fill_pct = (vacancy_filled / total_vacancy * 100) if total_vacancy > 0 else 0
-    absence_fill_pct = (absence_filled / total_absence * 100) if total_absence > 0 else 0
-
-    key_insights_html = f"""
-        <div class=\"summary-box\" style=\"background-color:#f8f9fa;padding:15px;border-radius:5px;margin:10px 0;\">
-            <h3>Key Insights</h3>
-            <ul>
-                <li><strong>Total Jobs:</strong> {total_jobs}</li>
-                <li><strong>Total Vacancies:</strong> {total_vacancy} ({(total_vacancy/total_jobs*100) if total_jobs > 0 else 0:.1f}%)</li>
-                <li><strong>Total Absences:</strong> {total_absence} ({(total_absence/total_jobs*100) if total_jobs > 0 else 0:.1f}%)</li>
-                <li><strong>Overall Fill Rate:</strong> {overall_fill_pct:.1f}%</li>
-                <li><strong>Vacancy Fill Rate:</strong> {vacancy_fill_pct:.1f}%</li>
-                <li><strong>Absence Fill Rate:</strong> {absence_fill_pct:.1f}%</li>
-            </ul>
+    # Calculate comparison stats for the school vs citywide, borough, and district
+    school_totals = {
+        'Total': int(school_data['Total'].sum()),
+        'Total_Vacancy': int(school_data['Total_Vacancy'].sum()),
+        'Total_Absence': int(school_data['Total_Absence'].sum()),
+        'Vacancy_Filled': int(school_data['Vacancy_Filled'].sum()),
+        'Absence_Filled': int(school_data['Absence_Filled'].sum())
+    }
+    
+    # Calculate fill rates for each level
+    def calculate_fill_rates(data):
+        total = data['Total']
+        total_vacancy = data['Total_Vacancy']
+        total_absence = data['Total_Absence']
+        vacancy_filled = data['Vacancy_Filled']
+        absence_filled = data['Absence_Filled']
+        
+        overall_fill_rate = ((vacancy_filled + absence_filled) / total * 100) if total > 0 else 0
+        vacancy_fill_rate = (vacancy_filled / total_vacancy * 100) if total_vacancy > 0 else 0
+        absence_fill_rate = (absence_filled / total_absence * 100) if total_absence > 0 else 0
+        
+        return overall_fill_rate, vacancy_fill_rate, absence_fill_rate
+    
+    # Get borough and district totals
+    borough_totals = {
+        'Total': int(borough_data['Total'].sum()),
+        'Total_Vacancy': int(borough_data['Total_Vacancy'].sum()),
+        'Total_Absence': int(borough_data['Total_Absence'].sum()),
+        'Vacancy_Filled': int(borough_data['Vacancy_Filled'].sum()),
+        'Absence_Filled': int(borough_data['Absence_Filled'].sum())
+    }
+    
+    district_totals = {
+        'Total': int(district_data['Total'].sum()),
+        'Total_Vacancy': int(district_data['Total_Vacancy'].sum()),
+        'Total_Absence': int(district_data['Total_Absence'].sum()),
+        'Vacancy_Filled': int(district_data['Vacancy_Filled'].sum()),
+        'Absence_Filled': int(district_data['Absence_Filled'].sum())
+    }
+    
+    # Calculate fill rates for each level
+    school_overall_fill, school_vacancy_fill, school_absence_fill = calculate_fill_rates(school_totals)
+    citywide_overall_fill, citywide_vacancy_fill, citywide_absence_fill = calculate_fill_rates(overall_stats)
+    borough_overall_fill, borough_vacancy_fill, borough_absence_fill = calculate_fill_rates(borough_totals)
+    district_overall_fill, district_vacancy_fill, district_absence_fill = calculate_fill_rates(district_totals)
+    
+    # Calculate comparison stats for the school vs citywide, borough, and district
+    school_totals = {
+        'Total': int(school_data['Total'].sum()),
+        'Total_Vacancy': int(school_data['Total_Vacancy'].sum()),
+        'Total_Absence': int(school_data['Total_Absence'].sum()),
+        'Vacancy_Filled': int(school_data['Vacancy_Filled'].sum()),
+        'Absence_Filled': int(school_data['Absence_Filled'].sum())
+    }
+    
+    # Calculate fill rates for each level
+    def calculate_fill_rates(data):
+        total = data['Total']
+        total_vacancy = data['Total_Vacancy']
+        total_absence = data['Total_Absence']
+        vacancy_filled = data['Vacancy_Filled']
+        absence_filled = data['Absence_Filled']
+        
+        overall_fill_rate = ((vacancy_filled + absence_filled) / total * 100) if total > 0 else 0
+        vacancy_fill_rate = (vacancy_filled / total_vacancy * 100) if total_vacancy > 0 else 0
+        absence_fill_rate = (absence_filled / total_absence * 100) if total_absence > 0 else 0
+        
+        return overall_fill_rate, vacancy_fill_rate, absence_fill_rate
+    
+    # Get borough and district totals
+    borough_totals = {
+        'Total': int(borough_data['Total'].sum()),
+        'Total_Vacancy': int(borough_data['Total_Vacancy'].sum()),
+        'Total_Absence': int(borough_data['Total_Absence'].sum()),
+        'Vacancy_Filled': int(borough_data['Vacancy_Filled'].sum()),
+        'Absence_Filled': int(borough_data['Absence_Filled'].sum())
+    }
+    
+    district_totals = {
+        'Total': int(district_data['Total'].sum()),
+        'Total_Vacancy': int(district_data['Total_Vacancy'].sum()),
+        'Total_Absence': int(district_data['Total_Absence'].sum()),
+        'Vacancy_Filled': int(district_data['Vacancy_Filled'].sum()),
+        'Absence_Filled': int(district_data['Absence_Filled'].sum())
+    }
+    
+    # Calculate fill rates for each level
+    school_overall_fill, school_vacancy_fill, school_absence_fill = calculate_fill_rates(school_totals)
+    citywide_overall_fill, citywide_vacancy_fill, citywide_absence_fill = calculate_fill_rates(overall_stats)
+    borough_overall_fill, borough_vacancy_fill, borough_absence_fill = calculate_fill_rates(borough_totals)
+    district_overall_fill, district_vacancy_fill, district_absence_fill = calculate_fill_rates(district_totals)
+    
+    # Create comparison HTML using card-based layout like district reports
+    comparison_html = f"""
+        <div class="comparison-grid">
+            <div class="comparison-card citywide">
+                <h4>Citywide Statistics</h4>
+                <ul>
+                    <li><strong>Total Jobs:</strong> {overall_stats['Total']:,}</li>
+                    <li><strong>Total Vacancies:</strong> {overall_stats['Total_Vacancy']:,} ({(overall_stats['Total_Vacancy'] / overall_stats['Total'] * 100) if overall_stats['Total'] > 0 else 0:.1f}%)</li>
+                    <li><strong>Total Absences:</strong> {overall_stats['Total_Absence']:,} ({(overall_stats['Total_Absence'] / overall_stats['Total'] * 100) if overall_stats['Total'] > 0 else 0:.1f}%)</li>
+                    <li><strong>Overall Fill Rate:</strong> {citywide_overall_fill:.1f}%</li>
+                    <li><strong>Vacancy Fill Rate:</strong> {citywide_vacancy_fill:.1f}%</li>
+                    <li><strong>Absence Fill Rate:</strong> {citywide_absence_fill:.1f}%</li>
+                    <li><strong>Number of Schools:</strong> {len(df['Location'].unique())}</li>
+                </ul>
+            </div>
+            <div class="comparison-card borough">
+                <h4>{school_borough} Statistics</h4>
+                <ul>
+                    <li><strong>Total Jobs:</strong> {borough_totals['Total']:,}</li>
+                    <li><strong>Total Vacancies:</strong> {borough_totals['Total_Vacancy']:,} ({(borough_totals['Total_Vacancy'] / borough_totals['Total'] * 100) if borough_totals['Total'] > 0 else 0:.1f}%)</li>
+                    <li><strong>Total Absences:</strong> {borough_totals['Total_Absence']:,} ({(borough_totals['Total_Absence'] / borough_totals['Total'] * 100) if borough_totals['Total'] > 0 else 0:.1f}%)</li>
+                    <li><strong>Overall Fill Rate:</strong> {borough_overall_fill:.1f}%</li>
+                    <li><strong>Vacancy Fill Rate:</strong> {borough_vacancy_fill:.1f}%</li>
+                    <li><strong>Absence Fill Rate:</strong> {borough_absence_fill:.1f}%</li>
+                    <li><strong>Number of Schools:</strong> {len(df[df['Borough'] == school_borough]['Location'].unique())}</li>
+                </ul>
+            </div>
+            <div class="comparison-card district">
+                <h4>District {int(district)} Statistics</h4>
+                <ul>
+                    <li><strong>Total Jobs:</strong> {district_totals['Total']:,}</li>
+                    <li><strong>Total Vacancies:</strong> {district_totals['Total_Vacancy']:,} ({(district_totals['Total_Vacancy'] / district_totals['Total'] * 100) if district_totals['Total'] > 0 else 0:.1f}%)</li>
+                    <li><strong>Total Absences:</strong> {district_totals['Total_Absence']:,} ({(district_totals['Total_Absence'] / district_totals['Total'] * 100) if district_totals['Total'] > 0 else 0:.1f}%)</li>
+                    <li><strong>Overall Fill Rate:</strong> {district_overall_fill:.1f}%</li>
+                    <li><strong>Vacancy Fill Rate:</strong> {district_vacancy_fill:.1f}%</li>
+                    <li><strong>Absence Fill Rate:</strong> {district_absence_fill:.1f}%</li>
+                    <li><strong>Number of Schools:</strong> {len(df[df['District'] == district]['Location'].unique())}</li>
+                </ul>
+            </div>
+            <div class="comparison-card school">
+                <h4>This School ({location})</h4>
+                <ul>
+                    <li><strong>Total Jobs:</strong> {school_totals['Total']:,}</li>
+                    <li><strong>Total Vacancies:</strong> {school_totals['Total_Vacancy']:,} ({(school_totals['Total_Vacancy'] / school_totals['Total'] * 100) if school_totals['Total'] > 0 else 0:.1f}%)</li>
+                    <li><strong>Total Absences:</strong> {school_totals['Total_Absence']:,} ({(school_totals['Total_Absence'] / school_totals['Total'] * 100) if school_totals['Total'] > 0 else 0:.1f}%)</li>
+                    <li><strong>Overall Fill Rate:</strong> {school_overall_fill:.1f}%</li>
+                    <li><strong>Vacancy Fill Rate:</strong> {school_vacancy_fill:.1f}%</li>
+                    <li><strong>Absence Fill Rate:</strong> {school_absence_fill:.1f}%</li>
+                    <li><strong>Classifications:</strong> {', '.join(school_data['Classification'].unique())}</li>
+                </ul>
+            </div>
         </div>
+    """
+    
+    # ALTERNATIVE TABLE-BASED COMPARISON (commented out but kept for future reference)
+    """
+    # Create comparison HTML table
+    comparison_html = f'''
+        <div class="summary-box" style="background-color:#f8f9fa;padding:20px;border-radius:8px;margin:15px 0;">
+            <h3>Performance Comparison: {location} vs District vs Borough vs Citywide</h3>
+            <div style="overflow-x: auto;">
+                <table class="table table-striped" style="margin-top: 15px;">
+                    <thead style="background-color: #2E86AB; color: white;">
+                        <tr>
+                            <th style="padding: 12px; text-align: left;">Level</th>
+                            <th style="padding: 12px; text-align: right;">Total Jobs</th>
+                            <th style="padding: 12px; text-align: right;">Total Vacancies</th>
+                            <th style="padding: 12px; text-align: right;">Total Absences</th>
+                            <th style="padding: 12px; text-align: right;">Overall Fill Rate</th>
+                            <th style="padding: 12px; text-align: right;">Vacancy Fill Rate</th>
+                            <th style="padding: 12px; text-align: right;">Absence Fill Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background-color: #e3f2fd; font-weight: bold;">
+                            <td style="padding: 10px;"><strong>This School</strong></td>
+                            <td style="padding: 10px; text-align: right;">{school_totals['Total']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{school_totals['Total_Vacancy']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{school_totals['Total_Absence']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{school_overall_fill:.1f}%</td>
+                            <td style="padding: 10px; text-align: right;">{school_vacancy_fill:.1f}%</td>
+                            <td style="padding: 10px; text-align: right;">{school_absence_fill:.1f}%</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">District {int(district)}</td>
+                            <td style="padding: 10px; text-align: right;">{district_totals['Total']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{district_totals['Total_Vacancy']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{district_totals['Total_Absence']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{district_overall_fill:.1f}%</td>
+                            <td style="padding: 10px; text-align: right;">{district_vacancy_fill:.1f}%</td>
+                            <td style="padding: 10px; text-align: right;">{district_absence_fill:.1f}%</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">Borough ({school_borough})</td>
+                            <td style="padding: 10px; text-align: right;">{borough_totals['Total']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{borough_totals['Total_Vacancy']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{borough_totals['Total_Absence']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{borough_overall_fill:.1f}%</td>
+                            <td style="padding: 10px; text-align: right;">{borough_vacancy_fill:.1f}%</td>
+                            <td style="padding: 10px; text-align: right;">{borough_absence_fill:.1f}%</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">Citywide</td>
+                            <td style="padding: 10px; text-align: right;">{overall_stats['Total']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{overall_stats['Total_Vacancy']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{overall_stats['Total_Absence']:,}</td>
+                            <td style="padding: 10px; text-align: right;">{citywide_overall_fill:.1f}%</td>
+                            <td style="padding: 10px; text-align: right;">{citywide_vacancy_fill:.1f}%</td>
+                            <td style="padding: 10px; text-align: right;">{citywide_absence_fill:.1f}%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top: 15px; padding: 10px; background-color: #fff3cd; border-radius: 5px; border-left: 4px solid #ffc107;">
+                <small><strong>Note:</strong> This comparison shows how this school's performance compares to its district, borough, and citywide averages.</small>
+            </div>
+        </div>
+    '''
     """
     # Create comprehensive HTML report
     html_content = f"""
@@ -600,6 +796,64 @@ def create_school_report(district, location, location_clean, school_data, output
                 margin: 25px 0;
             }}
 
+            .comparison-grid {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                margin: 25px 0;
+            }}
+
+            .comparison-card {{
+                padding: 25px;
+                border-radius: 15px;
+                box-shadow: var(--card-shadow);
+                border: 1px solid #e0e0e0;
+                transition: all 0.3s ease;
+            }}
+
+            .comparison-card:hover {{
+                box-shadow: var(--hover-shadow);
+                transform: translateY(-2px);
+            }}
+
+            .comparison-card.citywide {{
+                background: linear-gradient(135deg, #e8f4f8, #d6eaf8);
+            }}
+
+            .comparison-card.borough {{
+                background: linear-gradient(135deg, #f4e8f8, #e8d6f8);
+            }}
+
+            .comparison-card.district {{
+                background: linear-gradient(135deg, #f0f8e8, #e8f8d6);
+            }}
+
+            .comparison-card.school {{
+                background: linear-gradient(135deg, #fff8e1, #ffe0b2);
+            }}
+
+            .comparison-card h4 {{
+                color: var(--primary-color);
+                margin-bottom: 15px;
+                font-size: 1.3em;
+                font-weight: 600;
+            }}
+
+            .comparison-card ul {{
+                list-style: none;
+                padding: 0;
+            }}
+
+            .comparison-card li {{
+                padding: 8px 0;
+                border-bottom: 1px solid rgba(46, 134, 171, 0.1);
+                font-size: 1.1em;
+            }}
+
+            .comparison-card li:last-child {{
+                border-bottom: none;
+            }}
+
             .chart-container {{ 
                 margin: 25px 0; 
                 text-align: center;
@@ -669,6 +923,10 @@ def create_school_report(district, location, location_clean, school_data, output
                 .pie-container {{
                     grid-template-columns: 1fr;
                     gap: 15px;
+                }}
+
+                .comparison-grid {{
+                    grid-template-columns: 1fr;
                 }}
 
                 iframe {{
@@ -744,11 +1002,6 @@ def create_school_report(district, location, location_clean, school_data, output
                     <a href="../../../index.html">← Back to Overall Summary</a> | 
                     <a href="../../{int(district)}_report.html">← Back to District {int(district)}</a>
                 </div>
-                
-                <div class="section">
-                    <h2>Key Insights</h2>
-                    {key_insights_html}
-                </div>
 
                 <div class="section">
                     <h3>Summary Statistics</h3>
@@ -769,6 +1022,11 @@ def create_school_report(district, location, location_clean, school_data, output
                     <div class="pie-container">
                         {pie_charts_html}
                     </div>
+                </div>
+                
+                <div class="section">
+                    <h2>Comparison: Citywide vs Borough vs District vs School</h2>
+                    {comparison_html}
                 </div>
             </div>
             
@@ -876,7 +1134,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
         school_df = df[(df['District'] == district) & (df['Location'] == location)]
         school_summary = create_summary_stats(school_df, ['District', 'Location'])
         if len(school_summary) > 0:
-            school_report = create_school_report(district, location, location_clean, school_summary, output_dir, date_range_info)
+            school_report = create_school_report(district, location, location_clean, school_summary, df, summary_stats, output_dir, date_range_info)
             school_reports.append(school_report)
             school_links += f'<li><a href="Schools/School_{location_clean}/{safe_location_name}_report.html">{location}</a> - {school_summary["Total"].sum().astype(int)} total jobs</li>\n'
     # Calculate summary stats for comparison with district stats
