@@ -11,6 +11,8 @@
 [build.environment]
   # Python version to use
   PYTHON_VERSION = "3.9"
+  # Set timezone to Eastern Time
+  TZ = "America/New_York"
 
 # Redirect settings for clean URLs
 [[redirects]]
