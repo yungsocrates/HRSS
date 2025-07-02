@@ -286,16 +286,33 @@ def create_school_report(district, location, location_clean, school_data, output
     )
     
     # Save bar chart
-    bar_chart_file = os.path.join(school_dir, f'{location_clean}_bar_chart.html')
+    # Further sanitize the location_clean for filename to ensure Windows compatibility
+    safe_location_name = re.sub(r'[<>:"/\\|?*\n\r\t]', '_', str(location_clean)).strip()
+    # Remove multiple consecutive underscores for cleaner filenames
+    safe_location_name = re.sub(r'_+', '_', safe_location_name)
+    if len(safe_location_name) > 200:  # Prevent long filenames
+        safe_location_name = safe_location_name[:200]
+    bar_chart_file = os.path.join(school_dir, f'{safe_location_name}_bar_chart.html')
+    # Ensure the directory exists
+    os.makedirs(os.path.dirname(bar_chart_file), exist_ok=True)
     pyo.plot(fig_bar, filename=bar_chart_file, auto_open=False)
     
     # Create pie charts for each classification
     pie_charts_html = ""
     for idx, (_, row) in enumerate(school_data.iterrows()):
         if row['Total'] > 0:  # Only create pie chart if there are jobs
-            # Sanitize both location_clean and classification for filename
-            safe_location = re.sub(r'[<>:"/\\|?*]', '_', str(location_clean))
-            safe_classification = re.sub(r'[<>:"/\\|?*]', '_', str(row['Classification']))
+            # Sanitize both location_clean and classification for filename with comprehensive approach
+            safe_location = re.sub(r'[<>:"/\\|?*\n\r\t]', '_', str(location_clean)).strip()
+            safe_classification = re.sub(r'[<>:"/\\|?*\n\r\t]', '_', str(row['Classification'])).strip()
+            
+            # Remove multiple consecutive underscores for cleaner filenames
+            safe_location = re.sub(r'_+', '_', safe_location)
+            safe_classification = re.sub(r'_+', '_', safe_classification)
+            
+            # Ensure filename isn't too long (Windows has 260 char limit for full path)
+            base_name = f'{safe_location}_{safe_classification}_pie'
+            if len(base_name) > 200:  # Leave room for directory path and extension
+                base_name = base_name[:200]
             pie_fig = go.Figure(data=[go.Pie(
                 labels=['Vacancy Filled', 'Vacancy Unfilled', 'Absence Filled', 'Absence Unfilled'],
                 values=[row['Vacancy_Filled'], row['Vacancy_Unfilled'], row['Absence_Filled'], row['Absence_Unfilled']],
@@ -321,7 +338,9 @@ def create_school_report(district, location, location_clean, school_data, output
                 margin=dict(t=60, b=40, l=40, r=40)
             )
             
-            pie_file = os.path.join(school_dir, f'{safe_location}_{safe_classification}_pie.html')
+            pie_file = os.path.join(school_dir, f'{base_name}.html')
+            # Ensure the directory exists before writing
+            os.makedirs(os.path.dirname(pie_file), exist_ok=True)
             pyo.plot(pie_fig, filename=pie_file, auto_open=False)
             
             pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="470" frameborder="0"></iframe>\n'
@@ -736,7 +755,7 @@ def create_school_report(district, location, location_clean, school_data, output
                 <div class="section">
                     <h3>Jobs by Classification and Type</h3>
                     <div class="chart-container">
-                        <iframe src="{location_clean}_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
+                        <iframe src="{safe_location_name}_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
                     </div>
                 </div>
 
@@ -754,7 +773,7 @@ def create_school_report(district, location, location_clean, school_data, output
     </html>
     """
     # Save main report
-    report_file = os.path.join(school_dir, f'{location_clean}_report.html')
+    report_file = os.path.join(school_dir, f'{safe_location_name}_report.html')
     with open(report_file, 'w', encoding='utf-8') as f:
         f.write(html_content)
     
@@ -839,13 +858,22 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     school_links = ""
     school_reports = []
     for location in sorted(district_schools):
-        location_clean = re.sub(r'[<>:"/\\|?*]', '_', location)
+        location_clean = re.sub(r'[<>:"/\\|?*\n\r\t]', '_', str(location)).strip()
+        # Ensure the clean location name isn't too long
+        if len(location_clean) > 200:
+            location_clean = location_clean[:200]
+        
+        # Create safe location name for file paths (additional sanitization)
+        safe_location_name = re.sub(r'[<>:"/\\|?*\n\r\t]', '_', str(location_clean)).strip()
+        if len(safe_location_name) > 200:
+            safe_location_name = safe_location_name[:200]
+        
         school_df = df[(df['District'] == district) & (df['Location'] == location)]
         school_summary = create_summary_stats(school_df, ['District', 'Location'])
         if len(school_summary) > 0:
             school_report = create_school_report(district, location, location_clean, school_summary, output_dir, date_range_info)
             school_reports.append(school_report)
-            school_links += f'<li><a href="Schools/School_{location_clean}/{location_clean}_report.html">{location}</a> - {school_summary["Total"].sum().astype(int)} total jobs</li>\n'
+            school_links += f'<li><a href="Schools/School_{location_clean}/{safe_location_name}_report.html">{location}</a> - {school_summary["Total"].sum().astype(int)} total jobs</li>\n'
     # Calculate summary stats for comparison with district stats
     overall_totals = summary_stats.agg({
         'Vacancy_Filled': 'sum',
@@ -943,8 +971,16 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
                 margin=dict(t=60, b=40, l=40, r=40)
             )
             
-            safe_classification = re.sub(r'[<>:"/\\|?*\n\r\t ]', '_', str(row["Classification"]))
-            pie_file = os.path.join(district_dir, f'{int(district)}_{safe_classification}_pie.html')
+            safe_classification = re.sub(r'[<>:"/\\|?*\n\r\t]', '_', str(row["Classification"])).strip()
+            # Remove multiple consecutive underscores and ensure reasonable length
+            safe_classification = re.sub(r'_+', '_', safe_classification)
+            # Ensure filename isn't too long
+            base_name = f'{int(district)}_{safe_classification}_pie'
+            if len(base_name) > 200:
+                base_name = base_name[:200]
+            pie_file = os.path.join(district_dir, f'{base_name}.html')
+            # Ensure the directory exists before writing
+            os.makedirs(os.path.dirname(pie_file), exist_ok=True)
             pyo.plot(pie_fig, filename=pie_file, auto_open=False)
             
             pie_charts_html += f'<iframe src="{os.path.basename(pie_file)}" width="420" height="470" frameborder="0"></iframe>\n'

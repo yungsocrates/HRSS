@@ -198,7 +198,42 @@ We welcome contributions! Please see our contributing guidelines:
 4. Add tests if applicable
 5. Submit a pull request
 
-## 📄 License
+## � Troubleshooting
+
+### File Path Issues (Fixed in v3.2.0)
+
+If you encounter errors like `[Errno 22] Invalid argument` when generating reports, this has been resolved with enhanced file path sanitization:
+
+**Error Example:**
+```
+Error: [Errno 22] Invalid argument: 'nycdoe_reports\\District_27\\Schools\\School_Q351\\Q351_bar_chart.html'
+```
+
+**Solution Implemented:**
+- Enhanced filename sanitization using regex pattern `r'[<>:"/\\|?*\n\r\t]'`
+- Added automatic `.strip()` to remove problematic whitespace
+- Implemented filename length limits (200 characters max)
+- Added explicit directory creation before file operations
+- Applied consistent sanitization across all report types
+
+### District Sorting
+
+Districts are now properly sorted numerically (D2, D3, ..., D11, D12) rather than alphabetically. This ensures logical ordering in all reports and navigation links.
+
+### Performance Tips
+
+- **Large Datasets**: For datasets over 100k records, consider increasing system memory
+- **Network Drives**: Run from local drives for better I/O performance
+- **Browser Compatibility**: Modern browsers (Chrome 80+, Firefox 75+, Safari 13+) recommended for optimal chart rendering
+
+### Common Issues
+
+1. **Missing Dependencies**: Run `pip install -r requirements.txt`
+2. **Data Format**: Ensure CSV headers match expected column names
+3. **Date Parsing**: Excel serial dates are automatically converted
+4. **Memory Usage**: Close unused applications for large dataset processing
+
+## �📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 

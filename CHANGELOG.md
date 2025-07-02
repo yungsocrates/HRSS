@@ -5,6 +5,36 @@ All notable changes to the NYCDOE Paraprofessional Jobs Fill Rate Analytics proj
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2025-07-02
+
+### Fixed
+- 🔧 **Windows File Path Compatibility**: Resolved "Invalid argument" errors for file creation
+  - Enhanced filename sanitization using comprehensive regex pattern `r'[<>:"/\\|?*\n\r\t]'`
+  - Added `.strip()` to remove leading/trailing whitespace from filenames
+  - Implemented filename length limits (200 characters) to prevent Windows path length issues
+  - Added explicit directory existence checks with `os.makedirs(exist_ok=True)`
+- 📊 **Consistent File Naming**: Applied uniform sanitization across all report types
+  - Fixed school report file naming (bar charts, pie charts, HTML reports)
+  - Fixed district and borough report file naming consistency
+  - Ensured HTML iframe references match actual generated file names
+- 🔢 **District Sorting**: Confirmed numeric sorting implementation
+  - Districts now properly sorted as D2, D3, ..., D11, D12 (not D11, D12, D2, D3)
+  - Applied `key=int` sorting in district lists and summary tables
+  - Enhanced district summary table generation with proper numeric ordering
+
+### Enhanced
+- 🛠️ **Error Handling**: Improved robustness for file system operations
+- 📁 **File Management**: Added comprehensive directory creation before file writes
+- 🎯 **Code Quality**: Standardized file path handling across all functions
+- 📊 **Report Generation**: More reliable chart and report file creation
+
+### Technical Improvements
+- Updated `create_school_report()` function with enhanced file path sanitization
+- Updated `create_district_report()` function with consistent naming patterns
+- Updated `create_borough_report()` function with improved file handling
+- Added safety checks for Windows file system limitations
+- Improved error messages and debugging information
+
 ## [3.1.0] - 2025-07-01
 
 ### Added
