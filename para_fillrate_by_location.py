@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.offline as pyo
+import plotly.io as pio
 import numpy as np
 import os
 import re
@@ -295,7 +296,11 @@ def create_school_report(district, location, location_clean, school_data, output
     bar_chart_file = os.path.join(school_dir, f'{safe_location_name}_bar_chart.html')
     # Ensure the directory exists
     os.makedirs(os.path.dirname(bar_chart_file), exist_ok=True)
-    pyo.plot(fig_bar, filename=bar_chart_file, auto_open=False)
+    
+    # Generate HTML and write to file
+    html_str = pio.to_html(fig_bar, include_plotlyjs='cdn', div_id=f"{safe_location_name}_bar_chart")
+    with open(bar_chart_file, 'w', encoding='utf-8') as f:
+        f.write(html_str)
     
     # Create pie charts for each classification
     pie_charts_html = ""
@@ -940,7 +945,11 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     
     # Save bar chart
     bar_chart_file = os.path.join(district_dir, f'{int(district)}_bar_chart.html')
-    pyo.plot(fig_bar, filename=bar_chart_file, auto_open=False)
+    
+    # Generate HTML and write to file
+    html_str = pio.to_html(fig_bar, include_plotlyjs='cdn', div_id=f"district_{int(district)}_bar_chart")
+    with open(bar_chart_file, 'w', encoding='utf-8') as f:
+        f.write(html_str)
     
     # Create pie charts for each classification
     pie_charts_html = ""
@@ -1538,7 +1547,11 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats, 
     
     # Save bar chart
     bar_chart_file = os.path.join(borough_dir, f'{borough_clean}_bar_chart.html')
-    pyo.plot(fig_bar, filename=bar_chart_file, auto_open=False)
+    
+    # Generate HTML and write to file
+    html_str = pio.to_html(fig_bar, include_plotlyjs='cdn', div_id=f"borough_{borough_clean}_bar_chart")
+    with open(bar_chart_file, 'w', encoding='utf-8') as f:
+        f.write(html_str)
     
     # Create pie charts for each classification
     pie_charts_html = ""
@@ -1695,7 +1708,11 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats, 
     
     # Save bar chart
     bar_chart_file = os.path.join(borough_dir, f'{borough_clean}_bar_chart.html')
-    pyo.plot(fig_bar, filename=bar_chart_file, auto_open=False)
+    
+    # Generate HTML and write to file (second instance)
+    html_str = pio.to_html(fig_bar, include_plotlyjs='cdn', div_id=f"borough_{borough_clean}_bar_chart_2")
+    with open(bar_chart_file, 'w', encoding='utf-8') as f:
+        f.write(html_str)
     
     # Create pie charts for each classification
     pie_charts_html = ""
@@ -2353,7 +2370,11 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
     )
     
     overall_chart_file = os.path.join(output_dir, 'overall_bar_chart.html')
-    pyo.plot(fig_overall, filename=overall_chart_file, auto_open=False)
+    
+    # Generate HTML and write to file
+    html_str = pio.to_html(fig_overall, include_plotlyjs='cdn', div_id="overall_bar_chart")
+    with open(overall_chart_file, 'w', encoding='utf-8') as f:
+        f.write(html_str)
     
     # Create District summary table
     district_summary = summary_stats.groupby('District').agg({
