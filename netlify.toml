@@ -28,7 +28,6 @@
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=3600"
-    X-Frame-Options = "SAMEORIGIN"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
 
