@@ -48,11 +48,14 @@ Thumbs.db
 
 # Ignore large data files (if any)
 *.csv.bak
+
+# Ignore generated reports (built at deploy time)
+nycdoe_reports/
 *.csv.old
 
 # Ignore temporary files
 *.tmp
 *.temp
 
-# Keep the generated reports
-!nycdoe_reports/
+# Ignore generated reports (will be built at runtime)
+nycdoe_reports/

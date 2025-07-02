@@ -2352,7 +2352,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
         width=1400
     )
     
-    overall_chart_file = os.path.join(output_dir, 'overall_summary_chart.html')
+    overall_chart_file = os.path.join(output_dir, 'overall_bar_chart.html')
     pyo.plot(fig_overall, filename=overall_chart_file, auto_open=False)
     
     # Create District summary table
@@ -2780,7 +2780,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
                 <div class="section">
                     <h3>Overall Jobs by Classification and Type</h3>
                     <div class="chart-container">
-                        <iframe src="overall_summary_chart.html" width="1420" height="520" frameborder="0"></iframe>
+                        <iframe src="overall_bar_chart.html" width="1420" height="520" frameborder="0"></iframe>
                     </div>
                 </div>
                 
