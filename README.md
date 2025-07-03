@@ -56,15 +56,30 @@ Specialized tracking for paraprofessional positions requiring:
 
 ```
 ParaJobs/
+├── 📁 Core Files
+│   ├── chart_utils.py             # Chart generation utilities
+│   ├── data_processing.py         # Data loading and processing functions
+│   ├── report_generators.py       # Report generation functions
+│   ├── templates.py               # HTML/CSS/JS templates and helpers
+│   ├── para_fillrate_modular.py   # Main entry point (modular architecture)
+│   └── Horizontal_logo_White_PublicSchools.png  # Logo file
+│
 ├── 📁 Fill Rate Data/           # Raw CSV data files
+│
 ├── 📁 nycdoe_reports/          # Generated HTML reports
 │   ├── index.html              # Main dashboard
-│   ├── overall_summary_chart.html
+│   ├── overall_bar_chart.html  # Overall visualization
 │   ├── Borough_*/              # Borough-specific reports
 │   └── District_*/             # District and school reports
-├── para_fillrate_by_location.py # Main analytics engine
-├── para_fillrate_oo.py         # Object-oriented implementation
-└── README.md                   # This file
+│
+├── 📄 Documentation
+│   ├── README.md               # This file
+│   ├── CHANGELOG.md            # Version history
+│   └── script_documentation.md # Technical documentation
+│
+└── 📄 Legacy Files (Not Version Controlled)
+    ├── para_fillrate_by_location.py # Original monolithic script
+    └── para_fillrate_oo.py         # Object-oriented implementation
 ```
 
 ## 🔧 Installation & Setup
@@ -82,8 +97,8 @@ cd ParaJobs
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the analysis
-python para_fillrate_by_location.py
+# Run the analysis (using the new modular script)
+python para_fillrate_modular.py
 ```
 
 ### Dependencies

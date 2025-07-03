@@ -6,7 +6,7 @@
   publish = "nycdoe_reports"
   
   # Build command to generate reports
-  command = "python para_fillrate_by_location.py"
+  command = "python para_fillrate_modular.py"
 
 [build.environment]
   # Python version to use

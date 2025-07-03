@@ -17,6 +17,17 @@
 debug_test.py
 test_dates.py
 
+# Ignore legacy scripts (keep for reference but don't track changes)
+para_fillrate_by_location.py
+para_fillrate_oo.py  # Object-oriented implementation (legacy)
+para_report_generation.log
+
+# Ignore temporary or experimental scripts
+*_test.py
+*_temp.py
+*_old.py
+*_backup.py
+
 # Ignore Python cache
 __pycache__/
 *.py[cod]

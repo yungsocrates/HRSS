@@ -5,6 +5,34 @@ All notable changes to the NYCDOE Paraprofessional Jobs Fill Rate Analytics proj
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2025-07-02
+
+### Added
+- 🏗️ **Complete Codebase Modularization**: Refactored the monolithic script into specialized modules
+  - `para_fillrate_modular.py`: New main entry point for the application
+  - `data_processing.py`: Data loading, cleaning, and summary statistics functions
+  - `chart_utils.py`: Chart generation utilities for all visualization types
+  - `templates.py`: HTML/CSS/JS templates and helper functions
+  - `report_generators.py`: District, school, and specialized report generation
+- 🔄 **Improved Code Organization**: Clear separation of concerns for better maintainability
+- 🔧 **Standardized Module Imports**: Structured imports with explicit function naming
+- 📦 **Encapsulated Functionality**: Self-contained modules that can be reused and tested independently
+- 🧪 **Improved Testability**: Better structure allows for easier unit testing
+
+### Enhanced
+- 🎨 **Consistent Logo Usage**: Standardized white PNG logo across all reports
+- 📋 **Removed "NYCDOE" from Report Titles**: Cleaner, more professional titles
+- 🔗 **Optimized Resource Paths**: Efficient logo file referencing from project root
+- 🧩 **Improved Header Implementation**: Consistent header across all report types
+- 📱 **Responsive Design Improvements**: Better handling on mobile devices
+
+### Technical Improvements
+- Legacy code preserved as reference but excluded from version control
+- Improved error handling and logging throughout the application
+- Centralized configuration in main script
+- Enhanced documentation with detailed function descriptions
+- Netlify deployment configuration updated to use new modular entry point
+
 ## [3.3.0] - 2025-07-02
 
 ### Added
