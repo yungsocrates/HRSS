@@ -122,7 +122,7 @@ def get_base_css():
 
             .header-text h1 {
                 font-size: 2.5em;
-                font-weight: 300;
+                font-weight: 700;
                 margin-bottom: 10px;
                 margin-top: 0;
                 text-align: center;
@@ -130,6 +130,7 @@ def get_base_css():
 
             .header-text h2 {
                 font-size: 1.5em;
+                font-weight: 600;
                 opacity: 0.9;
                 margin-bottom: 10px;
                 margin-top: 0;

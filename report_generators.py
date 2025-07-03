@@ -313,7 +313,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     
     # Build content
     content = f"""
-        {get_header_html("../../Horizontal_logo_White_PublicSchools.png", 
+        {get_header_html("../Horizontal_logo_White_PublicSchools.png", 
                         "Substitute Paraprofessional Jobs Report", 
                         f"District: {int(district)}", 
                         date_range_info)}
@@ -358,7 +358,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     """
     
     # Generate HTML
-    html_content = get_html_template(f"Jobs Report - District {int(district)}", "../../Horizontal_logo_White_PublicSchools.png", content)
+    html_content = get_html_template(f"Jobs Report - District {int(district)}", "../Horizontal_logo_White_PublicSchools.png", content)
     
     # Save report
     report_file = os.path.join(district_dir, f'{int(district)}_report.html')

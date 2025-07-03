@@ -104,8 +104,13 @@ Key functions:
 ### Standardized Logo Implementation
 - Consistent white PNG logo (`Horizontal_logo_White_PublicSchools.png`)
 - Logo positioned on the right side of the header with text center-aligned on the left
-- Proper relative path handling for different report depths
-- Single source logo file with optimized references (no file copying)
+- **Bold header titles** for improved visual hierarchy (font-weight: 700 for main, 600 for subtitles)
+- **Relative path handling** for universal compatibility (local and web deployment)
+- Smart logo copying for deployment while maintaining efficient path references
+- **Path structure**:
+  - Main dashboard: `Horizontal_logo_White_PublicSchools.png` (same directory)
+  - Borough reports: `../Horizontal_logo_White_PublicSchools.png` (one level up)
+  - District/School reports: Appropriate `../` levels based on directory depth
 - Responsive design that maintains logo visibility at different screen sizes
 
 ### Report Title Standardization

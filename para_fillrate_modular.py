@@ -11,7 +11,7 @@ import time
 # Import our custom modules
 from data_processing import (
     load_and_process_data, get_data_date_range, create_summary_stats, 
-    create_borough_summary_stats, df_with_pretty_columns,
+    create_borough_summary_stats, copy_logo_to_output, df_with_pretty_columns,
     DISPLAY_COLS, format_pct, format_int
 )
 from report_generators import create_district_report
@@ -126,7 +126,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats, 
     
     # Build content
     content = f"""
-        {get_header_html("../../Horizontal_logo_White_PublicSchools.png", 
+        {get_header_html("../Horizontal_logo_White_PublicSchools.png", 
                         "Substitute Paraprofessional Jobs Report", 
                         f"Borough: {borough}", 
                         date_range_info)}
@@ -171,7 +171,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats, 
     """
     
     # Generate HTML
-    html_content = get_html_template(f"Jobs Report - {borough}", "../../Horizontal_logo_White_PublicSchools.png", content)
+    html_content = get_html_template(f"Jobs Report - {borough}", "../Horizontal_logo_White_PublicSchools.png", content)
     
     # Save report
     report_file = os.path.join(borough_dir, f'{borough_clean}_report.html')
@@ -273,7 +273,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
     
     # Build content
     content = f"""
-        {get_header_html("../Horizontal_logo_White_PublicSchools.png", 
+        {get_header_html("Horizontal_logo_White_PublicSchools.png", 
                         "Substitute Paraprofessional Jobs Dashboard", 
                         "Citywide Summary Report", 
                         date_range_info)}
@@ -342,7 +342,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
     """
     
     # Generate HTML
-    html_content = get_html_template("Jobs Dashboard - Overall Summary", "../Horizontal_logo_White_PublicSchools.png", content)
+    html_content = get_html_template("Jobs Dashboard - Overall Summary", "Horizontal_logo_White_PublicSchools.png", content)
     
     # Save report
     index_file = os.path.join(output_dir, 'index.html')
@@ -365,6 +365,9 @@ def main():
     try:
         # Create output directory
         os.makedirs(output_directory, exist_ok=True)
+        
+        # Copy logo for deployment
+        copy_logo_to_output(output_directory)
         
         # Load and process data
         print("Loading and processing data...")
