@@ -27,26 +27,15 @@ def get_base_css():
 
             body { 
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-                line-height: 1.6;
-                color: #333;
-                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-                min-height: 100vh;
-                padding: 20px;
-            }
-
-            .container {
-                max-width: 1600px;
-                margin: 0 auto;
-                background: white;
-                border-radius: 15px;
-                box-shadow: var(--card-shadow);
-                overflow: hidden;
+                margin: 0;
+                padding: 0; 
+                background-color: #f5f5f5;
             }
 
             .header { 
                 background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
                 color: white;
-                padding: 30px 20px; 
+                padding: 20px; 
                 margin: 0;
                 box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             }
@@ -55,7 +44,7 @@ def get_base_css():
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                max-width: 1400px;
+                max-width: 1500px;
                 margin: 0 auto;
                 padding: 0 20px;
             }
@@ -108,22 +97,17 @@ def get_base_css():
             }
 
             .content {
-                padding: 30px;
+                max-width: 1500px;
+                margin: 0 auto;
+                padding: 20px;
             }
 
             .section { 
                 background: white;
-                margin: 30px 0; 
-                padding: 30px;
-                border-radius: 15px;
-                box-shadow: var(--card-shadow);
-                border: 1px solid #e0e0e0;
-                transition: all 0.3s ease;
-            }
-
-            .section:hover {
-                box-shadow: var(--hover-shadow);
-                transform: translateY(-2px);
+                margin: 20px 0; 
+                padding: 25px;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
 
             .section h2, .section h3 { 
@@ -142,12 +126,11 @@ def get_base_css():
             }
 
             .navigation { 
-                background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+                background: #e3f2fd; 
                 padding: 20px; 
-                border-radius: 15px; 
+                border-radius: 10px; 
                 margin: 20px 0;
                 border-left: 5px solid var(--primary-color);
-                box-shadow: var(--card-shadow);
             }
 
             .navigation a {
@@ -164,17 +147,14 @@ def get_base_css():
             .navigation a:hover {
                 background: var(--primary-color);
                 color: white;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(46, 134, 171, 0.3);
             }
 
             .summary-box { 
-                background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
-                padding: 25px; 
-                border-radius: 15px; 
-                margin: 25px 0;
-                border-left: 5px solid var(--primary-color);
-                box-shadow: var(--card-shadow);
+                background: #e3f2fd; 
+                padding: 20px; 
+                border-radius: 10px; 
+                margin: 20px 0;
+                border-left: 5px solid #1976d2;
             }
 
             .summary-box h3 {
@@ -197,13 +177,10 @@ def get_base_css():
                 background: rgba(255, 255, 255, 0.7);
                 font-size: 1.1em;
                 text-align: center;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                transition: all 0.3s ease;
             }
 
             .summary-box li:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+                background: rgba(255, 255, 255, 0.9);
             }
 
             .summary-box strong {
@@ -426,7 +403,6 @@ def get_base_css():
                 padding: 30px 20px;
                 margin-top: 40px;
                 font-size: 1.1em;
-                border-radius: 0 0 15px 15px;
             }
 
             .footer p {
@@ -576,9 +552,7 @@ def get_html_template(title, logo_path, content, extra_css="", extra_js=""):
         </script>
     </head>
     <body>
-        <div class="container">
-            {content}
-        </div>
+        {content}
     </body>
     </html>
     """

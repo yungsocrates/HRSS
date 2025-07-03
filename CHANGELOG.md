@@ -5,6 +5,28 @@ All notable changes to the NYC Public Schools Paraprofessional Jobs Fill Rate An
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.4.0] - 2025-07-03
+
+### Added
+- 🖥️ **Full-Width Layout**: Header and footer now extend the complete width of the screen for maximum visual impact
+- 📐 **Optimized Content Width**: Increased content area to 1600px for better data presentation and readability
+- 🎨 **Unified Design Language**: Complete alignment with Renewal project's professional layout and styling
+- 🔄 **Layout Consistency**: Removed container-based layout in favor of full-width design for modern appearance
+
+### Enhanced
+- 🌐 **Screen Utilization**: Full-width header and footer maximize screen real estate usage
+- 📊 **Content Display**: Wider content area (1600px) provides better accommodation for large data tables and charts
+- 🎭 **Visual Impact**: Enhanced professional appearance with edge-to-edge header and footer design
+- 🏗️ **Template Architecture**: Simplified HTML structure removing unnecessary container wrappers
+- 📱 **Responsive Behavior**: Maintained responsive design while achieving full-width layout
+- 🔧 **CSS Optimization**: Streamlined styling removing container-specific CSS for cleaner codebase
+
+### Technical
+- ♻️ **HTML Structure**: Updated template generation to remove container div wrapper
+- 🎨 **CSS Updates**: Modified header, footer, and content CSS for full-width layout
+- 📏 **Width Management**: Optimized max-width settings for header content and main content areas
+- 🚀 **Performance**: Simplified DOM structure for better rendering performance
+
 ## [4.3.0] - 2025-07-03
 
 ### Added
