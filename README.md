@@ -37,12 +37,14 @@ This project analyzes substitute paraprofessional job postings and fill rates ac
 - **Date Range Display**: Clear indication of data period on all reports
 
 ### 🎨 Modern Design Features
-- **Elegant UI**: Professional gradient headers and card-based layouts
+- **Elegant UI**: Professional gradient headers with improved layout and proportional logo sizing
+- **Enhanced Header/Footer**: Left-aligned text with smaller, proportional logo placement and bold titles
 - **Responsive Design**: Optimized for desktop, tablet, and mobile viewing
 - **Enhanced Tables**: Improved readability with solid-color headers and responsive containers
 - **Hover Effects**: Interactive elements with smooth transitions
-- **Professional Styling**: Consistent color scheme and typography throughout
+- **Professional Styling**: Consistent color scheme and typography throughout with NYC Public Schools branding
 - **Comparison System**: Visual comparison cards with distinct color coding for different administrative levels
+- **Modern CSS**: Clean, professional header/footer design with improved spacing and typography hierarchy
 
 ### 🌐 Multi-language Support
 Specialized tracking for paraprofessional positions requiring:

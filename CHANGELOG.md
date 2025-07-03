@@ -5,6 +5,36 @@ All notable changes to the NYC Public Schools Paraprofessional Jobs Fill Rate An
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.3.0] - 2025-07-03
+
+### Added
+- 🎨 **Enhanced Header/Footer Design**: Replicated improved CSS styling from Renewal project for consistent, professional appearance
+- 📐 **Proportional Logo Sizing**: Updated logo to optimal 80px height for better proportion and visual balance
+- 🔄 **Unified Branding**: Standardized header/footer layout across both ParaJobs and Renewal projects
+- 📧 **Consistent Contact Information**: Maintained appropriate contact emails for each project (SubCentral@schools.nyc.gov for ParaJobs)
+
+### Enhanced
+- 🎭 **Modern Header Layout**: 
+  - Left-aligned header text with improved spacing and typography hierarchy
+  - Right-aligned logo with proper flex layout and sizing
+  - Enhanced text shadow and font weights for professional appearance
+  - Improved date information display with better opacity and formatting
+- 🦶 **Professional Footer Styling**: 
+  - Clean, centered layout with appropriate padding and margins
+  - Consistent color scheme using primary brand colors
+  - Improved link styling with hover effects
+  - Unified footer structure across all report types
+- 🏗️ **CSS Architecture**: 
+  - Removed unnecessary decorative elements for cleaner appearance
+  - Improved flex layout for better responsive behavior
+  - Enhanced color consistency and professional styling
+  - Better typography hierarchy with appropriate font weights
+
+### Technical
+- 🔧 **Template Improvements**: Updated `templates.py` with new header/footer CSS from Renewal project
+- 📱 **Responsive Design**: Improved mobile and tablet viewing experience
+- 🎯 **Cross-Project Consistency**: Aligned visual design language between ParaJobs and Renewal projects
+
 ## [4.2.0] - 2025-01-02
 
 ### Added

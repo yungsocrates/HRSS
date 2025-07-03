@@ -46,102 +46,65 @@ def get_base_css():
             .header { 
                 background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
                 color: white;
-                padding: 40px 20px; 
-                position: relative;
-                overflow: hidden;
-            }
-
-            .header::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="80" r="2.5" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
-                opacity: 0.3;
+                padding: 30px 20px; 
+                margin: 0;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             }
             
             .header-content {
                 display: flex;
-                flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0 20px;
             }
             
             .header-text {
-                text-align: center;
                 flex: 1;
-                padding-right: 5%;
-            }
-
-            .header h1 {
-                font-size: 2.5em;
-                font-weight: 300;
-                margin-bottom: 10px;
-                position: relative;
-                z-index: 1;
-            }
-
-            .header h2 {
-                font-size: 1.5em;
-                opacity: 0.9;
-                position: relative;
-                z-index: 1;
-                margin-bottom: 10px;
-            }
-
-            .header p {
-                font-size: 1.1em;
-                opacity: 0.9;
-                position: relative;
-                z-index: 1;
-                margin: 5px 0;
-            }
-
-            .header-content {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 20px;
-                position: relative;
-                z-index: 1;
-            }
-
-            .header-logo {
-                height: 120px;
-                width: auto;
-                filter: brightness(1.1);
-                margin-right: 5%;
-            }
-
-            .header-text {
                 text-align: left;
-                flex: 1;
+                margin-right: 30px;
             }
 
             .header-text h1 {
-                font-size: 2.5em;
+                margin: 0;
+                font-size: 2.2em;
                 font-weight: 700;
-                margin-bottom: 10px;
-                margin-top: 0;
-                text-align: center;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                line-height: 1.2;
             }
 
             .header-text h2 {
-                font-size: 1.5em;
+                margin: 8px 0;
+                font-size: 1.2em;
                 font-weight: 600;
                 opacity: 0.9;
-                margin-bottom: 10px;
-                margin-top: 0;
-                text-align: center;
+                line-height: 1.3;
+            }
+
+            .header-text .date-info {
+                margin: 8px 0 0 0;
+                font-size: 1.0em;
+                opacity: 0.8;
             }
 
             .header-text p {
-                font-size: 1.1em;
-                opacity: 0.9;
-                margin: 5px 0;
-                text-align: center;
+                font-size: 1.0em;
+                opacity: 0.8;
+                margin: 8px 0 0 0;
+            }
+
+            .header-logo {
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+            }
+
+            .logo {
+                height: 80px;
+                width: auto;
+                filter: brightness(1.1);
+                margin-left: 20px;
             }
 
             .content {
@@ -168,12 +131,14 @@ def get_base_css():
                 border-bottom: 3px solid var(--primary-color); 
                 padding-bottom: 15px;
                 margin-bottom: 20px;
-                font-weight: 600;
+                margin-top: 0;
+                font-weight: 700;
                 font-size: 1.8em;
             }
 
             .section h3 {
                 font-size: 1.5em;
+                font-weight: 600;
             }
 
             .navigation { 
@@ -454,26 +419,30 @@ def get_base_css():
                 border: 1px solid #e0e0e0;
             }
 
-            .footer { 
-                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            .footer {
+                background-color: var(--primary-color);
                 color: white;
                 text-align: center;
-                padding: 30px;
+                padding: 30px 20px;
                 margin-top: 40px;
-                border-radius: 15px;
-                box-shadow: var(--card-shadow);
+                font-size: 1.1em;
+                border-radius: 0 0 15px 15px;
             }
 
-            .footer a { 
-                color: #FFD700; 
-                text-decoration: none; 
+            .footer p {
+                margin: 8px 0;
+            }
+
+            .footer a {
+                color: #e3f2fd;
+                text-decoration: none;
                 font-weight: 600;
                 transition: all 0.3s ease;
             }
 
-            .footer a:hover { 
-                text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-                transform: scale(1.05);
+            .footer a:hover {
+                text-decoration: underline;
+                color: #FFD700;
             }
 
             iframe {
@@ -622,22 +591,30 @@ def get_header_html(logo_path, title, subtitle="", date_range_info=""):
             <div class="header-text">
                 <h1>{title}</h1>
                 {f"<h2>{subtitle}</h2>" if subtitle else ""}
-                {f"<p>{date_range_info}</p>" if date_range_info else ""}
+                {f'<div class="date-info">{date_range_info}</div>' if date_range_info else ""}
                 <p>Generated on: {time.strftime('%B %d, %Y at %I:%M %p')}</p>
             </div>
-            <img src="{logo_path}" alt="NYC Public Schools" class="header-logo">
+            <div class="header-logo">
+                <img src="{logo_path}" alt="NYC Public Schools" class="logo">
+            </div>
         </div>
     </div>
     """
 
-def get_professional_footer():
-    """Return the professional footer HTML"""
+def get_professional_footer(contact_emails=None):
+    """Return the professional footer HTML with NYC Public Schools branding"""
+    contact_info = ""
+    if contact_emails:
+        contact_links = " | ".join([f'<a href="mailto:{email}" style="color: #e3f2fd;">{email}</a>' for email in contact_emails])
+        contact_info = f"<p>Contact: {contact_links}</p>"
+    else:
+        contact_info = f"<p>Contact: <a href=\"mailto:SubCentral@schools.nyc.gov\" style=\"color: #e3f2fd;\">SubCentral@schools.nyc.gov</a></p>"
+    
     return f"""
     <div class="footer">
-        <div style="font-weight:bold; font-size:15px; margin-bottom:6px;">Created by HR School Support</div>
-        <div style="margin-bottom:6px;">For internal use only.</div>
-        <div style="margin-bottom:6px;">For inquiries, please contact <a href="mailto:SubCentral@schools.nyc.gov">SubCentral@schools.nyc.gov</a>.</div>
-        <div style="font-size:13px; color:#e0e0e0;">&copy; {pd.Timestamp.now().year} Property of the New York City Department of Education</div>
+        <p>Property of the New York City Department of Education</p>
+        {contact_info}
+        <p>HR School Support Analysis Team | {pd.Timestamp.now().year}</p>
     </div>
     """
 

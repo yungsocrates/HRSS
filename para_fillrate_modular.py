@@ -167,7 +167,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats, 
             </div>
         </div>
         
-        {get_professional_footer()}
+        {get_professional_footer(['SubCentral@schools.nyc.gov'])}
     """
     
     # Generate HTML
@@ -338,7 +338,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
             </div>
         </div>
         
-        {get_professional_footer()}
+        {get_professional_footer(['SubCentral@schools.nyc.gov'])}
     """
     
     # Generate HTML

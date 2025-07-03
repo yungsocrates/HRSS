@@ -163,7 +163,7 @@ def create_school_report(district, location, location_clean, school_data, df, su
             </div>
         </div>
         
-        {get_professional_footer()}
+        {get_professional_footer(['SubCentral@schools.nyc.gov'])}
     """
     
     # Generate HTML
@@ -354,7 +354,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
             </div>
         </div>
         
-        {get_professional_footer()}
+        {get_professional_footer(['SubCentral@schools.nyc.gov'])}
     """
     
     # Generate HTML
