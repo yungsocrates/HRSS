@@ -1,9 +1,49 @@
 # Changelog
 
-All notable changes to the NYCDOE Paraprofessional Jobs Fill Rate Analytics project will be documented in this file.
+All notable changes to the NYC Public Schools Paraprofessional Jobs Fill Rate Analytics project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [4.2.0] - 2025-01-02
+
+### Added
+- 📋 **Updated Documentation**: Comprehensive README.md updates reflecting modular architecture
+- 🏗️ **Architecture Documentation**: Detailed explanation of modular file structure and responsibilities
+- 🚀 **Deployment Guidance**: Updated deployment instructions for both Netlify and manual deployments
+- 📚 **Enhanced Project Overview**: Improved project description highlighting standardized branding and bold typography
+
+### Enhanced
+- 🎯 **Branding Consistency**: Removed "NYCDOE" references throughout documentation in favor of "NYC Public Schools"
+- 📖 **Technical Documentation**: Updated all technical references to point to the new modular entry point
+- 🔧 **Configuration Updates**: Netlify build command updated to use `para_fillrate_modular.py`
+
+### Documentation
+- Updated architecture section to reflect current modular structure
+- Enhanced feature descriptions to include bold typography and logo standardization
+- Improved troubleshooting section with current file references
+- Added comprehensive module descriptions and responsibilities
+
+## [4.1.0] - 2025-01-02
+
+### Added
+- 🎨 **Bold Header Titles**: Enhanced visual hierarchy with bold main titles (font-weight: 700) and semi-bold subtitles (font-weight: 600)
+- 🔗 **Universal Logo Compatibility**: Implemented relative path system that works both locally and on Netlify deployment
+- 📂 **Smart Logo Management**: Logo copying functionality for deployment while using efficient relative paths
+- 🌐 **Production-Ready Logo Display**: Logo now displays correctly in both local development and deployed environments
+
+### Fixed
+- 🌐 **Cross-Platform Logo Display**: Fixed logo path issues that prevented display on Netlify while maintaining local functionality
+- 🔄 **Relative Path Implementation**: Switched from absolute paths to relative paths for broader compatibility:
+  - Main dashboard: `Horizontal_logo_White_PublicSchools.png` (same directory)
+  - Borough reports: `../Horizontal_logo_White_PublicSchools.png` (one level up)
+  - District/School reports: Various levels of `../` based on directory depth
+- ✅ **Logo Asset Management**: Ensured logo files are properly copied to output directory for deployment
+
+### Enhanced
+- 💪 **Typography Improvements**: Strengthened visual hierarchy with bold titles for better readability
+- 🎯 **Deployment Optimization**: Streamlined logo handling for both local development and production deployment
+- 🔧 **Asset Pipeline**: Improved asset management for web deployment compatibility
 
 ## [4.0.0] - 2025-07-02
 

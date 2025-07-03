@@ -1,21 +1,22 @@
-# NYCDOE Paraprofessional Jobs Fill Rate Analytics Dashboard
+# NYC Public Schools Paraprofessional Jobs Fill Rate Analytics Dashboard
 
 [![Deploy to Netlify](https://img.shields.io/badge/deploy-netlify-00c7b7?style=flat-square&logo=netlify)](https://app.netlify.com/start/deploy?repository=https://github.com/yourusername/ParaJobs)
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-A comprehensive analytics dashboard for tracking and visualizing NYC Department of Education (NYCDOE) substitute paraprofessional job fill rates across all districts, boroughs, and schools.
+A comprehensive analytics dashboard for tracking and visualizing NYC Department of Education substitute paraprofessional job fill rates across all districts, boroughs, and schools. Features a modern, modular architecture with standardized branding and enhanced visual design.
 
 ## 🎯 Overview
 
-This project analyzes substitute paraprofessional job postings and fill rates across the NYCDOE system, providing detailed insights into:
+This project analyzes substitute paraprofessional job postings and fill rates across the NYC Public Schools system, providing detailed insights into:
 
 - **Fill Rate Analysis**: Comprehensive tracking of filled vs. unfilled positions
 - **Geographic Breakdown**: Analysis by borough, district, and individual schools
 - **Multi-language Support**: Specialized tracking for bilingual paraprofessional positions
-- **Interactive Dashboards**: Modern, responsive HTML reports with interactive charts
+- **Interactive Dashboards**: Modern, responsive HTML reports with interactive charts and bold typography
 - **Time-series Analysis**: Historical trends and patterns in job filling
 - **Data Period Tracking**: Clear display of date ranges for all analyzed data
+- **Standardized Branding**: Professional NYC Public Schools logo integration across all reports
 
 ## 🚀 Features
 
@@ -24,6 +25,8 @@ This project analyzes substitute paraprofessional job postings and fill rates ac
 - **Borough Reports**: Detailed analysis for each NYC borough with modern, elegant styling
 - **District Reports**: Individual district performance with enhanced data presentation and responsive design
 - **School Reports**: Granular analysis for every school with professional layout, improved tables, and comprehensive comparison features
+- **Bold Typography**: Enhanced visual hierarchy with bold report titles throughout the dashboard
+- **Consistent Branding**: NYC Public Schools logo displayed prominently on all reports with correct sizing and positioning
 
 ### 📈 Visualizations
 - **Pie Charts**: Distribution of filled/unfilled positions by classification
@@ -54,32 +57,41 @@ Specialized tracking for paraprofessional positions requiring:
 
 ## 🏗️ Architecture
 
+The project follows a modern modular architecture for maintainability and scalability:
+
 ```
 ParaJobs/
-├── 📁 Core Files
-│   ├── chart_utils.py             # Chart generation utilities
-│   ├── data_processing.py         # Data loading and processing functions
-│   ├── report_generators.py       # Report generation functions
-│   ├── templates.py               # HTML/CSS/JS templates and helpers
-│   ├── para_fillrate_modular.py   # Main entry point (modular architecture)
-│   └── Horizontal_logo_White_PublicSchools.png  # Logo file
+├── 📁 Core Modules (Modular Architecture)
+│   ├── para_fillrate_modular.py   # Main entry point - orchestrates the entire pipeline
+│   ├── data_processing.py         # Data loading, cleaning, and summary statistics
+│   ├── chart_utils.py             # Chart generation with Plotly
+│   ├── templates.py               # HTML/CSS/JS templates and styling components
+│   ├── report_generators.py       # Report generation for districts and schools
+│   └── Horizontal_logo_White_PublicSchools.png  # Official NYC Public Schools logo
 │
 ├── 📁 Fill Rate Data/           # Raw CSV data files
+│   ├── mayjobs.csv              # Primary job data
+│   └── nycdoe_job_summary.csv   # Summary statistics
 │
-├── 📁 nycdoe_reports/          # Generated HTML reports
+├── 📁 nycdoe_reports/          # Generated HTML reports (created at runtime)
 │   ├── index.html              # Main dashboard
 │   ├── overall_bar_chart.html  # Overall visualization
+│   ├── Horizontal_logo_White_PublicSchools.png  # Logo copy for deployment
 │   ├── Borough_*/              # Borough-specific reports
 │   └── District_*/             # District and school reports
 │
-├── 📄 Documentation
-│   ├── README.md               # This file
-│   ├── CHANGELOG.md            # Version history
-│   └── script_documentation.md # Technical documentation
+├── 📄 Documentation & Configuration
+│   ├── README.md               # This comprehensive guide
+│   ├── CHANGELOG.md            # Version history and updates
+│   ├── script_documentation.md # Technical documentation
+│   ├── requirements.txt        # Python dependencies
+│   ├── netlify.toml           # Netlify deployment configuration
+│   └── .gitignore             # Version control exclusions
 │
-└── 📄 Legacy Files (Not Version Controlled)
+└── 📄 Legacy Files (Ignored in .gitignore)
     ├── para_fillrate_by_location.py # Original monolithic script
-    └── para_fillrate_oo.py         # Object-oriented implementation
+    ├── para_fillrate_oo.py         # Object-oriented implementation
+    └── debug_test.py               # Development testing script
 ```
 
 ## 🔧 Installation & Setup
@@ -125,10 +137,17 @@ The system processes CSV files containing:
 - **District**: School district number
 - **Date/Time Information**: When jobs were posted and filled
 
-## 🎨 Modern UI Features (Version 3.1)
+## 🎨 Modern UI Features (Version 4.0)
 
-### Design Elements
-- **Responsive Layout**: Mobile-friendly design that works perfectly on all devices
+### Visual Design & Branding
+- **NYC Public Schools Logo**: Official white PNG logo (120px height) prominently displayed on all reports
+- **Bold Typography**: Enhanced visual hierarchy with bold report titles (font-weight: 700 for h1, 600 for h2)
+- **Professional Header Layout**: Title on left, logo on right with optimal spacing and alignment
+- **Consistent Footer**: "Property of the New York City Department of Education" across all reports
+- **Relative Path Handling**: Smart logo path resolution for all report types and directory structures
+
+### Responsive Layout & Design
+- **Mobile-Friendly Design**: Works perfectly on all devices with responsive breakpoints
 - **Professional Styling**: Clean, modern interface with consistent color scheme (#2C5282 primary)
 - **Enhanced Typography**: Optimized font choices with proper visual hierarchy
 - **Interactive Elements**: Smooth hover effects and intuitive user interactions
@@ -157,19 +176,22 @@ The system processes CSV files containing:
 ## 📱 Deployment
 
 ### Netlify Deployment
-This project is optimized for Netlify deployment:
+This project is optimized for Netlify deployment with automatic logo handling:
 
 1. Connect your GitHub repository to Netlify
-2. Set build command: `python para_fillrate_by_location.py`
+2. Set build command: `python para_fillrate_modular.py`
 3. Set publish directory: `nycdoe_reports`
-4. Deploy!
+4. Deploy! (Logo files are automatically copied for correct display)
+
+The modular architecture ensures all assets, including the NYC Public Schools logo, are properly deployed and display correctly in both local and production environments.
 
 ### Manual Deployment
 ```bash
-# Generate reports
-python para_fillrate_by_location.py
+# Generate reports using the modular architecture
+python para_fillrate_modular.py
 
 # Upload nycdoe_reports/ directory to your web server
+# Logo and all assets are automatically included
 ```
 
 ## 📈 Key Metrics & KPIs
