@@ -1,5 +1,27 @@
 """
-HTML Templates and CSS Styles for NYC DOE Reports
+HTML Templates and CSS Styles for NYC            .he            .header-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                max-width: 1800px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }tent {
+                display: flex;
+                .content {
+                max-width: 1800px;
+                margin: 0 auto;
+                padding: 20px;
+            }   .content {
+                max-width: 1750px;
+                margin: 0 auto;
+                padding: 20px;
+            }           justify-content: space-between;
+                align-items: center;
+                max-width: 1750px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }orts
 """
 
 import time
@@ -44,7 +66,7 @@ def get_base_css():
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                max-width: 1500px;
+                max-width: 1600px;
                 margin: 0 auto;
                 padding: 0 20px;
             }
@@ -97,7 +119,7 @@ def get_base_css():
             }
 
             .content {
-                max-width: 1500px;
+                max-width: 1600px;
                 margin: 0 auto;
                 padding: 20px;
             }
@@ -390,10 +412,18 @@ def get_base_css():
                 margin: 25px 0; 
                 text-align: center;
                 background: white;
-                padding: 30px;
+                padding: 20px 0;
                 border-radius: 15px;
                 box-shadow: var(--card-shadow);
                 border: 1px solid #e0e0e0;
+                overflow: hidden;
+            }
+
+            .chart-container iframe {
+                max-width: 100%;
+                border: none;
+                display: block;
+                margin: 0 auto;
             }
 
             .footer {

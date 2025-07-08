@@ -8,7 +8,7 @@ The heavy lifting is now done by imported modules for better maintainability.
 import os
 import time
 
-# Import our custom modules
+# Import our custom mo                    <iframe src="overall_bar_chart.html" width="1400" height="600" frameborder="0"></iframe>ules
 from data_processing import (
     load_and_process_data, get_data_date_range, create_summary_stats, 
     create_borough_summary_stats, copy_logo_to_output, df_with_pretty_columns,
@@ -147,7 +147,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats, 
             <div class="section">
                 <h3>Jobs by Classification and Type</h3>
                 <div class="chart-container">
-                    <iframe src="{borough_clean}_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
+                    <iframe src="{borough_clean}_bar_chart.html" width="1200" height="580" frameborder="0"></iframe>
                 </div>
             </div>
 
@@ -284,7 +284,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
             <div class="section">
                 <h3>Overall Jobs by Classification and Type</h3>
                 <div class="chart-container">
-                    <iframe src="overall_bar_chart.html" width="1420" height="520" frameborder="0"></iframe>
+                    <iframe src="overall_bar_chart.html" width="1450" height="600" frameborder="0"></iframe>
                 </div>
             </div>
             

@@ -99,10 +99,13 @@ Contains all chart generation logic:
 - Bar chart creation for different report levels
 - Pie chart generation for classifications
 - Chart styling and customization
+- **Optimized chart dimensions**: Charts sized to 1450px x 550px for perfect container fit
 
 Key functions:
-- `create_bar_chart()`: Generates bar charts for district and borough reports
-- `create_overall_bar_chart()`: Creates specialized bar charts for the main dashboard
+- `create_bar_chart()`: Generates bar charts for district and borough reports (1200px width)
+- `create_overall_bar_chart()`: Creates specialized bar charts for the main dashboard (1450px width)
+  - **Enhanced**: Optimized dimensions to eliminate horizontal scrollbars
+  - Perfect fit within container with 1700px max-width layout
 - `create_pie_charts_for_data()`: Generates pie charts for data breakdowns
 
 ### `templates.py`

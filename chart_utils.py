@@ -225,7 +225,7 @@ def create_overall_bar_chart(overall_stats, output_file):
         xaxis_title='Classification',
         yaxis_title='Number of Jobs',
         barmode='group',
-        height=500,
+        height=550,
         width=1400
     )
     

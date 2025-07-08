@@ -5,6 +5,21 @@ All notable changes to the NYC Public Schools Paraprofessional Jobs Fill Rate An
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.6.0] - 2025-07-08
+
+### Fixed
+- 🖼️ **Scrollbar Elimination**: Resolved horizontal scrollbars on overall summary bar chart
+  - Increased chart width from 1400px to 1450px for optimal display
+  - Increased iframe dimensions to 1450px x 600px to match chart size perfectly
+  - Enhanced container max-width to 1700px to accommodate larger charts
+  - Optimized chart-container CSS with proper padding and overflow handling
+  - Achieved seamless visual experience without horizontal scrolling
+
+### Enhanced
+- 📊 **Chart Display**: Improved visual presentation of overall summary bar chart
+- 🎨 **Layout Optimization**: Fine-tuned container dimensions for perfect chart fit
+- 📱 **Responsive Design**: Maintained responsive behavior while eliminating scrollbars
+
 ## [4.5.0] - 2025-07-08
 
 ### Added
