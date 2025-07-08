@@ -32,7 +32,7 @@ def create_bar_chart(data, title, output_file, div_id=None):
         x=data['Classification'].apply(clean_classification_for_display),
         y=data['Vacancy_Filled'],
         marker_color='darkgreen',
-        text=[f"{val:,}" for val in data['Vacancy_Filled']],
+        text=[f"{int(val):,}" for val in data['Vacancy_Filled']],
         textposition='auto'
     ))
     
@@ -41,7 +41,7 @@ def create_bar_chart(data, title, output_file, div_id=None):
         x=data['Classification'].apply(clean_classification_for_display),
         y=data['Vacancy_Unfilled'],
         marker_color='lightcoral',
-        text=[f"{val:,}" for val in data['Vacancy_Unfilled']],
+        text=[f"{int(val):,}" for val in data['Vacancy_Unfilled']],
         textposition='auto'
     ))
     
@@ -50,7 +50,7 @@ def create_bar_chart(data, title, output_file, div_id=None):
         x=data['Classification'].apply(clean_classification_for_display),
         y=data['Absence_Filled'],
         marker_color='forestgreen',
-        text=[f"{val:,}" for val in data['Absence_Filled']],
+        text=[f"{int(val):,}" for val in data['Absence_Filled']],
         textposition='auto'
     ))
     
@@ -59,7 +59,7 @@ def create_bar_chart(data, title, output_file, div_id=None):
         x=data['Classification'].apply(clean_classification_for_display),
         y=data['Absence_Unfilled'],
         marker_color='red',
-        text=[f"{val:,}" for val in data['Absence_Unfilled']],
+        text=[f"{int(val):,}" for val in data['Absence_Unfilled']],
         textposition='auto'
     ))
     
@@ -189,7 +189,7 @@ def create_overall_bar_chart(overall_stats, output_file):
         x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Vacancy_Filled'],
         marker_color='darkgreen',
-        text=[f"{val:,}" for val in filtered_stats['Vacancy_Filled']],
+        text=[f"{int(val):,}" for val in filtered_stats['Vacancy_Filled']],
         textposition='auto'
     ))
 
@@ -198,7 +198,7 @@ def create_overall_bar_chart(overall_stats, output_file):
         x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Vacancy_Unfilled'],
         marker_color='lightcoral',
-        text=[f"{val:,}" for val in filtered_stats['Vacancy_Unfilled']],
+        text=[f"{int(val):,}" for val in filtered_stats['Vacancy_Unfilled']],
         textposition='auto'
     ))
 
@@ -207,7 +207,7 @@ def create_overall_bar_chart(overall_stats, output_file):
         x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Absence_Filled'],
         marker_color='forestgreen',
-        text=[f"{val:,}" for val in filtered_stats['Absence_Filled']],
+        text=[f"{int(val):,}" for val in filtered_stats['Absence_Filled']],
         textposition='auto'
     ))
 
@@ -216,7 +216,7 @@ def create_overall_bar_chart(overall_stats, output_file):
         x=[clean_classification_for_display(x) for x in filtered_stats['Classification']],
         y=filtered_stats['Absence_Unfilled'],
         marker_color='red',
-        text=[f"{val:,}" for val in filtered_stats['Absence_Unfilled']],
+        text=[f"{int(val):,}" for val in filtered_stats['Absence_Unfilled']],
         textposition='auto'
     ))
 

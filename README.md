@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-A comprehensive analytics dashboard for tracking and visualizing NYC Department of Education substitute paraprofessional job fill rates across all districts, boroughs, and schools. Features a modern, modular architecture with standardized branding and enhanced visual design.
+A comprehensive analytics dashboard for tracking and visualizing NYC Department of Education substitute paraprofessional job fill rates across all districts, boroughs, and schools. Features a modern, modular architecture with standardized branding, enhanced visual design, and multi-source data integration.
 
 ## 🎯 Overview
 
@@ -12,29 +12,33 @@ This project analyzes substitute paraprofessional job postings and fill rates ac
 
 - **Fill Rate Analysis**: Comprehensive tracking of filled vs. unfilled positions
 - **Geographic Breakdown**: Analysis by borough, district, and individual schools
-- **Multi-language Support**: Specialized tracking for bilingual paraprofessional positions
+- **Multi-Source Data Integration**: Combines data from multiple CSV files (e.g., mayjobs.csv, junejobs.csv)
+- **Gender-Neutral Classifications**: Standardized job classifications with gender identifiers removed
 - **Interactive Dashboards**: Modern, responsive HTML reports with interactive charts and bold typography
 - **Time-series Analysis**: Historical trends and patterns in job filling
-- **Data Period Tracking**: Clear display of date ranges for all analyzed data
+- **Enhanced Navigation**: Seamless navigation between overview, borough, and district reports
 - **Standardized Branding**: Professional NYC Public Schools logo integration across all reports
 
 ## 🚀 Features
 
 ### 📊 Interactive Reports
-- **Citywide Overview**: High-level summary with key performance indicators and data period display
+- **Citywide Overview**: High-level summary with key performance indicators and combined data sources
 - **Borough Reports**: Detailed analysis for each NYC borough with modern, elegant styling
-- **District Reports**: Individual district performance with enhanced data presentation and responsive design
-- **School Reports**: Granular analysis for every school with professional layout, improved tables, and comprehensive comparison features
-- **Bold Typography**: Enhanced visual hierarchy with bold report titles throughout the dashboard
+- **District Reports**: Individual district performance with enhanced navigation including back-to-borough links
+- **School Reports**: Granular analysis for every school with professional layout and comprehensive comparison features
+- **Multi-Source Integration**: Seamless combination of data from multiple CSV files with source tracking
+- **Gender-Neutral Classifications**: Standardized job titles with "FEMALE PARA" and "MALE PARA" converted to "PARAPROFESSIONAL"
 - **Consistent Branding**: NYC Public Schools logo displayed prominently on all reports with correct sizing and positioning
+- **Enhanced Navigation**: Complete navigation hierarchy from overview → borough → district → school with return links
 
 ### 📈 Visualizations
 - **Pie Charts**: Distribution of filled/unfilled positions by classification
-- **Bar Charts**: Comparative analysis across different job types with integer value displays
+- **Bar Charts**: Comparative analysis across different job types with integer value displays (no more float values)
 - **Enhanced Summary Tables**: Professional tables with solid-color headers and responsive overflow handling
 - **Trend Analysis**: Fill rate patterns and performance metrics with modern, card-based interface
 - **Comparison Cards**: Four-way comparison system (Citywide vs Borough vs District vs School) with color-coded cards
-- **Date Range Display**: Clear indication of data period on all reports
+- **Date Range Display**: Clear indication of data period and source files on all reports
+- **Robust Date Parsing**: Improved handling of different date formats from various CSV sources
 
 ### 🎨 Modern Design Features
 - **Full-Width Layout**: Professional edge-to-edge header and footer design that spans the entire screen width
@@ -73,7 +77,8 @@ ParaJobs/
 │   └── Horizontal_logo_White_PublicSchools.png  # Official NYC Public Schools logo
 │
 ├── 📁 Fill Rate Data/           # Raw CSV data files
-│   ├── mayjobs.csv              # Primary job data
+│   ├── mayjobs.csv              # Primary job data source (May)
+│   ├── junejobs.csv             # Secondary job data source (June)
 │   └── nycdoe_job_summary.csv   # Summary statistics
 │
 ├── 📁 nycdoe_reports/          # Generated HTML reports (created at runtime)
@@ -123,22 +128,35 @@ plotly>=5.0.0
 numpy>=1.21.0
 ```
 
-## 📊 Data Sources
+## 📊 Data Sources & Processing
 
-The system processes CSV files containing:
-- Job postings data
-- Fill status information
-- Geographic location codes
-- Classification details
-- Timestamp information
+The system processes multiple CSV files containing:
+- **Multi-Source Integration**: Automatically combines data from multiple CSV files (e.g., mayjobs.csv, junejobs.csv)
+- **Robust Date Parsing**: Handles various date formats including Excel serial dates and standard date strings
+- **Gender-Neutral Processing**: Standardizes job classifications by removing gender identifiers
+- **Fill status information**: Tracks filled vs unfilled positions
+- **Geographic location codes**: Borough and district mapping
+- **Classification details**: Standardized job categories
+- **Source tracking**: Maintains information about which CSV file each record came from
 
-### Data Fields
-- **Classification**: Type of paraprofessional position
+### Data Fields & Processing
+- **Classification**: Standardized paraprofessional positions (gender identifiers removed)
+  - "FEMALE PARA" and "MALE PARA" → "PARAPROFESSIONAL"
+  - All "FEMALE" and "MALE" prefixes automatically removed
 - **Type**: Job type (Vacancy or Absence)
-- **Status**: Current fill status
-- **Location**: School identifier
+- **Status**: Current fill status with robust parsing
+- **Location**: School identifier with borough mapping
 - **District**: School district number
-- **Date/Time Information**: When jobs were posted and filled
+- **Date/Time Information**: Enhanced parsing for multiple date formats
+- **Source_File**: Tracks which CSV file provided each data record
+
+### Multi-Source Data Handling
+The system now supports:
+- **Automatic CSV Combination**: Seamlessly merges data from multiple source files
+- **Source Tracking**: Each record maintains reference to its source file
+- **Date Range Calculation**: Computes overall date ranges across all sources
+- **Duplicate Handling**: Intelligent processing of overlapping data
+- **Error Recovery**: Robust error handling for malformed dates or missing fields
 
 ## 🎨 Modern UI Features (Version 4.3)
 

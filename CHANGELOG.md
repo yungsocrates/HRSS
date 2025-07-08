@@ -5,6 +5,56 @@ All notable changes to the NYC Public Schools Paraprofessional Jobs Fill Rate An
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.5.0] - 2025-07-08
+
+### Added
+- 📊 **Multi-Source Data Integration**: Combined data processing from multiple CSV files (mayjobs.csv and junejobs.csv)
+- 🔄 **Enhanced Navigation**: Added back-to-borough navigation links in district reports for improved user experience
+- 👤 **Gender-Neutral Classifications**: Standardized job classifications by removing gender identifiers
+- 📅 **Robust Date Parsing**: Improved date handling for various formats including Excel serial dates and standard strings
+- 📋 **Source Tracking**: Each data record now maintains information about its source CSV file
+
+### Enhanced
+- 🎯 **Data Processing**: 
+  - Automatic combination of multiple CSV files with intelligent merging
+  - Standardization of "FEMALE PARA" and "MALE PARA" to "PARAPROFESSIONAL"
+  - Removal of "FEMALE" and "MALE" prefixes from all job classifications
+  - Enhanced error handling for malformed dates and missing fields
+- 🧭 **Navigation System**: 
+  - District reports now include navigation back to their parent borough
+  - Complete navigation hierarchy: Overview → Borough → District → School
+  - Consistent navigation links across all report levels
+- 📈 **Visualization Improvements**: 
+  - Fixed bar chart displays showing integer values instead of floats
+  - Cleaned up data source information display in headers
+  - Enhanced chart formatting with proper number formatting
+- 🗂️ **Data Management**: 
+  - Combined dataset tracking with source file identification
+  - Date range calculation across multiple data sources
+  - Improved data validation and processing pipeline
+
+### Technical
+- 🔧 **Function Updates**: 
+  - Modified `load_and_process_data()` to accept multiple CSV file paths
+  - Added `clean_classification_gender()` function for standardizing job titles
+  - Enhanced `get_data_date_range()` to handle multi-source data
+  - Updated chart creation functions to ensure integer value display
+- 📊 **Data Pipeline**: 
+  - Robust CSV combination with error handling
+  - Enhanced date parsing with fallback mechanisms
+  - Standardized data type conversions throughout processing
+  - Source file tracking integration
+- 🎨 **UI/UX**: 
+  - Simplified header information display (removed redundant data source listings)
+  - Enhanced navigation breadcrumb system
+  - Improved chart value formatting consistency
+
+### Fixed
+- 🔢 **Chart Display**: Bar charts now show clean integer values instead of floating-point numbers
+- 📅 **Date Processing**: Resolved date parsing errors for string-format dates mixed with numeric formats
+- 🧭 **Navigation**: Added missing back-to-borough links in district reports
+- 📊 **Data Types**: Ensured consistent integer conversion for all count-based metrics
+
 ## [4.4.0] - 2025-07-03
 
 ### Added

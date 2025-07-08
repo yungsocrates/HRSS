@@ -333,7 +333,7 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
             
             <div class="section">
                 <p style="text-align: center; font-style: italic; color: #666; font-size: 1.1em;">
-                    Generated from data containing {len(df):,} job records
+                    Generated from combined data containing {len(df):,} job records
                 </p>
             </div>
         </div>
@@ -355,8 +355,11 @@ def main():
     """
     Main function to generate static reports
     """
-    # Configuration
-    csv_file_path = 'Fill Rate Data/mayjobs.csv'
+    # Configuration - Updated to use multiple CSV files
+    csv_files = [
+        'Fill Rate Data/mayjobs.csv',
+        'Fill Rate Data/junejobs.csv'
+    ]
     output_directory = 'nycdoe_reports'
     
     start_time = time.time()
@@ -369,9 +372,9 @@ def main():
         # Copy logo for deployment
         copy_logo_to_output(output_directory)
         
-        # Load and process data
-        print("Loading and processing data...")
-        df = load_and_process_data(csv_file_path)
+        # Load and process data from multiple files
+        print("Loading and processing data from multiple sources...")
+        df = load_and_process_data(csv_files)
         
         # Get date range information
         date_range_info = get_data_date_range(df)
@@ -438,9 +441,10 @@ def main():
         elapsed = time.time() - start_time
         print(f"Total run time: {elapsed:.2f} seconds")
         
-    except FileNotFoundError:
-        print(f"Error: Could not find file '{csv_file_path}'")
-        print("Please make sure the file exists and update the csv_file_path variable.")
+    except FileNotFoundError as e:
+        print(f"Error: Could not find one or more CSV files: {csv_files}")
+        print("Please make sure all files exist in the specified paths.")
+        print(f"Details: {str(e)}")
     except Exception as e:
         print(f"Error: {str(e)}")
         import traceback

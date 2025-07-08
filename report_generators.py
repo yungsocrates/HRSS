@@ -319,7 +319,10 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
                         date_range_info)}
         
         <div class="content">
-            {get_navigation_html([("../index.html", "← Back to Overall Summary")])}
+            {get_navigation_html([
+                ("../index.html", "← Back to Overall Summary"),
+                (f"../Borough_{borough_name_clean}/{borough_name_clean}_report.html", f"← Back to {district_borough} Report")
+            ])}
             
             <div class="section">
                 <h3>Summary Statistics</h3>

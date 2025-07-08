@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import shutil
 import os
+import re
 
 # === GLOBAL CONSTANTS ===
 DISPLAY_COLS = [
@@ -51,24 +52,65 @@ def copy_logo_to_output(output_directory):
     else:
         print(f"Warning: Logo file {logo_source} not found")
 
-def load_and_process_data(csv_file_path):
+def load_and_process_data(csv_file_paths):
     """
-    Load CSV data and process it for dashboard display
+    Load CSV data from multiple files and process it for dashboard display
+    
+    Args:
+        csv_file_paths: Single CSV file path (string) or list of CSV file paths
     """
-    # Read the CSV file
-    df = pd.read_csv(csv_file_path)
+    # Handle both single file and multiple files
+    if isinstance(csv_file_paths, str):
+        csv_file_paths = [csv_file_paths]
+    
+    # Read and combine all CSV files
+    dataframes = []
+    for csv_file_path in csv_file_paths:
+        print(f"Loading data from: {csv_file_path}")
+        df = pd.read_csv(csv_file_path)
+        
+        # Add source file information for tracking
+        df['Source_File'] = os.path.basename(csv_file_path)
+        dataframes.append(df)
+    
+    # Combine all dataframes
+    df = pd.concat(dataframes, ignore_index=True)
+    print(f"Combined data: {len(df)} total records from {len(csv_file_paths)} files")
     
     # Clean column names (remove extra spaces)
     df.columns = df.columns.str.strip()
     
-    # Parse Job Start dates (convert from Excel serial date format)
+    # Parse Job Start dates (handle different formats)
     if 'Job Start' in df.columns:
-        # Convert Excel serial date to datetime (Excel serial dates start from 1900-01-01)
-        df['Job Start'] = pd.to_datetime(df['Job Start'] - 1, unit='D', origin='1900-01-01')
+        try:
+            # First, try to convert numeric Excel serial dates
+            numeric_mask = pd.to_numeric(df['Job Start'], errors='coerce').notna()
+            if numeric_mask.any():
+                # Convert Excel serial date to datetime for numeric values
+                df.loc[numeric_mask, 'Job Start'] = pd.to_datetime(
+                    pd.to_numeric(df.loc[numeric_mask, 'Job Start']) - 1, 
+                    unit='D', 
+                    origin='1900-01-01'
+                )
+            
+            # Then try to parse any remaining string dates
+            string_mask = ~numeric_mask
+            if string_mask.any():
+                df.loc[string_mask, 'Job Start'] = pd.to_datetime(
+                    df.loc[string_mask, 'Job Start'], 
+                    errors='coerce'
+                )
+        except Exception as e:
+            print(f"Warning: Could not parse some Job Start dates - {e}")
+            # Try a general datetime conversion as fallback
+            df['Job Start'] = pd.to_datetime(df['Job Start'], errors='coerce')
     
     # Clean Classification names to remove newlines and extra spaces
     df['Classification'] = df['Classification'].str.replace('\n', ' ').str.replace('\r', ' ').str.strip()
     df['Classification'] = df['Classification'].str.replace(r'\s+', ' ', regex=True)
+    
+    # Clean up gender-specific classifications
+    df['Classification'] = df['Classification'].apply(clean_classification_gender)
     
     # Create District code (ensure it's an integer and remove rows with NaN districts)
     df = df.dropna(subset=['District'])  # Remove rows where District is NaN
@@ -98,6 +140,35 @@ def load_and_process_data(csv_file_path):
     df['Type_Fill_Status'] = df['Type'] + '_' + df['Fill_Status']
     
     return df
+
+def clean_classification_gender(classification):
+    """
+    Clean up classification names by removing gender identifiers and standardizing terms
+    
+    Args:
+        classification (str): Original classification name
+        
+    Returns:
+        str: Cleaned classification name
+    """
+    if pd.isna(classification):
+        return classification
+    
+    # Convert to string and strip whitespace
+    clean_name = str(classification).strip()
+    
+    # Handle specific cases first
+    if clean_name.upper() in ['FEMALE PARA', 'MALE PARA']:
+        return 'PARAPROFESSIONAL'
+    
+    # Remove FEMALE or MALE from the classification
+    # Use word boundaries to avoid partial matches
+    clean_name = re.sub(r'\b(FEMALE|MALE)\s*', '', clean_name, flags=re.IGNORECASE)
+    
+    # Clean up any extra whitespace that might result from removal
+    clean_name = re.sub(r'\s+', ' ', clean_name).strip()
+    
+    return clean_name
 
 def get_borough_from_location(location):
     """
@@ -138,9 +209,9 @@ def get_data_date_range(df):
         max_date_str = max_date.strftime('%B %d, %Y')
         
         if min_date.date() == max_date.date():
-            return f"Data from: {min_date_str}"
+            return f"Job dates: {min_date_str}"
         else:
-            return f"Data period: {min_date_str} to {max_date_str}"
+            return f"Job dates: {min_date_str} to {max_date_str}"
     except Exception as e:
         print(f"Warning: Could not parse date range - {e}")
         return "Date range not available"
@@ -181,6 +252,12 @@ def create_summary_stats(df, group_cols):
     summary_pivot['Total_Vacancy'] = summary_pivot['Vacancy_Filled'] + summary_pivot['Vacancy_Unfilled']
     summary_pivot['Total_Absence'] = summary_pivot['Absence_Filled'] + summary_pivot['Absence_Unfilled']
     summary_pivot['Total'] = summary_pivot['Total_Vacancy'] + summary_pivot['Total_Absence']
+    
+    # Ensure count columns are integers
+    count_columns = ['Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 
+                     'Absence_Filled', 'Absence_Unfilled', 'Total_Absence', 'Total']
+    for col in count_columns:
+        summary_pivot[col] = summary_pivot[col].astype(int)
     
     # Calculate percentages
     summary_pivot['Vacancy_Fill_Pct'] = np.where(
