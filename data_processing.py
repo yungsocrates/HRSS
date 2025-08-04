@@ -75,7 +75,7 @@ def load_and_process_data(csv_file_paths):
         
         if filename in ['SREPP1.csv', 'SREPP2.csv']:
             print(f"Loading payroll data from: {csv_file_path}")
-            df = pd.read_csv(csv_file_path, skiprows=[1], usecols=[2*i for i in range(0, 10)], encoding='UTF-8', sep=',')
+            df = pd.read_csv(csv_file_path, skiprows=[1], usecols=[2*i for i in range(0, 7)], encoding='UTF-8', sep=',')
             print(f"  Raw columns from {filename}: {list(df.columns)}")
             df['Source_File'] = filename
             srepp_dataframes.append(df)
