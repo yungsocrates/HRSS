@@ -59,6 +59,7 @@ Thumbs.db
 
 # Ignore large data files (if any)
 *.csv.bak
+Fill Rate Data/AC Totals - System Wide.xlsx
 
 # Ignore generated reports (built at deploy time)
 nycdoe_reports/
