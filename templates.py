@@ -513,6 +513,94 @@ def get_base_css():
             }
 
             /* Print Styles */
+            /* Tabbed Tables */
+            .tabbed-container {
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: var(--card-shadow);
+            }
+
+            .tab-buttons {
+                display: flex;
+                background: var(--light-bg);
+                border-bottom: 2px solid #ddd;
+            }
+
+            .tab-button {
+                background: none;
+                border: none;
+                padding: 15px 25px;
+                cursor: pointer;
+                font-size: 1.1em;
+                font-weight: 600;
+                color: #666;
+                transition: all 0.3s ease;
+                border-bottom: 3px solid transparent;
+                flex: 1;
+                text-align: center;
+            }
+
+            .tab-button:hover {
+                background: rgba(46, 134, 171, 0.1);
+                color: var(--primary-color);
+            }
+
+            .tab-button.active {
+                background: white;
+                color: var(--primary-color);
+                border-bottom-color: var(--primary-color);
+            }
+
+            .tab-content {
+                display: none;
+                padding: 0;
+            }
+
+            .tab-content.active {
+                display: block;
+            }
+
+            .tab-content .table-responsive {
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .tab-content table {
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .tab-content table thead th {
+                background: var(--light-bg);
+                font-weight: 600;
+                color: var(--primary-color);
+            }
+
+            /* Print styles for tabs */
+            @media print {
+                .tab-buttons {
+                    display: none;
+                }
+                
+                .tab-content {
+                    display: block !important;
+                    page-break-inside: avoid;
+                    margin-bottom: 20px;
+                }
+                
+                .tab-content:before {
+                    content: attr(data-tab-title);
+                    display: block;
+                    font-weight: bold;
+                    font-size: 1.2em;
+                    color: var(--primary-color);
+                    margin-bottom: 10px;
+                    border-bottom: 2px solid var(--primary-color);
+                    padding-bottom: 5px;
+                }
+            }
+
             @media print {
                 body {
                     background: white;
@@ -547,6 +635,26 @@ def get_base_javascript():
                 info: false, 
                 order: [],
                 responsive: true
+            });
+            
+            // Tab functionality
+            $('.tab-button').click(function() {
+                var targetTab = $(this).data('tab');
+                var container = $(this).closest('.tabbed-container');
+                
+                // Remove active class from all buttons and content in this container
+                container.find('.tab-button').removeClass('active');
+                container.find('.tab-content').removeClass('active');
+                
+                // Add active class to clicked button and corresponding content
+                $(this).addClass('active');
+                container.find('.tab-content[data-tab="' + targetTab + '"]').addClass('active');
+            });
+            
+            // Activate first tab by default
+            $('.tabbed-container').each(function() {
+                $(this).find('.tab-button:first').addClass('active');
+                $(this).find('.tab-content:first').addClass('active');
             });
         });
     """
@@ -655,5 +763,83 @@ def get_comparison_card_html(title, stats, card_class=""):
         <ul>
             {stats_html}
         </ul>
+    </div>
+    """
+
+def create_tabbed_summary_tables(data, formatters):
+    """
+    Create tabbed summary tables separating Vacancy, Absence, and Combined data
+    
+    Args:
+        data: DataFrame with summary statistics
+        formatters: Dictionary of column formatters
+    
+    Returns:
+        str: HTML for tabbed table interface
+    """
+    from data_processing import df_with_pretty_columns, format_pct, format_int
+    
+    # Define columns for each tab
+    if 'Classification' in data.columns:
+        base_cols = ['Classification']
+    elif 'School' in data.columns:
+        base_cols = ['School']
+    elif 'Borough' in data.columns:
+        base_cols = ['Borough']
+    elif 'District' in data.columns:
+        base_cols = ['District']
+    else:
+        base_cols = []
+    
+    vacancy_cols = base_cols + ['Vacancy Filled', 'Vacancy Unfilled', 'Total Vacancy', 'Vacancy Fill %']
+    absence_cols = base_cols + ['Absence Filled', 'Absence Unfilled', 'Total Absence', 'Absence Fill %']
+    combined_cols = base_cols + ['Total Filled', 'Total Unfilled', 'Total', 'Overall Fill %']
+    
+    # Create pretty column names
+    pretty_data = df_with_pretty_columns(data)
+    
+    # Filter columns that exist in the data
+    vacancy_cols = [col for col in vacancy_cols if col in pretty_data.columns]
+    absence_cols = [col for col in absence_cols if col in pretty_data.columns]
+    combined_cols = [col for col in combined_cols if col in pretty_data.columns]
+    
+    # Create tables for each tab
+    vacancy_table = pretty_data[vacancy_cols].to_html(
+        index=False,
+        classes='table table-striped',
+        formatters={col: formatters.get(col, str) for col in vacancy_cols}
+    ) if vacancy_cols else "<p>No vacancy data available</p>"
+    
+    absence_table = pretty_data[absence_cols].to_html(
+        index=False,
+        classes='table table-striped',
+        formatters={col: formatters.get(col, str) for col in absence_cols}
+    ) if absence_cols else "<p>No absence data available</p>"
+    
+    combined_table = pretty_data[combined_cols].to_html(
+        index=False,
+        classes='table table-striped',
+        formatters={col: formatters.get(col, str) for col in combined_cols}
+    ) if combined_cols else "<p>No combined data available</p>"
+    
+    return f"""
+    <div class="tabbed-container">
+        <div class="tab-buttons">
+            <button class="tab-button" data-tab="vacancy">Vacancy Jobs</button>
+            <button class="tab-button" data-tab="absence">Absence Jobs</button>
+            <button class="tab-button" data-tab="combined">Combined Totals</button>
+        </div>
+        
+        <div class="tab-content" data-tab="vacancy" data-tab-title="Vacancy Jobs">
+            <div class="table-responsive">{vacancy_table}</div>
+        </div>
+        
+        <div class="tab-content" data-tab="absence" data-tab-title="Absence Jobs">
+            <div class="table-responsive">{absence_table}</div>
+        </div>
+        
+        <div class="tab-content" data-tab="combined" data-tab-title="Combined Totals">
+            <div class="table-responsive">{combined_table}</div>
+        </div>
     </div>
     """

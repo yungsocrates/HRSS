@@ -21,6 +21,8 @@ This project analyzes substitute paraprofessional job postings and fill rates ac
 
 ## 🚀 Features
 
+## 🚀 Features
+
 ### 📊 Interactive Reports
 - **Citywide Overview**: High-level summary with key performance indicators and combined data sources
 - **Borough Reports**: Detailed analysis for each NYC borough with modern, elegant styling
@@ -30,24 +32,29 @@ This project analyzes substitute paraprofessional job postings and fill rates ac
 - **Gender-Neutral Classifications**: Standardized job titles with "FEMALE PARA" and "MALE PARA" converted to "PARAPROFESSIONAL"
 - **Consistent Branding**: NYC Public Schools logo displayed prominently on all reports with correct sizing and positioning
 - **Enhanced Navigation**: Complete navigation hierarchy from overview → borough → district → school with return links
+- **SubCentral vs Payroll Matching**: Advanced job-level matching analysis using Location + EIS ID + Date between SubCentral and payroll systems
 
-### 📈 Visualizations
+### 📈 Visualizations & Data Display
+- **Tabbed Summary Tables**: Revolutionary three-tab interface separating Vacancy Jobs, Absence Jobs, and Combined Totals for easier data comprehension
 - **Pie Charts**: Distribution of filled/unfilled positions by classification
-- **Bar Charts**: Comparative analysis across different job types with integer value displays (no more float values)
+- **Bar Charts**: Comparative analysis across different job types with integer value displays
 - **Enhanced Summary Tables**: Professional tables with solid-color headers and responsive overflow handling
 - **Trend Analysis**: Fill rate patterns and performance metrics with modern, card-based interface
 - **Comparison Cards**: Four-way comparison system (Citywide vs Borough vs District vs School) with color-coded cards
 - **Date Range Display**: Clear indication of data period and source files on all reports
 - **Robust Date Parsing**: Improved handling of different date formats from various CSV sources
+- **Matching Analysis Tables**: Styled tables showing SubCentral vs Payroll data correlation with consistent formatting
 
 ### 🎨 Modern Design Features
+- **Tabbed Interface**: Clean, JavaScript-powered tabs for organizing summary statistics into logical groups
 - **Full-Width Layout**: Professional edge-to-edge header and footer design that spans the entire screen width
 - **Enhanced Container Width**: Optimized 1500px content width for better data display and readability
 - **Clean Header/Footer**: Left-aligned text with proportional 80px logo placement and bold typography
 - **Responsive Design**: Optimized for desktop, tablet, and mobile viewing
 - **Enhanced Tables**: Improved readability with solid-color headers and responsive containers
-- **Hover Effects**: Interactive elements with smooth transitions
+- **Hover Effects**: Interactive elements with smooth transitions for tabs and navigation
 - **Professional Styling**: Consistent color scheme and typography throughout with NYC Public Schools branding
+- **Print Optimization**: Special print styles for tabbed content with automatic section headers
 - **Comparison System**: Visual comparison cards with distinct color coding for different administrative levels
 - **Modern CSS**: Clean, professional header/footer design with improved spacing and typography hierarchy
 
@@ -132,15 +139,20 @@ numpy>=1.21.0
 
 The system processes multiple CSV files containing:
 - **Multi-Source Integration**: Automatically combines data from multiple CSV files (e.g., mayjobs.csv, junejobs.csv)
+- **SubCentral vs Payroll Matching**: Advanced job-level matching using Location + EIS ID + Date for data verification
 - **Robust Date Parsing**: Handles various date formats including Excel serial dates and standard date strings
 - **Gender-Neutral Processing**: Standardizes job classifications by removing gender identifiers
-- **Fill status information**: Tracks filled vs unfilled positions
+- **Fill status information**: Tracks filled vs unfilled positions with detailed breakdowns
 - **Geographic location codes**: Borough and district mapping
 - **Classification details**: Standardized job categories
 - **Source tracking**: Maintains information about which CSV file each record came from
+- **Data Quality Assurance**: NaN value removal, integer conversion, and zero-padding for consistent data formatting
 
 ### Data Fields & Processing
 - **Classification**: Standardized paraprofessional positions (gender identifiers removed)
+- **Vacancy vs Absence Jobs**: Separate tracking and analysis of permanent vacancies vs temporary absences
+- **Combined Totals**: Aggregated statistics including Total Filled and Total Unfilled across all job types
+- **Match Percentage**: Calculated correlation between SubCentral job postings and payroll records
   - "FEMALE PARA" and "MALE PARA" → "PARAPROFESSIONAL"
   - All "FEMALE" and "MALE" prefixes automatically removed
 - **Type**: Job type (Vacancy or Absence)

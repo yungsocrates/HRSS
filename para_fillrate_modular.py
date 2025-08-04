@@ -8,15 +8,15 @@ The heavy lifting is now done by imported modules for better maintainability.
 import os
 import time
 
-# Import our custom mo                    <iframe src="overall_bar_chart.html" width="1400" height="600" frameborder="0"></iframe>ules
+# Import our custom modules
 from data_processing import (
     load_and_process_data, get_data_date_range, create_summary_stats, 
     create_borough_summary_stats, copy_logo_to_output, df_with_pretty_columns,
-    DISPLAY_COLS, format_pct, format_int
+    DISPLAY_COLS, format_pct, format_int, create_matching_analysis
 )
 from report_generators import create_district_report
 from chart_utils import create_overall_bar_chart
-from templates import get_html_template, get_header_html, get_professional_footer
+from templates import get_html_template, get_header_html, get_professional_footer, create_tabbed_summary_tables
 
 def create_borough_report(borough, borough_data, df, output_dir, summary_stats, date_range_info):
     """
@@ -32,16 +32,12 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats, 
     borough_dir = os.path.join(output_dir, f"Borough_{borough_clean}")
     os.makedirs(borough_dir, exist_ok=True)
     
-    # Create summary table
-    table_html = df_with_pretty_columns(borough_data[DISPLAY_COLS]).to_html(
-        index=False,
-        table_id='summary-table',
-        classes='table table-striped',
-        formatters={
-            df_with_pretty_columns(borough_data[DISPLAY_COLS]).columns[i]: format_pct if 'Pct' in col else format_int
-            for i, col in enumerate(DISPLAY_COLS)
-        }
-    )
+    # Create tabbed summary tables
+    formatters = {
+        df_with_pretty_columns(borough_data[DISPLAY_COLS]).columns[i]: format_pct if 'Pct' in col else format_int
+        for i, col in enumerate(DISPLAY_COLS)
+    }
+    table_html = create_tabbed_summary_tables(borough_data[DISPLAY_COLS], formatters)
     
     # Create bar chart
     bar_chart_file = os.path.join(borough_dir, f'{borough_clean}_bar_chart.html')
@@ -202,6 +198,11 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
         overall_stats['Total_Absence'] > 0,
         (overall_stats['Absence_Filled'] / overall_stats['Total_Absence'] * 100).round(1), 0
     )
+    
+    # Calculate combined totals
+    overall_stats['Total_Filled'] = overall_stats['Vacancy_Filled'] + overall_stats['Absence_Filled']
+    overall_stats['Total_Unfilled'] = overall_stats['Vacancy_Unfilled'] + overall_stats['Absence_Unfilled']
+    
     overall_stats['Overall_Fill_Pct'] = np.where(
         overall_stats['Total'] > 0,
         ((overall_stats['Vacancy_Filled'] + overall_stats['Absence_Filled']) / overall_stats['Total'] * 100).round(1), 0
@@ -226,6 +227,11 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
         district_summary['Total_Absence'] > 0,
         (district_summary['Absence_Filled'] / district_summary['Total_Absence'] * 100).round(1), 0
     )
+    
+    # Calculate combined totals for district summary
+    district_summary['Total_Filled'] = district_summary['Vacancy_Filled'] + district_summary['Absence_Filled']
+    district_summary['Total_Unfilled'] = district_summary['Vacancy_Unfilled'] + district_summary['Absence_Unfilled']
+    
     district_summary['Overall_Fill_Pct'] = np.where(
         district_summary['Total'] > 0,
         ((district_summary['Vacancy_Filled'] + district_summary['Absence_Filled']) / district_summary['Total'] * 100).round(1), 0
@@ -271,6 +277,26 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
     </div>
     """
     
+    # Create tabbed summary tables
+    overall_formatters = {
+        df_with_pretty_columns(overall_stats[DISPLAY_COLS]).columns[i]: format_pct if 'Pct' in col else format_int
+        for i, col in enumerate(DISPLAY_COLS)
+    }
+    overall_table_html = create_tabbed_summary_tables(overall_stats[DISPLAY_COLS], overall_formatters)
+    
+    # Create district summary table with proper column formatting
+    district_display_cols = ['District'] + DISPLAY_COLS[1:]  # Exclude Classification, add District
+    district_for_table = district_summary[district_display_cols].sort_values('District')
+    
+    district_formatters = {
+        'District': lambda x: f"D{int(x)}" if pd.notna(x) else x,
+        **{
+            df_with_pretty_columns(pd.DataFrame(columns=DISPLAY_COLS)).columns[i]: format_pct if 'Pct' in col else format_int
+            for i, col in enumerate(DISPLAY_COLS) if DISPLAY_COLS[i] != 'Classification'
+        }
+    }
+    district_table_html = create_tabbed_summary_tables(district_for_table, district_formatters)
+    
     # Build content
     content = f"""
         {get_header_html("Horizontal_logo_White_PublicSchools.png", 
@@ -290,31 +316,12 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
             
             <div class="section">
                 <h3>Summary by Classification (All Districts)</h3>
-                <div class="table-responsive">
-                    {df_with_pretty_columns(overall_stats[DISPLAY_COLS]).to_html(
-                        index=False, classes='table',
-                        formatters={
-                            df_with_pretty_columns(overall_stats[DISPLAY_COLS]).columns[i]: format_pct if 'Pct' in col else format_int
-                            for i, col in enumerate(DISPLAY_COLS)
-                        }
-                    )}
-                </div>
+                {overall_table_html}
             </div>
             
             <div class="section">
                 <h3>Summary by District</h3>
-                <div class="table-responsive">
-                    {district_summary[['District'] + DISPLAY_COLS[1:]].sort_values('District').rename(columns={'District': 'District', **{col: df_with_pretty_columns(pd.DataFrame(columns=DISPLAY_COLS)).columns[i] for i, col in enumerate(DISPLAY_COLS)}}).to_html(
-                        index=False, classes='table',
-                        formatters={
-                            'District': lambda x: f"D{int(x)}" if pd.notna(x) else x,
-                            **{
-                                df_with_pretty_columns(pd.DataFrame(columns=DISPLAY_COLS)).columns[i]: format_pct if 'Pct' in col else format_int
-                                for i, col in enumerate(DISPLAY_COLS)
-                            }
-                        }
-                    )}
-                </div>
+                {district_table_html}
             </div>
 
             <div class="section">
@@ -358,7 +365,13 @@ def main():
     # Configuration - Updated to use multiple CSV files
     csv_files = [
         'Fill Rate Data/mayjobs.csv',
-        'Fill Rate Data/junejobs.csv'
+        'Fill Rate Data/junejobs.csv',
+        'Fill Rate Data/apriljobs.csv',
+        'Fill Rate Data/febmarchjobs.csv',
+        'Fill Rate Data/decjanjobs.csv',
+        'Fill Rate Data/sepoctnovjobs.csv',
+        'SREPP1.csv',
+        'SREPP2.csv',
     ]
     output_directory = 'nycdoe_reports'
     
@@ -374,7 +387,39 @@ def main():
         
         # Load and process data from multiple files
         print("Loading and processing data from multiple sources...")
-        df = load_and_process_data(csv_files)
+        df, srepp_df = load_and_process_data(csv_files)
+        
+        # Handle SREPP data if present
+        if not srepp_df.empty:
+            print(f"SREPP payroll data loaded: {len(srepp_df)} records")
+            print(f"SREPP columns: {list(srepp_df.columns)}")
+            print(f"Sample SREPP data:")
+            print(srepp_df.head(3))
+        else:
+            print("No SREPP payroll data found")
+            
+        # Show main data info
+        if not df.empty:
+            print(f"Main SubCentral data loaded: {len(df)} records")
+            print(f"Main data columns: {list(df.columns)}")
+            print(f"Sample locations: {list(df['Location'].unique())[:5]}")
+        else:
+            print("No main SubCentral data found")
+            
+        # Create matching analysis between SubCentral and SREPP data
+        print("Creating matching analysis between SubCentral and payroll data...")
+        matching_stats = create_matching_analysis(df, srepp_df)
+        if not matching_stats.empty:
+            print(f"Matching analysis completed for {len(matching_stats)} locations")
+            print("Sample matching results:")
+            print(matching_stats.head(5))
+        else:
+            print("No matching analysis data available")
+        
+        # Continue with main data processing
+        if df.empty:
+            print("Warning: No main data loaded. Check your CSV files.")
+            return
         
         # Get date range information
         date_range_info = get_data_date_range(df)
@@ -407,7 +452,7 @@ def main():
             district_data = summary_stats[summary_stats['District'] == district].copy()
             if len(district_data) > 0:
                 report_file, school_reports = create_district_report(
-                    district, district_data, df, output_directory, summary_stats, date_range_info
+                    district, district_data, df, output_directory, summary_stats, date_range_info, matching_stats
                 )
                 report_files.append(report_file)
                 all_school_reports.extend(school_reports)

@@ -6,7 +6,7 @@ import os
 import re
 from templates import (
     get_html_template, get_header_html, get_professional_footer,
-    get_navigation_html, get_comparison_card_html
+    get_navigation_html, get_comparison_card_html, create_tabbed_summary_tables
 )
 from chart_utils import (
     create_bar_chart, create_pie_charts_for_data, create_overall_bar_chart
@@ -30,16 +30,12 @@ def create_school_report(district, location, location_clean, school_data, df, su
     if len(safe_location_name) > 200:
         safe_location_name = safe_location_name[:200]
     
-    # Create summary table
-    table_html = df_with_pretty_columns(school_data[DISPLAY_COLS]).to_html(
-        index=False,
-        table_id='summary-table',
-        classes='table table-striped',
-        formatters={
-            df_with_pretty_columns(school_data[DISPLAY_COLS]).columns[i]: format_pct if 'Pct' in col else format_int
-            for i, col in enumerate(DISPLAY_COLS)
-        }
-    )
+    # Create tabbed summary tables
+    formatters = {
+        df_with_pretty_columns(school_data[DISPLAY_COLS]).columns[i]: format_pct if 'Pct' in col else format_int
+        for i, col in enumerate(DISPLAY_COLS)
+    }
+    table_html = create_tabbed_summary_tables(school_data[DISPLAY_COLS], formatters)
     
     # Create bar chart
     bar_chart_file = os.path.join(school_dir, f'{safe_location_name}_bar_chart.html')
@@ -176,7 +172,7 @@ def create_school_report(district, location, location_clean, school_data, df, su
     
     return report_file
 
-def create_district_report(district, district_data, df, output_dir, summary_stats, date_range_info):
+def create_district_report(district, district_data, df, output_dir, summary_stats, date_range_info, matching_stats=None):
     """
     Create a comprehensive report for a single District including school summaries
     """
@@ -189,16 +185,12 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     borough_name_clean = district_borough.replace(' ', '_').replace('/', '_')
     borough_data = create_summary_stats(df[df['Borough'] == district_borough], ['Borough'])
     
-    # Create summary table
-    table_html = df_with_pretty_columns(district_data[DISPLAY_COLS]).to_html(
-        index=False,
-        table_id='summary-table',
-        classes='table table-striped',
-        formatters={
-            df_with_pretty_columns(district_data[DISPLAY_COLS]).columns[i]: format_pct if 'Pct' in col else format_int
-            for i, col in enumerate(DISPLAY_COLS)
-        }
-    )
+    # Create tabbed summary tables
+    formatters = {
+        df_with_pretty_columns(district_data[DISPLAY_COLS]).columns[i]: format_pct if 'Pct' in col else format_int
+        for i, col in enumerate(DISPLAY_COLS)
+    }
+    table_html = create_tabbed_summary_tables(district_data[DISPLAY_COLS], formatters)
     
     # Create bar chart
     bar_chart_file = os.path.join(district_dir, f'{int(district)}_bar_chart.html')
@@ -223,6 +215,11 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     # Calculate percentages for schools
     summary_by_school['Vacancy_Fill_Pct'] = (summary_by_school['Vacancy_Filled'] / summary_by_school['Total_Vacancy'] * 100).fillna(0).round(1)
     summary_by_school['Absence_Fill_Pct'] = (summary_by_school['Absence_Filled'] / summary_by_school['Total_Absence'] * 100).fillna(0).round(1)
+    
+    # Calculate combined totals for schools
+    summary_by_school['Total_Filled'] = summary_by_school['Vacancy_Filled'] + summary_by_school['Absence_Filled']
+    summary_by_school['Total_Unfilled'] = summary_by_school['Vacancy_Unfilled'] + summary_by_school['Absence_Unfilled']
+    
     summary_by_school['Overall_Fill_Pct'] = ((summary_by_school['Vacancy_Filled'] + summary_by_school['Absence_Filled']) / summary_by_school['Total'] * 100).fillna(0).round(1)
     
     # Generate school reports and links
@@ -248,16 +245,17 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
             total_jobs = int(school_summary['Total'].sum())
             school_links += f'<li><a href="Schools/School_{location_clean}/{location_clean}_report.html">{location}</a> - {total_jobs} total jobs</li>\n'
     
-    # Create school summary table HTML
-    summary_by_school_html = df_with_pretty_columns(summary_by_school.rename(columns={'Location': 'School'})).to_html(
-        index=False,
-        classes='table',
-        formatters={
-            'School': str,
-            'Vacancy Filled': format_int, 'Vacancy Unfilled': format_int, 'Total Vacancy': format_int,
-            'Vacancy Fill %': format_pct, 'Absence Filled': format_int, 'Absence Unfilled': format_int,
-            'Total Absence': format_int, 'Absence Fill %': format_pct, 'Total': format_int, 'Overall Fill %': format_pct
-        }
+    # Create school summary table HTML using tabbed interface
+    school_formatters = {
+        'School': str,
+        'Vacancy Filled': format_int, 'Vacancy Unfilled': format_int, 'Total Vacancy': format_int,
+        'Vacancy Fill %': format_pct, 'Absence Filled': format_int, 'Absence Unfilled': format_int,
+        'Total Absence': format_int, 'Absence Fill %': format_pct, 'Total Filled': format_int, 
+        'Total Unfilled': format_int, 'Total': format_int, 'Overall Fill %': format_pct
+    }
+    summary_by_school_html = create_tabbed_summary_tables(
+        summary_by_school.rename(columns={'Location': 'School'}), 
+        school_formatters
     )
     
     # Get comparison data
@@ -332,8 +330,43 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
             <div class="section">
                 <h3>Summary by School</h3>
                 <div class="table-responsive">{summary_by_school_html}</div>
-            </div>
-
+            </div>"""
+    
+    # Add matching statistics section if available
+    if matching_stats is not None and not matching_stats.empty:
+        # Filter matching stats for this district
+        district_matching = matching_stats[matching_stats['Location'].isin(
+            df[df['District'] == district]['Location'].unique()
+        )]
+        
+        if len(district_matching) > 0:
+            # Create matching stats table with enhanced styling to match tabbed tables
+            matching_table_html = df_with_pretty_columns(district_matching).to_html(
+                index=False,
+                classes='table table-striped',
+                formatters={
+                    'SubCentral Job Days': format_int,
+                    'Payroll Job Days': format_int,
+                    'Matched Jobs': format_int,
+                    'Match Percentage': format_pct
+                }
+            )
+            
+            content += f"""
+            <div class="section">
+                <h3>SubCentral vs Payroll Analysis</h3>
+                <div class="tabbed-container">
+                    <div class="tab-content active" data-tab="matching" data-tab-title="SubCentral vs Payroll Analysis">
+                        <div class="table-responsive">{matching_table_html}</div>
+                    </div>
+                </div>
+                <p style="font-style: italic; color: #666; margin-top: 10px;">
+                    This analysis matches individual jobs using <strong>Location + EIS ID + Date</strong> between SubCentral and payroll systems. 
+                    Match Percentage shows what percentage of payroll records have corresponding SubCentral records.
+                </p>
+            </div>"""
+    
+    content += f"""
             <div class="section">
                 <h3>Jobs by Classification and Type</h3>
                 <div class="chart-container">

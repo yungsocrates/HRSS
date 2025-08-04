@@ -5,6 +5,56 @@ All notable changes to the NYC Public Schools Paraprofessional Jobs Fill Rate An
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.0.0] - 2025-08-04
+
+### Added
+- 🗂️ **Tabbed Summary Tables**: Revolutionary three-tab interface for organizing data
+  - **Vacancy Jobs Tab**: Dedicated view for permanent vacancy positions
+  - **Absence Jobs Tab**: Separate view for temporary absence positions  
+  - **Combined Totals Tab**: Unified view showing Total Filled, Total Unfilled, and overall statistics
+  - JavaScript-powered tab switching with hover effects and print optimization
+  - Consistent styling across all administrative levels (Citywide, Borough, District, School)
+
+- 🔗 **SubCentral vs Payroll Matching Analysis**: Advanced job-level data verification
+  - Unique ID matching using Location + EIS ID + Date format
+  - Match percentage calculations showing data correlation between systems
+  - Enhanced debug output for troubleshooting data quality issues
+  - NaN value filtering and integer conversion for consistent data formatting
+  - Zero-padding to 7 characters for EIS ID standardization
+
+- 📊 **Enhanced Data Processing**: 
+  - Total Filled and Total Unfilled calculations in Combined Totals tab
+  - Match Percentage column with proper percentage formatting
+  - Improved data quality pipeline with comprehensive error handling
+  - Enhanced debugging capabilities for specific locations (M015 debug mode)
+
+### Enhanced
+- 🎨 **Visual Design**: 
+  - SubCentral vs Payroll Analysis tables now match tabbed table styling
+  - Consistent header formatting and color scheme across all table types
+  - Professional tab button design with active states and hover effects
+  - Print-friendly styles with automatic section headers for tabbed content
+
+- 🔧 **Technical Architecture**:
+  - New `create_tabbed_summary_tables()` function in templates.py
+  - Enhanced CSS classes for tabbed interface styling
+  - JavaScript tab functionality with jQuery integration
+  - Modular table generation for better code maintainability
+
+- 📋 **Data Quality Improvements**:
+  - Comprehensive NaN removal from critical matching columns
+  - Robust integer conversion with error handling for data type consistency
+  - Zero-padding implementation for standardized ID formatting
+  - Enhanced matching algorithm with detailed debugging output
+
+### Technical Details
+- Updated DISPLAY_COLS to include Total_Filled and Total_Unfilled
+- Enhanced DISPLAY_COLS_RENAME mapping for user-friendly column names
+- Modified create_summary_stats() to calculate combined totals
+- Updated all report generation functions to use tabbed interface
+- Improved CSS with print media queries for tabbed content
+- Enhanced JavaScript for interactive tab switching functionality
+
 ## [4.6.0] - 2025-07-08
 
 ### Fixed
