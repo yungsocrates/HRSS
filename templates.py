@@ -791,30 +791,26 @@ def create_tabbed_summary_tables(data, formatters):
     else:
         base_cols = []
     
-    vacancy_cols = base_cols + ['Vacancy Filled', 'Vacancy Unfilled', 'Total Vacancy', 'Vacancy Fill %']
-    absence_cols = base_cols + ['Absence Filled', 'Absence Unfilled', 'Total Absence', 'Absence Fill %']
+    # Combine vacancy and absence columns into one detailed tab
+    details_cols = base_cols + [
+        'Vacancy Filled', 'Vacancy Unfilled', 'Total Vacancy', 'Vacancy Fill %',
+        'Absence Filled', 'Absence Unfilled', 'Total Absence', 'Absence Fill %'
+    ]
     combined_cols = base_cols + ['Total Filled', 'Total Unfilled', 'Total', 'Overall Fill %']
     
     # Create pretty column names
     pretty_data = df_with_pretty_columns(data)
     
     # Filter columns that exist in the data
-    vacancy_cols = [col for col in vacancy_cols if col in pretty_data.columns]
-    absence_cols = [col for col in absence_cols if col in pretty_data.columns]
+    details_cols = [col for col in details_cols if col in pretty_data.columns]
     combined_cols = [col for col in combined_cols if col in pretty_data.columns]
     
     # Create tables for each tab
-    vacancy_table = pretty_data[vacancy_cols].to_html(
+    details_table = pretty_data[details_cols].to_html(
         index=False,
         classes='table table-striped',
-        formatters={col: formatters.get(col, str) for col in vacancy_cols}
-    ) if vacancy_cols else "<p>No vacancy data available</p>"
-    
-    absence_table = pretty_data[absence_cols].to_html(
-        index=False,
-        classes='table table-striped',
-        formatters={col: formatters.get(col, str) for col in absence_cols}
-    ) if absence_cols else "<p>No absence data available</p>"
+        formatters={col: formatters.get(col, str) for col in details_cols}
+    ) if details_cols else "<p>No details data available</p>"
     
     combined_table = pretty_data[combined_cols].to_html(
         index=False,
@@ -825,17 +821,12 @@ def create_tabbed_summary_tables(data, formatters):
     return f"""
     <div class="tabbed-container">
         <div class="tab-buttons">
-            <button class="tab-button" data-tab="vacancy">Vacancy Jobs</button>
-            <button class="tab-button" data-tab="absence">Absence Jobs</button>
+            <button class="tab-button" data-tab="details">Vacancy and Absence Details</button>
             <button class="tab-button" data-tab="combined">Combined Totals</button>
         </div>
         
-        <div class="tab-content" data-tab="vacancy" data-tab-title="Vacancy Jobs">
-            <div class="table-responsive">{vacancy_table}</div>
-        </div>
-        
-        <div class="tab-content" data-tab="absence" data-tab-title="Absence Jobs">
-            <div class="table-responsive">{absence_table}</div>
+        <div class="tab-content" data-tab="details" data-tab-title="Vacancy and Absence Details">
+            <div class="table-responsive">{details_table}</div>
         </div>
         
         <div class="tab-content" data-tab="combined" data-tab-title="Combined Totals">

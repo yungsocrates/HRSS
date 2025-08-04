@@ -61,13 +61,8 @@ Thumbs.db
 *.csv.bak
 Fill Rate Data/AC Totals - System Wide.xlsx
 
-# Ignore generated reports (built at deploy time)
-nycdoe_reports/
 *.csv.old
 
 # Ignore temporary files
 *.tmp
 *.temp
-
-# Ignore generated reports (will be built at runtime)
-nycdoe_reports/

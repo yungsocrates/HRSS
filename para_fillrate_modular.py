@@ -62,18 +62,22 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats, 
     # Calculate percentages
     summary_by_district['Vacancy_Fill_Pct'] = (summary_by_district['Vacancy_Filled'] / summary_by_district['Total_Vacancy'] * 100).fillna(0).round(1)
     summary_by_district['Absence_Fill_Pct'] = (summary_by_district['Absence_Filled'] / summary_by_district['Total_Absence'] * 100).fillna(0).round(1)
+    
+    # Calculate combined totals
+    summary_by_district['Total_Filled'] = summary_by_district['Vacancy_Filled'] + summary_by_district['Absence_Filled']
+    summary_by_district['Total_Unfilled'] = summary_by_district['Vacancy_Unfilled'] + summary_by_district['Absence_Unfilled']
+    
     summary_by_district['Overall_Fill_Pct'] = ((summary_by_district['Vacancy_Filled'] + summary_by_district['Absence_Filled']) / summary_by_district['Total'] * 100).fillna(0).round(1)
     
-    summary_by_district_html = df_with_pretty_columns(summary_by_district).to_html(
-        index=False,
-        classes='table',
-        formatters={
-            'District': lambda x: f"D{int(x)}" if pd.notna(x) else x,
-            'Vacancy Filled': format_int, 'Vacancy Unfilled': format_int, 'Total Vacancy': format_int,
-            'Vacancy Fill %': format_pct, 'Absence Filled': format_int, 'Absence Unfilled': format_int,
-            'Total Absence': format_int, 'Absence Fill %': format_pct, 'Total': format_int, 'Overall Fill %': format_pct
-        }
-    )
+    # Create tabbed summary table for districts
+    district_formatters = {
+        'District': lambda x: f"D{int(x)}" if pd.notna(x) else x,
+        'Vacancy Filled': format_int, 'Vacancy Unfilled': format_int, 'Total Vacancy': format_int,
+        'Vacancy Fill %': format_pct, 'Absence Filled': format_int, 'Absence Unfilled': format_int,
+        'Total Absence': format_int, 'Absence Fill %': format_pct, 'Total Filled': format_int, 
+        'Total Unfilled': format_int, 'Total': format_int, 'Overall Fill %': format_pct
+    }
+    summary_by_district_html = create_tabbed_summary_tables(summary_by_district, district_formatters)
     
     # Get districts in this borough and create links
     borough_districts = sorted(df[df['Borough'] == borough]['District'].unique())
@@ -132,12 +136,12 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats, 
             
             <div class="section">
                 <h3>Summary Statistics</h3>
-                <div class="table-responsive">{table_html}</div>
+                {table_html}
             </div>
 
             <div class="section">
                 <h3>Summary by District</h3>
-                <div class="table-responsive">{summary_by_district_html}</div>
+                {summary_by_district_html}
             </div>
 
             <div class="section">
@@ -444,6 +448,9 @@ def main():
         
         # Create reports for each District
         districts = sorted(df['District'].unique())
+        summary_districts = sorted(summary_stats['District'].unique())
+        print(f"Districts in main data: {districts}")
+        print(f"Districts in summary_stats: {summary_districts}")
         print(f"Creating reports for {len(districts)} districts...")
         report_files = []
         all_school_reports = []
@@ -451,12 +458,22 @@ def main():
         for district in districts:
             district_data = summary_stats[summary_stats['District'] == district].copy()
             if len(district_data) > 0:
-                report_file, school_reports = create_district_report(
+                # Check if district exists in main dataframe
+                district_schools = df[df['District'] == district]
+                if district_schools.empty:
+                    print(f"Warning: District {int(district)} has no schools in main data, skipping...")
+                    continue
+                    
+                result = create_district_report(
                     district, district_data, df, output_directory, summary_stats, date_range_info, matching_stats
                 )
-                report_files.append(report_file)
-                all_school_reports.extend(school_reports)
-                print(f"District {int(district)} report finished.")
+                if result is not None:
+                    report_file, school_reports = result
+                    report_files.append(report_file)
+                    all_school_reports.extend(school_reports)
+                    print(f"District {int(district)} report finished.")
+                else:
+                    print(f"District {int(district)} report skipped due to missing data.")
         
         # Create reports for each borough
         boroughs = sorted(df['Borough'].unique())

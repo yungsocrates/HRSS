@@ -138,7 +138,7 @@ def create_school_report(district, location, location_clean, school_data, df, su
             
             <div class="section">
                 <h3>Summary Statistics</h3>
-                <div class="table-responsive">{table_html}</div>
+                {table_html}
             </div>
 
             <div class="section">
@@ -180,8 +180,13 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     district_dir = os.path.join(output_dir, f"District_{int(district)}")
     os.makedirs(district_dir, exist_ok=True)
     
-    # Get the borough for this district
-    district_borough = df[df['District'] == district]['Borough'].iloc[0]
+    # Get the borough for this district with error handling
+    district_schools = df[df['District'] == district]
+    if district_schools.empty:
+        print(f"Warning: No schools found for district {district}")
+        return None, []
+    
+    district_borough = district_schools['Borough'].iloc[0]
     borough_name_clean = district_borough.replace(' ', '_').replace('/', '_')
     borough_data = create_summary_stats(df[df['Borough'] == district_borough], ['Borough'])
     
@@ -324,12 +329,12 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
             
             <div class="section">
                 <h3>Summary Statistics</h3>
-                <div class="table-responsive">{table_html}</div>
+                {table_html}
             </div>
 
             <div class="section">
                 <h3>Summary by School</h3>
-                <div class="table-responsive">{summary_by_school_html}</div>
+                {summary_by_school_html}
             </div>"""
     
     # Add matching statistics section if available

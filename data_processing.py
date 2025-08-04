@@ -75,10 +75,30 @@ def load_and_process_data(csv_file_paths):
         
         if filename in ['SREPP1.csv', 'SREPP2.csv']:
             print(f"Loading payroll data from: {csv_file_path}")
-            df = pd.read_csv(csv_file_path, skiprows=[1], usecols=[2*i for i in range(0, 7)], encoding='UTF-8', sep=',')
-            print(f"  Raw columns from {filename}: {list(df.columns)}")
-            df['Source_File'] = filename
-            srepp_dataframes.append(df)
+            # First, read the file to check available columns
+            try:
+                # Try reading without specifying columns first
+                temp_df = pd.read_csv(csv_file_path, nrows=1, encoding='UTF-8', sep=',')
+                available_cols = len(temp_df.columns)
+                print(f"  Available columns in {filename}: {available_cols}")
+                print(f"  Column names: {list(temp_df.columns)}")
+                
+                # Only read the columns that actually exist
+                if available_cols >= 10:
+                    # If we have enough columns, use the even-numbered ones
+                    cols_to_use = [2*i for i in range(0, min(10, available_cols//2))]
+                    df = pd.read_csv(csv_file_path, skiprows=[1], usecols=cols_to_use, encoding='UTF-8', sep=',')
+                else:
+                    # If we don't have enough columns, read all available columns
+                    df = pd.read_csv(csv_file_path, encoding='UTF-8', sep=',')
+                    
+                print(f"  Loaded columns from {filename}: {list(df.columns)}")
+                df['Source_File'] = filename
+                srepp_dataframes.append(df)
+            except Exception as e:
+                print(f"  Error loading {csv_file_path}: {str(e)}")
+                print(f"  Skipping this file and continuing...")
+                continue
         else:
             print(f"Loading data from: {csv_file_path}")
             df = pd.read_csv(csv_file_path)
