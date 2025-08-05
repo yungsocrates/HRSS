@@ -821,16 +821,16 @@ def create_tabbed_summary_tables(data, formatters):
     return f"""
     <div class="tabbed-container">
         <div class="tab-buttons">
-            <button class="tab-button" data-tab="details">Vacancy and Absence Details</button>
             <button class="tab-button" data-tab="combined">Combined Totals</button>
-        </div>
-        
-        <div class="tab-content" data-tab="details" data-tab-title="Vacancy and Absence Details">
-            <div class="table-responsive">{details_table}</div>
+            <button class="tab-button" data-tab="details">Vacancy and Absence Details</button>
         </div>
         
         <div class="tab-content" data-tab="combined" data-tab-title="Combined Totals">
             <div class="table-responsive">{combined_table}</div>
+        </div>
+        
+        <div class="tab-content" data-tab="details" data-tab-title="Vacancy and Absence Details">
+            <div class="table-responsive">{details_table}</div>
         </div>
     </div>
     """
