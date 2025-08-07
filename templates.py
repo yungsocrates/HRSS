@@ -119,7 +119,7 @@ def get_base_css():
             }
 
             .content {
-                max-width: 1600px;
+                max-width: 1550px;
                 margin: 0 auto;
                 padding: 20px;
             }
@@ -130,6 +130,9 @@ def get_base_css():
                 padding: 25px;
                 border-radius: 10px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                max-width: 1520px;
+                margin-left: auto;
+                margin-right: auto;
             }
 
             .section h2, .section h3 { 
@@ -417,6 +420,7 @@ def get_base_css():
                 box-shadow: var(--card-shadow);
                 border: 1px solid #e0e0e0;
                 overflow: hidden;
+                max-width: 100%;
             }
 
             .chart-container iframe {
@@ -508,7 +512,8 @@ def get_base_css():
 
                 iframe {
                     width: 100% !important;
-                    height: 400px !important;
+                    height: 450px !important;
+                    max-width: 100%;
                 }
             }
 
@@ -621,6 +626,70 @@ def get_base_css():
 
                 iframe {
                     display: none;
+                }
+            }
+            
+            /* Map Styles */
+            .map-summary {
+                margin: 20px 0;
+            }
+
+            .summary-stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin: 20px 0;
+            }
+
+            .stat-card {
+                background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                box-shadow: var(--card-shadow);
+                transition: all 0.3s ease;
+                border: 1px solid rgba(46, 134, 171, 0.2);
+            }
+
+            .stat-card:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--hover-shadow);
+            }
+
+            .stat-card h4 {
+                color: var(--primary-color);
+                margin-bottom: 10px;
+                font-size: 1.1em;
+                font-weight: 600;
+            }
+
+            .stat-value {
+                font-size: 1.8em;
+                font-weight: 700;
+                color: var(--secondary-color);
+                margin-top: 5px;
+            }
+
+            .map-notes {
+                background: var(--light-bg);
+                padding: 15px;
+                border-radius: 8px;
+                border-left: 4px solid var(--primary-color);
+                margin-top: 15px;
+            }
+
+            @media (max-width: 768px) {
+                .summary-stats-grid {
+                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                    gap: 10px;
+                }
+
+                .stat-card {
+                    padding: 15px;
+                }
+
+                .stat-value {
+                    font-size: 1.5em;
                 }
             }
     """

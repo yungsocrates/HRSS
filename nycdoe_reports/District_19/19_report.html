@@ -97,7 +97,7 @@
             }
 
             .content {
-                max-width: 1600px;
+                max-width: 1550px;
                 margin: 0 auto;
                 padding: 20px;
             }
@@ -108,6 +108,9 @@
                 padding: 25px;
                 border-radius: 10px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                max-width: 1520px;
+                margin-left: auto;
+                margin-right: auto;
             }
 
             .section h2, .section h3 { 
@@ -395,6 +398,7 @@
                 box-shadow: var(--card-shadow);
                 border: 1px solid #e0e0e0;
                 overflow: hidden;
+                max-width: 100%;
             }
 
             .chart-container iframe {
@@ -486,7 +490,8 @@
 
                 iframe {
                     width: 100% !important;
-                    height: 400px !important;
+                    height: 450px !important;
+                    max-width: 100%;
                 }
             }
 
@@ -601,6 +606,70 @@
                     display: none;
                 }
             }
+            
+            /* Map Styles */
+            .map-summary {
+                margin: 20px 0;
+            }
+
+            .summary-stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin: 20px 0;
+            }
+
+            .stat-card {
+                background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                box-shadow: var(--card-shadow);
+                transition: all 0.3s ease;
+                border: 1px solid rgba(46, 134, 171, 0.2);
+            }
+
+            .stat-card:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--hover-shadow);
+            }
+
+            .stat-card h4 {
+                color: var(--primary-color);
+                margin-bottom: 10px;
+                font-size: 1.1em;
+                font-weight: 600;
+            }
+
+            .stat-value {
+                font-size: 1.8em;
+                font-weight: 700;
+                color: var(--secondary-color);
+                margin-top: 5px;
+            }
+
+            .map-notes {
+                background: var(--light-bg);
+                padding: 15px;
+                border-radius: 8px;
+                border-left: 4px solid var(--primary-color);
+                margin-top: 15px;
+            }
+
+            @media (max-width: 768px) {
+                .summary-stats-grid {
+                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                    gap: 10px;
+                }
+
+                .stat-card {
+                    padding: 15px;
+                }
+
+                .stat-value {
+                    font-size: 1.5em;
+                }
+            }
     
             
         </style>
@@ -650,7 +719,7 @@
                 <h1>Substitute Paraprofessional Jobs Report</h1>
                 <h2>District: 19</h2>
                 <div class="date-info">Job dates: September 03, 2024 to June 26, 2025</div>
-                <p>Generated on: August 04, 2025 at 04:25 PM</p>
+                <p>Generated on: August 07, 2025 at 05:55 PM</p>
             </div>
             <div class="header-logo">
                 <img src="../Horizontal_logo_White_PublicSchools.png" alt="NYC Public Schools" class="logo">
@@ -2052,10 +2121,7 @@
 
             <div class="section">
                 <h3>Breakdown by Classification</h3>
-                <div class="pie-container"><iframe src="District_19_ARABIC SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_19_PARAPROFESSIONAL_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_19_SPANISH SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-</div>
+                <div class="pie-container"><iframe src="District_19_ARABIC_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_19_PARAPROFESSIONAL_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_19_SPANISH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe></div>
             </div>
 
             <div class="section">
@@ -2086,8 +2152,8 @@
             
             <div class="section">
                 <h3>Individual School Reports</h3>
-                <div class="district-links"><ul><li><a href="Schools/School_K007/K007_report.html">K007</a> - 1326 total jobs</li>
-<li><a href="Schools/School_K013/K013_report.html">K013</a> - 1649 total jobs</li>
+                <div class="district-links"><ul><li><a href="Schools/School_K007/K007_report.html">K007</a> - 1,326 total jobs</li>
+<li><a href="Schools/School_K013/K013_report.html">K013</a> - 1,649 total jobs</li>
 <li><a href="Schools/School_K065/K065_report.html">K065</a> - 151 total jobs</li>
 <li><a href="Schools/School_K089/K089_report.html">K089</a> - 460 total jobs</li>
 <li><a href="Schools/School_K108/K108_report.html">K108</a> - 414 total jobs</li>
@@ -2096,9 +2162,9 @@
 <li><a href="Schools/School_K159/K159_report.html">K159</a> - 743 total jobs</li>
 <li><a href="Schools/School_K171/K171_report.html">K171</a> - 360 total jobs</li>
 <li><a href="Schools/School_K190/K190_report.html">K190</a> - 142 total jobs</li>
-<li><a href="Schools/School_K202/K202_report.html">K202</a> - 1193 total jobs</li>
-<li><a href="Schools/School_K213/K213_report.html">K213</a> - 1555 total jobs</li>
-<li><a href="Schools/School_K214/K214_report.html">K214</a> - 1651 total jobs</li>
+<li><a href="Schools/School_K202/K202_report.html">K202</a> - 1,193 total jobs</li>
+<li><a href="Schools/School_K213/K213_report.html">K213</a> - 1,555 total jobs</li>
+<li><a href="Schools/School_K214/K214_report.html">K214</a> - 1,651 total jobs</li>
 <li><a href="Schools/School_K218/K218_report.html">K218</a> - 665 total jobs</li>
 <li><a href="Schools/School_K224/K224_report.html">K224</a> - 815 total jobs</li>
 <li><a href="Schools/School_K273/K273_report.html">K273</a> - 586 total jobs</li>
@@ -2108,21 +2174,20 @@
 <li><a href="Schools/School_K325/K325_report.html">K325</a> - 163 total jobs</li>
 <li><a href="Schools/School_K328/K328_report.html">K328</a> - 315 total jobs</li>
 <li><a href="Schools/School_K345/K345_report.html">K345</a> - 637 total jobs</li>
-<li><a href="Schools/School_K346/K346_report.html">K346</a> - 2811 total jobs</li>
+<li><a href="Schools/School_K346/K346_report.html">K346</a> - 2,811 total jobs</li>
 <li><a href="Schools/School_K404/K404_report.html">K404</a> - 608 total jobs</li>
 <li><a href="Schools/School_K409/K409_report.html">K409</a> - 807 total jobs</li>
 <li><a href="Schools/School_K422/K422_report.html">K422</a> - 861 total jobs</li>
-<li><a href="Schools/School_K452/K452_report.html">K452</a> - 1648 total jobs</li>
+<li><a href="Schools/School_K452/K452_report.html">K452</a> - 1,648 total jobs</li>
 <li><a href="Schools/School_K502/K502_report.html">K502</a> - 83 total jobs</li>
 <li><a href="Schools/School_K507/K507_report.html">K507</a> - 950 total jobs</li>
 <li><a href="Schools/School_K510/K510_report.html">K510</a> - 14 total jobs</li>
-<li><a href="Schools/School_K557/K557_report.html">K557</a> - 1029 total jobs</li>
+<li><a href="Schools/School_K557/K557_report.html">K557</a> - 1,029 total jobs</li>
 <li><a href="Schools/School_K583/K583_report.html">K583</a> - 72 total jobs</li>
 <li><a href="Schools/School_K618/K618_report.html">K618</a> - 18 total jobs</li>
 <li><a href="Schools/School_K639/K639_report.html">K639</a> - 22 total jobs</li>
 <li><a href="Schools/School_K654/K654_report.html">K654</a> - 90 total jobs</li>
 <li><a href="Schools/School_K659/K659_report.html">K659</a> - 7 total jobs</li>
-<li><a href="Schools/School_K660/K660_report.html">K660</a> - 510 total jobs</li>
 <li><a href="Schools/School_K661/K661_report.html">K661</a> - 553 total jobs</li>
 <li><a href="Schools/School_K663/K663_report.html">K663</a> - 514 total jobs</li>
 <li><a href="Schools/School_K677/K677_report.html">K677</a> - 931 total jobs</li>

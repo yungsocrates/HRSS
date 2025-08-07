@@ -84,7 +84,7 @@ def create_borough_report(borough, borough_data, df, output_dir, summary_stats, 
     district_links = ""
     for district in borough_districts:
         total_jobs = summary_by_district[summary_by_district['District'] == district]['Total'].iloc[0]
-        district_links += f'<li><a href="../District_{int(district)}/{int(district)}_report.html">District {int(district)} Report</a> - {int(total_jobs)} total jobs</li>\n'
+        district_links += f'<li><a href="../District_{int(district)}/{int(district)}_report.html">District {int(district)} Report</a> - {int(total_jobs):,} total jobs</li>\n'
     
     # Get comparison data
     overall_totals = summary_stats.agg({
@@ -187,13 +187,11 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
     import pandas as pd
     import numpy as np
     
-    # Overall statistics by classification
-    overall_stats = summary_stats.groupby('Classification').agg({
+    # Vectorized and memory-efficient summary stats
+    overall_stats = summary_stats.groupby('Classification', as_index=False).agg({
         'Vacancy_Filled': 'sum', 'Vacancy_Unfilled': 'sum', 'Absence_Filled': 'sum',
         'Absence_Unfilled': 'sum', 'Total_Vacancy': 'sum', 'Total_Absence': 'sum', 'Total': 'sum'
-    }).reset_index()
-    
-    # Recalculate percentages
+    })
     overall_stats['Vacancy_Fill_Pct'] = np.where(
         overall_stats['Total_Vacancy'] > 0,
         (overall_stats['Vacancy_Filled'] / overall_stats['Total_Vacancy'] * 100).round(1), 0
@@ -202,27 +200,20 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
         overall_stats['Total_Absence'] > 0,
         (overall_stats['Absence_Filled'] / overall_stats['Total_Absence'] * 100).round(1), 0
     )
-    
-    # Calculate combined totals
     overall_stats['Total_Filled'] = overall_stats['Vacancy_Filled'] + overall_stats['Absence_Filled']
     overall_stats['Total_Unfilled'] = overall_stats['Vacancy_Unfilled'] + overall_stats['Absence_Unfilled']
-    
     overall_stats['Overall_Fill_Pct'] = np.where(
         overall_stats['Total'] > 0,
         ((overall_stats['Vacancy_Filled'] + overall_stats['Absence_Filled']) / overall_stats['Total'] * 100).round(1), 0
     )
-    
-    # Create overall bar chart
+
     overall_chart_file = os.path.join(output_dir, 'overall_bar_chart.html')
     create_overall_bar_chart(overall_stats, overall_chart_file)
-    
-    # Create District summary table
-    district_summary = summary_stats.groupby('District').agg({
+
+    district_summary = summary_stats.groupby('District', as_index=False).agg({
         'Vacancy_Filled': 'sum', 'Vacancy_Unfilled': 'sum', 'Absence_Filled': 'sum',
         'Absence_Unfilled': 'sum', 'Total_Vacancy': 'sum', 'Total_Absence': 'sum', 'Total': 'sum'
-    }).reset_index()
-    
-    # Recalculate percentages for district summary
+    })
     district_summary['Vacancy_Fill_Pct'] = np.where(
         district_summary['Total_Vacancy'] > 0,
         (district_summary['Vacancy_Filled'] / district_summary['Total_Vacancy'] * 100).round(1), 0
@@ -231,39 +222,37 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
         district_summary['Total_Absence'] > 0,
         (district_summary['Absence_Filled'] / district_summary['Total_Absence'] * 100).round(1), 0
     )
-    
-    # Calculate combined totals for district summary
     district_summary['Total_Filled'] = district_summary['Vacancy_Filled'] + district_summary['Absence_Filled']
     district_summary['Total_Unfilled'] = district_summary['Vacancy_Unfilled'] + district_summary['Absence_Unfilled']
-    
     district_summary['Overall_Fill_Pct'] = np.where(
         district_summary['Total'] > 0,
         ((district_summary['Vacancy_Filled'] + district_summary['Absence_Filled']) / district_summary['Total'] * 100).round(1), 0
     )
     district_summary = district_summary.sort_values('Total', ascending=False)
-    
-    # Generate links to individual District reports
-    district_links = ""
-    for _, row in district_summary.sort_values('District').iterrows():
-        district_num = row['District']
-        district_links += f'<li><a href="District_{int(district_num)}/{int(district_num)}_report.html">District {int(district_num)} Report</a> - {int(row["Total"])} total jobs</li>\n'
 
-    borough_links = ""
-    for borough in sorted(df['Borough'].unique()):
-        if borough != 'Unknown':
-            borough_data = borough_stats[borough_stats['Borough'] == borough]
-            if len(borough_data) > 0:
-                total_jobs = borough_data['Total'].sum()
-                borough_name_clean = borough.replace(' ', '_').replace('/', '_')
-                borough_links += f'<li><a href="Borough_{borough_name_clean}/{borough_name_clean}_report.html">{borough} Report</a> - {int(total_jobs)} total jobs</li>\n'
-    
-    # Calculate overall statistics
+    # Vectorized navigation link generation
+    district_links = ''.join([
+        f'<li><a href="District_{int(row.District)}/{int(row.District)}_report.html">District {int(row.District)} Report</a> - {int(row.Total):,} total jobs</li>\n'
+        for _, row in district_summary.sort_values('District').iterrows()
+    ])
+
+    borough_totals = borough_stats.groupby('Borough')['Total'].sum()
+    borough_links = ''.join([
+        f'<li><a href="Borough_{borough.replace(" ", "_").replace("/", "_")}/{borough.replace(" ", "_").replace("/", "_")}_report.html">{borough} Report</a> - {int(total):,} total jobs</li>\n'
+        for borough, total in borough_totals.items() if borough != 'Unknown'
+    ])
+
+    # Vectorized statistics
+    fill_status_counts = df['Fill_Status'].value_counts()
+    type_counts = df['Type'].value_counts()
     total_jobs = len(df)
-    total_filled = len(df[df['Fill_Status'] == 'Filled'])
-    total_vacancies = len(df[df['Type'] == 'Vacancy'])
-    total_absences = len(df[df['Type'] == 'Absence'])
-    
-    # Create summary box
+    total_filled = fill_status_counts.get('Filled', 0)
+    total_vacancies = type_counts.get('Vacancy', 0)
+    total_absences = type_counts.get('Absence', 0)
+    unique_districts = df['District'].nunique()
+    unique_schools = df['Location'].nunique()
+    unique_classifications = df['Classification'].nunique()
+
     summary_box = f"""
     <div class="section">
         <div class="summary-box">
@@ -273,9 +262,9 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
                 <li><strong>Total Vacancies</strong>{total_vacancies:,} ({(total_vacancies/total_jobs*100):.1f}%)</li>
                 <li><strong>Total Absences</strong>{total_absences:,} ({(total_absences/total_jobs*100):.1f}%)</li>
                 <li><strong>Total Filled</strong>{total_filled:,} ({(total_filled/total_jobs*100):.1f}%)</li>
-                <li><strong>Total Districts</strong>{len(df['District'].unique())}</li>
-                <li><strong>Total Schools</strong>{len(df['Location'].unique())}</li>
-                <li><strong>Total Classifications</strong>{len(df['Classification'].unique())}</li>
+                <li><strong>Total Districts</strong>{unique_districts}</li>
+                <li><strong>Total Schools</strong>{unique_schools}</li>
+                <li><strong>Total Classifications</strong>{unique_classifications}</li>
             </ul>
         </div>
     </div>
@@ -300,6 +289,21 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
         }
     }
     district_table_html = create_tabbed_summary_tables(district_for_table, district_formatters)
+    
+    # Create district choropleth map
+    district_map_html = ""
+    try:
+        from district_mapping import create_district_choropleth, get_district_map_section_html
+        map_file = os.path.join(output_dir, 'district_fillrate_map.html')
+        map_content = create_district_choropleth(district_summary, map_file)
+        if map_content:
+            district_map_html = get_district_map_section_html(district_summary, 'district_fillrate_map.html')
+            print("District choropleth map created successfully")
+        else:
+            print("Warning: Could not create district choropleth map")
+    except Exception as e:
+        print(f"Warning: Could not create district map - {e}")
+        # Continue without the map
     
     # Build content
     content = f"""
@@ -327,6 +331,8 @@ def create_overall_summary(df, summary_stats, borough_stats, output_dir, date_ra
                 <h3>Summary by District</h3>
                 {district_table_html}
             </div>
+
+            {district_map_html}
 
             <div class="section">
                 <h3>Detailed Reports</h3>

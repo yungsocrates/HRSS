@@ -97,7 +97,7 @@
             }
 
             .content {
-                max-width: 1600px;
+                max-width: 1550px;
                 margin: 0 auto;
                 padding: 20px;
             }
@@ -108,6 +108,9 @@
                 padding: 25px;
                 border-radius: 10px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                max-width: 1520px;
+                margin-left: auto;
+                margin-right: auto;
             }
 
             .section h2, .section h3 { 
@@ -395,6 +398,7 @@
                 box-shadow: var(--card-shadow);
                 border: 1px solid #e0e0e0;
                 overflow: hidden;
+                max-width: 100%;
             }
 
             .chart-container iframe {
@@ -486,7 +490,8 @@
 
                 iframe {
                     width: 100% !important;
-                    height: 400px !important;
+                    height: 450px !important;
+                    max-width: 100%;
                 }
             }
 
@@ -601,6 +606,70 @@
                     display: none;
                 }
             }
+            
+            /* Map Styles */
+            .map-summary {
+                margin: 20px 0;
+            }
+
+            .summary-stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin: 20px 0;
+            }
+
+            .stat-card {
+                background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                box-shadow: var(--card-shadow);
+                transition: all 0.3s ease;
+                border: 1px solid rgba(46, 134, 171, 0.2);
+            }
+
+            .stat-card:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--hover-shadow);
+            }
+
+            .stat-card h4 {
+                color: var(--primary-color);
+                margin-bottom: 10px;
+                font-size: 1.1em;
+                font-weight: 600;
+            }
+
+            .stat-value {
+                font-size: 1.8em;
+                font-weight: 700;
+                color: var(--secondary-color);
+                margin-top: 5px;
+            }
+
+            .map-notes {
+                background: var(--light-bg);
+                padding: 15px;
+                border-radius: 8px;
+                border-left: 4px solid var(--primary-color);
+                margin-top: 15px;
+            }
+
+            @media (max-width: 768px) {
+                .summary-stats-grid {
+                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                    gap: 10px;
+                }
+
+                .stat-card {
+                    padding: 15px;
+                }
+
+                .stat-value {
+                    font-size: 1.5em;
+                }
+            }
     
             
         </style>
@@ -650,7 +719,7 @@
                 <h1>Substitute Paraprofessional Jobs Dashboard</h1>
                 <h2>Citywide Summary Report</h2>
                 <div class="date-info">Job dates: September 03, 2024 to June 26, 2025</div>
-                <p>Generated on: August 04, 2025 at 04:39 PM</p>
+                <p>Generated on: August 07, 2025 at 06:13 PM</p>
             </div>
             <div class="header-logo">
                 <img src="Horizontal_logo_White_PublicSchools.png" alt="NYC Public Schools" class="logo">
@@ -2292,56 +2361,98 @@
     
             </div>
 
+            
+    <div class="section">
+        <h3>Geographic Distribution - District Fill Rates</h3>
+        
+        <div class="map-summary">
+            <div class="summary-stats-grid">
+                <div class="stat-card">
+                    <h4>Average Fill Rate</h4>
+                    <div class="stat-value">78.4%</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Highest Fill Rate District</h4>
+                    <div class="stat-value">D23 (87.9%)</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Districts ≥90%</h4>
+                    <div class="stat-value">0 of 36</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Districts <70%</h4>
+                    <div class="stat-value">2 of 36</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <iframe src="district_fillrate_map.html" width="1400" height="950" frameborder="0"></iframe>
+        </div>
+        
+        <div class="map-notes">
+            <p style="font-style: italic; color: #666; text-align: center; margin-top: 15px;">
+                Districts are colored by overall fill rate: 
+                <span style="color: #d62728;">Red (low)</span> → 
+                <span style="color: #ff7f0e;">Orange</span> → 
+                <span style="color: #ffff99;">Yellow</span> → 
+                <span style="color: #98df8a;">Light Green</span> → 
+                <span style="color: #2ca02c;">Green (high)</span>
+            </p>
+        </div>
+    </div>
+    
+
             <div class="section">
                 <h3>Detailed Reports</h3>
                 <div class="links-grid">
                     <div class="links-section">
                         <h4>Borough Reports</h4>
-                        <ul><li><a href="Borough_Bronx/Bronx_report.html">Bronx Report</a> - 319739 total jobs</li>
-<li><a href="Borough_Brooklyn/Brooklyn_report.html">Brooklyn Report</a> - 450113 total jobs</li>
-<li><a href="Borough_Manhattan/Manhattan_report.html">Manhattan Report</a> - 205458 total jobs</li>
-<li><a href="Borough_Queens/Queens_report.html">Queens Report</a> - 317039 total jobs</li>
-<li><a href="Borough_Staten_Island/Staten_Island_report.html">Staten Island Report</a> - 96420 total jobs</li>
+                        <ul><li><a href="Borough_Bronx/Bronx_report.html">Bronx Report</a> - 319,739 total jobs</li>
+<li><a href="Borough_Brooklyn/Brooklyn_report.html">Brooklyn Report</a> - 450,113 total jobs</li>
+<li><a href="Borough_Manhattan/Manhattan_report.html">Manhattan Report</a> - 205,458 total jobs</li>
+<li><a href="Borough_Queens/Queens_report.html">Queens Report</a> - 317,039 total jobs</li>
+<li><a href="Borough_Staten_Island/Staten_Island_report.html">Staten Island Report</a> - 96,420 total jobs</li>
 </ul>
                     </div>
                     <div class="links-section">
                         <h4>District Reports</h4>
-                        <ul><li><a href="District_1/1_report.html">District 1 Report</a> - 11036 total jobs</li>
-<li><a href="District_2/2_report.html">District 2 Report</a> - 47660 total jobs</li>
-<li><a href="District_3/3_report.html">District 3 Report</a> - 21130 total jobs</li>
-<li><a href="District_4/4_report.html">District 4 Report</a> - 20983 total jobs</li>
-<li><a href="District_5/5_report.html">District 5 Report</a> - 18265 total jobs</li>
-<li><a href="District_6/6_report.html">District 6 Report</a> - 25083 total jobs</li>
-<li><a href="District_7/7_report.html">District 7 Report</a> - 22934 total jobs</li>
-<li><a href="District_8/8_report.html">District 8 Report</a> - 23663 total jobs</li>
-<li><a href="District_9/9_report.html">District 9 Report</a> - 36772 total jobs</li>
-<li><a href="District_10/10_report.html">District 10 Report</a> - 50350 total jobs</li>
-<li><a href="District_11/11_report.html">District 11 Report</a> - 36909 total jobs</li>
-<li><a href="District_12/12_report.html">District 12 Report</a> - 18909 total jobs</li>
-<li><a href="District_13/13_report.html">District 13 Report</a> - 21416 total jobs</li>
-<li><a href="District_14/14_report.html">District 14 Report</a> - 16680 total jobs</li>
-<li><a href="District_15/15_report.html">District 15 Report</a> - 36394 total jobs</li>
-<li><a href="District_16/16_report.html">District 16 Report</a> - 8897 total jobs</li>
-<li><a href="District_17/17_report.html">District 17 Report</a> - 35240 total jobs</li>
-<li><a href="District_18/18_report.html">District 18 Report</a> - 26671 total jobs</li>
-<li><a href="District_19/19_report.html">District 19 Report</a> - 29225 total jobs</li>
-<li><a href="District_20/20_report.html">District 20 Report</a> - 38737 total jobs</li>
-<li><a href="District_21/21_report.html">District 21 Report</a> - 36624 total jobs</li>
-<li><a href="District_22/22_report.html">District 22 Report</a> - 34931 total jobs</li>
-<li><a href="District_23/23_report.html">District 23 Report</a> - 21004 total jobs</li>
-<li><a href="District_24/24_report.html">District 24 Report</a> - 35902 total jobs</li>
-<li><a href="District_25/25_report.html">District 25 Report</a> - 24199 total jobs</li>
-<li><a href="District_26/26_report.html">District 26 Report</a> - 17902 total jobs</li>
-<li><a href="District_27/27_report.html">District 27 Report</a> - 39141 total jobs</li>
-<li><a href="District_28/28_report.html">District 28 Report</a> - 27057 total jobs</li>
-<li><a href="District_29/29_report.html">District 29 Report</a> - 27816 total jobs</li>
-<li><a href="District_30/30_report.html">District 30 Report</a> - 25668 total jobs</li>
-<li><a href="District_31/31_report.html">District 31 Report</a> - 56467 total jobs</li>
-<li><a href="District_32/32_report.html">District 32 Report</a> - 10124 total jobs</li>
+                        <ul><li><a href="District_1/1_report.html">District 1 Report</a> - 11,036 total jobs</li>
+<li><a href="District_2/2_report.html">District 2 Report</a> - 47,660 total jobs</li>
+<li><a href="District_3/3_report.html">District 3 Report</a> - 21,130 total jobs</li>
+<li><a href="District_4/4_report.html">District 4 Report</a> - 20,983 total jobs</li>
+<li><a href="District_5/5_report.html">District 5 Report</a> - 18,265 total jobs</li>
+<li><a href="District_6/6_report.html">District 6 Report</a> - 25,083 total jobs</li>
+<li><a href="District_7/7_report.html">District 7 Report</a> - 22,934 total jobs</li>
+<li><a href="District_8/8_report.html">District 8 Report</a> - 23,663 total jobs</li>
+<li><a href="District_9/9_report.html">District 9 Report</a> - 36,772 total jobs</li>
+<li><a href="District_10/10_report.html">District 10 Report</a> - 50,350 total jobs</li>
+<li><a href="District_11/11_report.html">District 11 Report</a> - 36,909 total jobs</li>
+<li><a href="District_12/12_report.html">District 12 Report</a> - 18,909 total jobs</li>
+<li><a href="District_13/13_report.html">District 13 Report</a> - 21,416 total jobs</li>
+<li><a href="District_14/14_report.html">District 14 Report</a> - 16,680 total jobs</li>
+<li><a href="District_15/15_report.html">District 15 Report</a> - 36,394 total jobs</li>
+<li><a href="District_16/16_report.html">District 16 Report</a> - 8,897 total jobs</li>
+<li><a href="District_17/17_report.html">District 17 Report</a> - 35,240 total jobs</li>
+<li><a href="District_18/18_report.html">District 18 Report</a> - 26,671 total jobs</li>
+<li><a href="District_19/19_report.html">District 19 Report</a> - 29,225 total jobs</li>
+<li><a href="District_20/20_report.html">District 20 Report</a> - 38,737 total jobs</li>
+<li><a href="District_21/21_report.html">District 21 Report</a> - 36,624 total jobs</li>
+<li><a href="District_22/22_report.html">District 22 Report</a> - 34,931 total jobs</li>
+<li><a href="District_23/23_report.html">District 23 Report</a> - 21,004 total jobs</li>
+<li><a href="District_24/24_report.html">District 24 Report</a> - 35,902 total jobs</li>
+<li><a href="District_25/25_report.html">District 25 Report</a> - 24,199 total jobs</li>
+<li><a href="District_26/26_report.html">District 26 Report</a> - 17,902 total jobs</li>
+<li><a href="District_27/27_report.html">District 27 Report</a> - 39,141 total jobs</li>
+<li><a href="District_28/28_report.html">District 28 Report</a> - 27,057 total jobs</li>
+<li><a href="District_29/29_report.html">District 29 Report</a> - 27,816 total jobs</li>
+<li><a href="District_30/30_report.html">District 30 Report</a> - 25,668 total jobs</li>
+<li><a href="District_31/31_report.html">District 31 Report</a> - 56,467 total jobs</li>
+<li><a href="District_32/32_report.html">District 32 Report</a> - 10,124 total jobs</li>
 <li><a href="District_33/33_report.html">District 33 Report</a> - 3 total jobs</li>
-<li><a href="District_62/62_report.html">District 62 Report</a> - 145888 total jobs</li>
-<li><a href="District_79/79_report.html">District 79 Report</a> - 2507 total jobs</li>
-<li><a href="District_97/97_report.html">District 97 Report</a> - 336582 total jobs</li>
+<li><a href="District_62/62_report.html">District 62 Report</a> - 145,888 total jobs</li>
+<li><a href="District_79/79_report.html">District 79 Report</a> - 2,507 total jobs</li>
+<li><a href="District_97/97_report.html">District 97 Report</a> - 336,582 total jobs</li>
 </ul>
                     </div>
                 </div>

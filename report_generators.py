@@ -24,11 +24,12 @@ def create_school_report(district, location, location_clean, school_data, df, su
     school_dir = os.path.join(output_dir, f"District_{int(district)}", "Schools", f"School_{location_clean}")
     os.makedirs(school_dir, exist_ok=True)
     
-    # Sanitize location name for files
-    safe_location_name = re.sub(r'[<>:"/\\|?*\n\r\t]', '_', str(location_clean)).strip()
-    safe_location_name = re.sub(r'_+', '_', safe_location_name)
+    # Sanitize location name for files - more robust for Windows
+    safe_location_name = re.sub(r'[<>:"/\\|?*\n\r\t\s]', '_', str(location_clean)).strip()
+    safe_location_name = re.sub(r'_+', '_', safe_location_name).strip('_')
+    safe_location_name = safe_location_name.replace('.', '_')
     if len(safe_location_name) > 200:
-        safe_location_name = safe_location_name[:200]
+        safe_location_name = safe_location_name[:200].rstrip('._')
     
     # Create tabbed summary tables
     formatters = {
@@ -233,9 +234,12 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
     school_reports = []
     
     for location in sorted(district_schools):
-        location_clean = re.sub(r'[<>:"/\\|?*\n\r\t]', '_', str(location)).strip()
+        # More robust sanitization for Windows filenames
+        location_clean = re.sub(r'[<>:"/\\|?*\n\r\t\s]', '_', str(location)).strip()
+        location_clean = re.sub(r'_+', '_', location_clean).strip('_')
+        location_clean = location_clean.replace('.', '_')
         if len(location_clean) > 200:
-            location_clean = location_clean[:200]
+            location_clean = location_clean[:200].rstrip('._')
         
         school_df = df[(df['District'] == district) & (df['Location'] == location)]
         school_summary = create_summary_stats(school_df, ['District', 'Location'])
@@ -248,7 +252,7 @@ def create_district_report(district, district_data, df, output_dir, summary_stat
             school_reports.append(school_report)
             
             total_jobs = int(school_summary['Total'].sum())
-            school_links += f'<li><a href="Schools/School_{location_clean}/{location_clean}_report.html">{location}</a> - {total_jobs} total jobs</li>\n'
+            school_links += f'<li><a href="Schools/School_{location_clean}/{location_clean}_report.html">{location}</a> - {total_jobs:,} total jobs</li>\n'
     
     # Create school summary table HTML using tabbed interface
     school_formatters = {

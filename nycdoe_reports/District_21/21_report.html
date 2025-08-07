@@ -97,7 +97,7 @@
             }
 
             .content {
-                max-width: 1600px;
+                max-width: 1550px;
                 margin: 0 auto;
                 padding: 20px;
             }
@@ -108,6 +108,9 @@
                 padding: 25px;
                 border-radius: 10px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                max-width: 1520px;
+                margin-left: auto;
+                margin-right: auto;
             }
 
             .section h2, .section h3 { 
@@ -395,6 +398,7 @@
                 box-shadow: var(--card-shadow);
                 border: 1px solid #e0e0e0;
                 overflow: hidden;
+                max-width: 100%;
             }
 
             .chart-container iframe {
@@ -486,7 +490,8 @@
 
                 iframe {
                     width: 100% !important;
-                    height: 400px !important;
+                    height: 450px !important;
+                    max-width: 100%;
                 }
             }
 
@@ -601,6 +606,70 @@
                     display: none;
                 }
             }
+            
+            /* Map Styles */
+            .map-summary {
+                margin: 20px 0;
+            }
+
+            .summary-stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin: 20px 0;
+            }
+
+            .stat-card {
+                background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                box-shadow: var(--card-shadow);
+                transition: all 0.3s ease;
+                border: 1px solid rgba(46, 134, 171, 0.2);
+            }
+
+            .stat-card:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--hover-shadow);
+            }
+
+            .stat-card h4 {
+                color: var(--primary-color);
+                margin-bottom: 10px;
+                font-size: 1.1em;
+                font-weight: 600;
+            }
+
+            .stat-value {
+                font-size: 1.8em;
+                font-weight: 700;
+                color: var(--secondary-color);
+                margin-top: 5px;
+            }
+
+            .map-notes {
+                background: var(--light-bg);
+                padding: 15px;
+                border-radius: 8px;
+                border-left: 4px solid var(--primary-color);
+                margin-top: 15px;
+            }
+
+            @media (max-width: 768px) {
+                .summary-stats-grid {
+                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                    gap: 10px;
+                }
+
+                .stat-card {
+                    padding: 15px;
+                }
+
+                .stat-value {
+                    font-size: 1.5em;
+                }
+            }
     
             
         </style>
@@ -650,7 +719,7 @@
                 <h1>Substitute Paraprofessional Jobs Report</h1>
                 <h2>District: 21</h2>
                 <div class="date-info">Job dates: September 03, 2024 to June 26, 2025</div>
-                <p>Generated on: August 04, 2025 at 04:27 PM</p>
+                <p>Generated on: August 07, 2025 at 05:58 PM</p>
             </div>
             <div class="header-logo">
                 <img src="../Horizontal_logo_White_PublicSchools.png" alt="NYC Public Schools" class="logo">
@@ -2100,24 +2169,7 @@
 
             <div class="section">
                 <h3>Breakdown by Classification</h3>
-                <div class="pie-container"><iframe src="District_21_AKAN SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_ARABIC SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_BENGALI SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_CANTONESE SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_GA SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_GEORGIAN SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_IBO SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_IGBO SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_LATIN SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_MANDARIN SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_PARAPROFESSIONAL_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_RUSSIAN SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_SPANISH SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_TURKISH SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_UKRAINIAN SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_UZBEK SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-<iframe src="District_21_VIETNAMESE SPEAKING PARA_pie.html" width="420" height="470" frameborder="0"></iframe>
-</div>
+                <div class="pie-container"><iframe src="District_21_AKAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_ARABIC_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_BENGALI_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_CANTONESE_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_GA_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_GEORGIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_IBO_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_IGBO_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_LATIN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_MANDARIN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_PARAPROFESSIONAL_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_RUSSIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_SPANISH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_TURKISH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_UKRAINIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_UZBEK_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_21_VIETNAMESE_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe></div>
             </div>
 
             <div class="section">
@@ -2148,46 +2200,46 @@
             
             <div class="section">
                 <h3>Individual School Reports</h3>
-                <div class="district-links"><ul><li><a href="Schools/School_K090/K090_report.html">K090</a> - 1809 total jobs</li>
+                <div class="district-links"><ul><li><a href="Schools/School_K090/K090_report.html">K090</a> - 1,809 total jobs</li>
 <li><a href="Schools/School_K095/K095_report.html">K095</a> - 592 total jobs</li>
 <li><a href="Schools/School_K096/K096_report.html">K096</a> - 636 total jobs</li>
-<li><a href="Schools/School_K097/K097_report.html">K097</a> - 2283 total jobs</li>
+<li><a href="Schools/School_K097/K097_report.html">K097</a> - 2,283 total jobs</li>
 <li><a href="Schools/School_K098/K098_report.html">K098</a> - 162 total jobs</li>
 <li><a href="Schools/School_K099/K099_report.html">K099</a> - 355 total jobs</li>
 <li><a href="Schools/School_K100/K100_report.html">K100</a> - 455 total jobs</li>
-<li><a href="Schools/School_K101/K101_report.html">K101</a> - 1498 total jobs</li>
+<li><a href="Schools/School_K101/K101_report.html">K101</a> - 1,498 total jobs</li>
 <li><a href="Schools/School_K121/K121_report.html">K121</a> - 91 total jobs</li>
 <li><a href="Schools/School_K128/K128_report.html">K128</a> - 403 total jobs</li>
 <li><a href="Schools/School_K153/K153_report.html">K153</a> - 895 total jobs</li>
-<li><a href="Schools/School_K177/K177_report.html">K177</a> - 2095 total jobs</li>
-<li><a href="Schools/School_K188/K188_report.html">K188</a> - 1435 total jobs</li>
-<li><a href="Schools/School_K199/K199_report.html">K199</a> - 2022 total jobs</li>
+<li><a href="Schools/School_K177/K177_report.html">K177</a> - 2,095 total jobs</li>
+<li><a href="Schools/School_K188/K188_report.html">K188</a> - 1,435 total jobs</li>
+<li><a href="Schools/School_K199/K199_report.html">K199</a> - 2,022 total jobs</li>
 <li><a href="Schools/School_K209/K209_report.html">K209</a> - 822 total jobs</li>
-<li><a href="Schools/School_K212/K212_report.html">K212</a> - 2100 total jobs</li>
-<li><a href="Schools/School_K215/K215_report.html">K215</a> - 1308 total jobs</li>
-<li><a href="Schools/School_K216/K216_report.html">K216</a> - 1669 total jobs</li>
+<li><a href="Schools/School_K212/K212_report.html">K212</a> - 2,100 total jobs</li>
+<li><a href="Schools/School_K215/K215_report.html">K215</a> - 1,308 total jobs</li>
+<li><a href="Schools/School_K216/K216_report.html">K216</a> - 1,669 total jobs</li>
 <li><a href="Schools/School_K225/K225_report.html">K225</a> - 383 total jobs</li>
 <li><a href="Schools/School_K226/K226_report.html">K226</a> - 528 total jobs</li>
-<li><a href="Schools/School_K228/K228_report.html">K228</a> - 1419 total jobs</li>
+<li><a href="Schools/School_K228/K228_report.html">K228</a> - 1,419 total jobs</li>
 <li><a href="Schools/School_K238/K238_report.html">K238</a> - 798 total jobs</li>
 <li><a href="Schools/School_K239/K239_report.html">K239</a> - 40 total jobs</li>
 <li><a href="Schools/School_K253/K253_report.html">K253</a> - 798 total jobs</li>
-<li><a href="Schools/School_K281/K281_report.html">K281</a> - 1095 total jobs</li>
+<li><a href="Schools/School_K281/K281_report.html">K281</a> - 1,095 total jobs</li>
 <li><a href="Schools/School_K288/K288_report.html">K288</a> - 571 total jobs</li>
 <li><a href="Schools/School_K303/K303_report.html">K303</a> - 333 total jobs</li>
-<li><a href="Schools/School_K329/K329_report.html">K329</a> - 1979 total jobs</li>
+<li><a href="Schools/School_K329/K329_report.html">K329</a> - 1,979 total jobs</li>
 <li><a href="Schools/School_K337/K337_report.html">K337</a> - 57 total jobs</li>
 <li><a href="Schools/School_K348/K348_report.html">K348</a> - 4 total jobs</li>
 <li><a href="Schools/School_K410/K410_report.html">K410</a> - 125 total jobs</li>
-<li><a href="Schools/School_K468/K468_report.html">K468</a> - 1124 total jobs</li>
-<li><a href="Schools/School_K525/K525_report.html">K525</a> - 1163 total jobs</li>
+<li><a href="Schools/School_K468/K468_report.html">K468</a> - 1,124 total jobs</li>
+<li><a href="Schools/School_K525/K525_report.html">K525</a> - 1,163 total jobs</li>
 <li><a href="Schools/School_K540/K540_report.html">K540</a> - 984 total jobs</li>
 <li><a href="Schools/School_K559/K559_report.html">K559</a> - 401 total jobs</li>
 <li><a href="Schools/School_K572/K572_report.html">K572</a> - 505 total jobs</li>
 <li><a href="Schools/School_K620/K620_report.html">K620</a> - 767 total jobs</li>
 <li><a href="Schools/School_K690/K690_report.html">K690</a> - 493 total jobs</li>
 <li><a href="Schools/School_K728/K728_report.html">K728</a> - 209 total jobs</li>
-<li><a href="Schools/School_KP21/KP21_report.html">KP21</a> - 2218 total jobs</li>
+<li><a href="Schools/School_KP21/KP21_report.html">KP21</a> - 2,218 total jobs</li>
 </ul></div>
             </div>
         </div>

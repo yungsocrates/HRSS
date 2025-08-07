@@ -8,6 +8,10 @@ import shutil
 import os
 import re
 
+def remove_unnamed_columns(df):
+    """Remove columns with 'Unnamed' in their name from a DataFrame."""
+    return df.loc[:, ~df.columns.str.contains('^Unnamed', case=False)]
+
 # === GLOBAL CONSTANTS ===
 DISPLAY_COLS = [
     'Classification', 'Vacancy_Filled', 'Vacancy_Unfilled', 'Total_Vacancy', 'Vacancy_Fill_Pct',
@@ -79,6 +83,7 @@ def load_and_process_data(csv_file_paths):
             try:
                 # Try reading without specifying columns first
                 temp_df = pd.read_csv(csv_file_path, nrows=1, encoding='UTF-8', sep=',')
+                temp_df = remove_unnamed_columns(temp_df)
                 available_cols = len(temp_df.columns)
                 print(f"  Available columns in {filename}: {available_cols}")
                 print(f"  Column names: {list(temp_df.columns)}")
@@ -93,6 +98,7 @@ def load_and_process_data(csv_file_paths):
                     df = pd.read_csv(csv_file_path, encoding='UTF-8', sep=',')
                     
                 print(f"  Loaded columns from {filename}: {list(df.columns)}")
+                df = remove_unnamed_columns(df)
                 df['Source_File'] = filename
                 srepp_dataframes.append(df)
             except Exception as e:
@@ -102,6 +108,7 @@ def load_and_process_data(csv_file_paths):
         else:
             print(f"Loading data from: {csv_file_path}")
             df = pd.read_csv(csv_file_path)
+            df = remove_unnamed_columns(df)
             # Add source file information for tracking
             df['Source_File'] = filename
             main_dataframes.append(df)
@@ -109,12 +116,14 @@ def load_and_process_data(csv_file_paths):
     # Combine main dataframes (excluding SREPP files)
     if main_dataframes:
         df = pd.concat(main_dataframes, ignore_index=True)
+        df = remove_unnamed_columns(df)
     else:
         df = pd.DataFrame()  # Empty dataframe if no main files
     
     # Combine SREPP dataframes separately
     if srepp_dataframes:
         srepp_df = pd.concat(srepp_dataframes, ignore_index=True)
+        srepp_df = remove_unnamed_columns(srepp_df)
         print(f"Combined SREPP payroll data: {len(srepp_df)} records from {len(srepp_dataframes)} files")
     else:
         srepp_df = pd.DataFrame()  # Empty dataframe if no SREPP files

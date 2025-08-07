@@ -82,6 +82,39 @@ def create_bar_chart(data, title, output_file, div_id=None):
     
     return output_file
 
+def sanitize_filename(name):
+    """
+    Enhanced filename sanitization for Windows compatibility
+    """
+    if not name:
+        return "unknown"
+    
+    # Convert to string and remove/replace problematic characters
+    # Windows invalid: < > : " | ? * \ / and control chars
+    sanitized = re.sub(r'[<>:"|?*\\/\x00-\x1f\x7f-\x9f]', '_', str(name))
+    
+    # Replace multiple underscores/spaces with single underscore
+    sanitized = re.sub(r'[_\s]+', '_', sanitized)
+    
+    # Remove leading/trailing underscores, periods, and spaces
+    sanitized = sanitized.strip('_. ')
+    
+    # Handle Windows reserved names
+    reserved = {'CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 
+                'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 
+                'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9'}
+    
+    if sanitized.upper() in reserved:
+        sanitized = f"file_{sanitized}"
+    
+    # Ensure it's not empty and not too long
+    if not sanitized:
+        sanitized = "unknown"
+    if len(sanitized) > 50:
+        sanitized = sanitized[:50].rstrip('_.')
+    
+    return sanitized
+
 def create_pie_chart(classification, data_row, location_clean, output_dir):
     """
     Create a pie chart for a specific classification
@@ -98,18 +131,35 @@ def create_pie_chart(classification, data_row, location_clean, output_dir):
     if data_row['Total'] <= 0:
         return None, ""
     
-    # Sanitize names for filename
-    safe_location = re.sub(r'[<>:"/\\|?*\n\r\t]', '_', str(location_clean)).strip()
-    safe_classification = re.sub(r'[<>:"/\\|?*\n\r\t]', '_', str(classification)).strip()
+    # Use enhanced sanitization with additional safety
+    safe_location = sanitize_filename(location_clean)
+    safe_classification = sanitize_filename(classification)
     
-    # Remove multiple consecutive underscores for cleaner filenames
-    safe_location = re.sub(r'_+', '_', safe_location)
-    safe_classification = re.sub(r'_+', '_', safe_classification)
+    # Create progressively simpler filenames until one works
+    filename_attempts = [
+        f'{safe_location}_{safe_classification}_pie.html',
+        f'{safe_location[:20]}_pie.html',
+        f'school_{abs(hash(location_clean)) % 10000}_pie.html',
+        f'chart_{abs(hash(str(data_row))) % 10000}.html'
+    ]
     
-    # Ensure filename isn't too long
-    base_name = f'{safe_location}_{safe_classification}_pie'
-    if len(base_name) > 200:
-        base_name = base_name[:200]
+    pie_file = None
+    for attempt in filename_attempts:
+        try:
+            test_path = os.path.join(output_dir, attempt)
+            # Test if we can create this file
+            os.makedirs(output_dir, exist_ok=True)
+            with open(test_path, 'w') as test_f:
+                test_f.write('test')
+            os.remove(test_path)
+            pie_file = test_path
+            break
+        except Exception:
+            continue
+    
+    if pie_file is None:
+        print(f"Warning: Could not create valid filename for {location_clean} {classification}")
+        return None, ""
     
     pie_fig = go.Figure(data=[go.Pie(
         labels=['Vacancy Filled', 'Vacancy Unfilled', 'Absence Filled', 'Absence Unfilled'],
@@ -138,15 +188,15 @@ def create_pie_chart(classification, data_row, location_clean, output_dir):
         margin=dict(t=60, b=40, l=40, r=40)
     )
     
-    pie_file = os.path.join(output_dir, f'{base_name}.html')
-    # Ensure the directory exists before writing
-    os.makedirs(os.path.dirname(pie_file), exist_ok=True)
-    pyo.plot(pie_fig, filename=pie_file, auto_open=False)
-    
-    iframe_html = f'<iframe src="{os.path.basename(pie_file)}" width="420" height="470" frameborder="0"></iframe>\n'
-    
-    return pie_file, iframe_html
-
+    try:
+        pyo.plot(pie_fig, filename=pie_file, auto_open=False)
+        base_filename = os.path.basename(pie_file)
+        iframe_html = f'<iframe src="{base_filename}" width="450" height="500" frameborder="0"></iframe>'
+        return pie_file, iframe_html
+    except Exception as e:
+        print(f"Error creating pie chart file '{pie_file}': {e}")
+        return None, ""
+        fallback_name = f"chart_{abs(hash(f'{location_clean}_{classification}')) % 100000}.html"
 def create_pie_charts_for_data(data, location_clean, output_dir):
     """
     Create pie charts for all classifications in the data
