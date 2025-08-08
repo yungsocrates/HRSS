@@ -17,6 +17,9 @@
 debug_test.py
 test_dates.py
 
+# Individual district reports for dissemination (not tracked)
+district_individual_reports/
+
 # Ignore legacy scripts (keep for reference but don't track changes)
 para_fillrate_by_location.py
 para_fillrate_oo.py  # Object-oriented implementation (legacy)
@@ -66,3 +69,6 @@ Fill Rate Data/AC Totals - System Wide.xlsx
 # Ignore temporary files
 *.tmp
 *.temp
+
+# Ignore generated ReportLab PDFs
+/district_reportlab_pdfs/
