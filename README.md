@@ -4,22 +4,21 @@
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-A comprehensive analytics dashboard for tracking and visualizing NYC Department of Education substitute paraprofessional job fill rates across all districts, boroughs, and schools. Features a modern, modular architecture with standardized branding, enhanced visual design, and multi-source data integration.
+A comprehensive analytics dashboard for tracking and visualizing NYC Department of Education substitute paraprofessional job fill rates across all districts, boroughs, and schools. Features a modern, modular architecture with standardized branding, enhanced visual design, multi-source data integration, and robust DataTables-powered interactive functionality.
 
 ## 🎯 Overview
 
 This project analyzes substitute paraprofessional job postings and fill rates across the NYC Public Schools system, providing detailed insights into:
 
-- **Fill Rate Analysis**: Comprehensive tracking of filled vs. unfilled positions
-- **Geographic Breakdown**: Analysis by borough, district, and individual schools
+- **Fill Rate Analysis**: Comprehensive tracking of filled vs. unfilled positions with robust sorting
+- **Geographic Breakdown**: Analysis by borough, district, and individual schools with complete navigation
 - **Multi-Source Data Integration**: Combines data from multiple CSV files (e.g., mayjobs.csv, junejobs.csv)
 - **Gender-Neutral Classifications**: Standardized job classifications with gender identifiers removed
-- **Interactive Dashboards**: Modern, responsive HTML reports with interactive charts and bold typography
+- **Interactive Dashboards**: Modern, responsive HTML reports with DataTables-powered sorting and filtering
 - **Time-series Analysis**: Historical trends and patterns in job filling
-- **Enhanced Navigation**: Seamless navigation between overview, borough, and district reports
+- **Enhanced Navigation**: Complete navigation hierarchy with accurate link descriptions
 - **Standardized Branding**: Professional NYC Public Schools logo integration across all reports
-
-## 🚀 Features
+- **Reliable User Experience**: Fixed DataTables errors, eliminated duplicate content, and optimized chart displays
 
 ## 🚀 Features
 
@@ -35,9 +34,11 @@ This project analyzes substitute paraprofessional job postings and fill rates ac
 - **SubCentral vs Payroll Matching**: Advanced job-level matching analysis using Location + EIS ID + Date between SubCentral and payroll systems
 
 ### 📈 Visualizations & Data Display
-- **Tabbed Summary Tables**: Revolutionary three-tab interface separating Vacancy Jobs, Absence Jobs, and Combined Totals for easier data comprehension
+- **Tabbed Summary Tables**: Revolutionary three-tab interface with robust DataTables integration for reliable sorting and filtering
+- **Smart Data Sorting**: All tables sorted strategically - fill rates from lowest to highest to identify areas needing attention
+- **Enhanced Navigation Links**: Clear, accurate link descriptions with proper ordering information
 - **Pie Charts**: Distribution of filled/unfilled positions by classification
-- **Bar Charts**: Comparative analysis across different job types with integer value displays
+- **Bar Charts**: Comparative analysis across different job types with optimized container sizing
 - **Enhanced Summary Tables**: Professional tables with solid-color headers and responsive overflow handling
 - **Trend Analysis**: Fill rate patterns and performance metrics with modern, card-based interface
 - **Comparison Cards**: Four-way comparison system (Citywide vs Borough vs District vs School) with color-coded cards
@@ -46,17 +47,19 @@ This project analyzes substitute paraprofessional job postings and fill rates ac
 - **Matching Analysis Tables**: Styled tables showing SubCentral vs Payroll data correlation with consistent formatting
 
 ### 🎨 Modern Design Features
-- **Tabbed Interface**: Clean, JavaScript-powered tabs for organizing summary statistics into logical groups
+- **Tabbed Interface**: Clean, JavaScript-powered tabs with robust DataTables integration and error-free switching
+- **Reliable Interactivity**: Fixed JavaScript errors for seamless user experience across all table interactions
 - **Full-Width Layout**: Professional edge-to-edge header and footer design that spans the entire screen width
-- **Enhanced Container Width**: Optimized 1500px content width for better data display and readability
+- **Enhanced Container Width**: Optimized 1500px content width with properly sized chart containers (1220x520)
 - **Clean Header/Footer**: Left-aligned text with proportional 80px logo placement and bold typography
-- **Responsive Design**: Optimized for desktop, tablet, and mobile viewing
-- **Enhanced Tables**: Improved readability with solid-color headers and responsive containers
+- **Responsive Design**: Optimized for desktop, tablet, and mobile viewing without scroll bar issues
+- **Enhanced Tables**: Improved readability with solid-color headers, responsive containers, and smart sorting
 - **Hover Effects**: Interactive elements with smooth transitions for tabs and navigation
 - **Professional Styling**: Consistent color scheme and typography throughout with NYC Public Schools branding
 - **Print Optimization**: Special print styles for tabbed content with automatic section headers
 - **Comparison System**: Visual comparison cards with distinct color coding for different administrative levels
 - **Modern CSS**: Clean, professional header/footer design with improved spacing and typography hierarchy
+- **Content Clarity**: Eliminated duplicate notes and enhanced all descriptions with clear sorting information
 
 ### 🌐 Multi-language Support
 Specialized tracking for paraprofessional positions requiring:
@@ -68,6 +71,27 @@ Specialized tracking for paraprofessional positions requiring:
 - Korean
 - French
 - And many other languages
+
+## 🔧 Recent Stability & Usability Improvements (v5.1.0)
+
+### DataTables Integration & JavaScript Reliability
+- **Fixed DataTables Errors**: Resolved critical JavaScript errors that occurred when switching between tabs
+- **Robust Table Initialization**: Enhanced DataTables initialization to handle hidden tables properly
+- **Error-Free Tab Switching**: Eliminated "Cannot read properties of undefined" errors
+- **Enhanced User Experience**: Smooth, reliable interaction with all tabbed content
+
+### Navigation & Content Accuracy
+- **School Report Links**: Fixed broken individual school report navigation in district reports
+- **Accurate Link Descriptions**: Corrected misleading navigation descriptions:
+  - Citywide and Borough reports now correctly reference "district-level reports"
+  - District reports correctly reference "school codes for detailed reports"
+- **Eliminated Duplicate Notes**: Removed redundant note paragraphs across all report types
+- **Comprehensive Sorting Information**: All notes now include clear sorting descriptions
+
+### Visual Display Optimization
+- **Borough Chart Containers**: Fixed overflow issues causing scroll bars in borough reports
+- **Consistent Chart Dimensions**: Standardized iframe sizes across all report types (1220x520)
+- **Clean Interface**: Removed debug output for faster, cleaner report generation
 
 ## 🏗️ Architecture
 

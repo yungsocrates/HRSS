@@ -5,6 +5,64 @@ All notable changes to the NYC Public Schools Paraprofessional Jobs Fill Rate An
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.0] - 2025-08-13
+
+### Fixed
+- 🐛 **DataTables JavaScript Errors**: Resolved critical DataTables initialization errors on tabbed tables
+  - Fixed "Cannot read properties of undefined" errors when switching between tabs
+  - Implemented robust DataTables initialization with hidden table detection
+  - Added proper cleanup and re-initialization for tabbed content
+  - Enhanced error handling to prevent JavaScript crashes on tab switching
+
+- 🔗 **Individual School Report Links**: Fixed broken school report navigation in district reports
+  - Restored missing school links in district-level reports
+  - Fixed school report generation that was failing for some districts
+  - Enhanced link generation with proper school data validation
+  - Improved error handling for districts with no school data
+
+- 📊 **Borough Bar Chart Display**: Fixed container overflow causing scroll bars
+  - Updated borough report iframe dimensions from 1200x580 to 1220x520
+  - Matched dimensions with district reports for consistent display
+  - Eliminated horizontal scroll bars in borough-level bar charts
+
+- 📝 **Duplicate Notes**: Eliminated redundant note paragraphs across all reports
+  - Removed duplicate notes from tabbed table functions in templates.py
+  - Consolidated comprehensive notes in main report files
+  - Ensured single, clear note per table section
+
+- 🏷️ **Link Descriptions**: Corrected misleading navigation link descriptions
+  - Fixed citywide summary district links: "school-level" → "district-level reports"
+  - Fixed borough report district links: "school-level" → "district-level reports"  
+  - Maintained correct "school codes for detailed reports" in district reports
+  - Updated link ordering descriptions for clarity
+
+### Enhanced
+- 📋 **Table Sorting Information**: Added comprehensive sorting descriptions to all notes
+  - All fill rate tables now specify "sorted from lowest to highest overall fill rate"
+  - Match percentage tables specify "sorted from lowest to highest Match %"
+  - Navigation links specify ordering method (by district number, alphabetically by borough)
+  - Classification tables specify "sorted alphabetically by classification type"
+  - Comparison tables specify "sorted by highest to lowest total jobs"
+
+- 🔧 **Data Processing Reliability**: 
+  - Enhanced admin-level fill rate tables with consistent lowest-to-highest sorting
+  - Fixed borough duplication in citywide summary through proper aggregation
+  - Enabled sorting functionality for all payroll analysis tables
+  - Improved DataTables configuration for better user experience
+
+- 🎨 **User Experience**: 
+  - Removed debug output for faster report generation
+  - Maintained only essential progress messages during generation
+  - Improved table responsiveness and interaction
+  - Enhanced navigation clarity across all report levels
+
+### Technical Details
+- Enhanced `generate_clean_table_html()` for robust DataTables integration
+- Updated tabbed table functions to remove redundant notes
+- Improved school links generation with proper validation
+- Standardized iframe dimensions across all report types
+- Enhanced sorting descriptions for better user guidance
+
 ## [5.0.0] - 2025-08-04
 
 ### Added

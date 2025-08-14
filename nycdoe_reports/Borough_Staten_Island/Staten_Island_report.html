@@ -218,7 +218,7 @@
             }
 
             .table th { 
-                background: var(--primary-color);
+                background: #6c757d;
                 color: white;
                 font-weight: 600;
                 font-size: 1.1em;
@@ -384,6 +384,42 @@
             }
 
             .district-links a:hover {
+                background: var(--primary-color);
+                color: white;
+                transform: translateX(5px);
+            }
+
+            .borough-links {
+                background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                padding: 25px;
+                border-radius: 15px;
+                box-shadow: var(--card-shadow);
+                border: 1px solid #e0e0e0;
+            }
+
+            .borough-links ul {
+                list-style: none;
+                padding: 0;
+                columns: 2;
+                column-gap: 30px;
+            }
+
+            .borough-links li {
+                padding: 8px 0;
+                break-inside: avoid;
+            }
+
+            .borough-links a {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                display: inline-block;
+                padding: 5px 10px;
+                border-radius: 5px;
+            }
+
+            .borough-links a:hover {
                 background: var(--primary-color);
                 color: white;
                 transform: translateX(5px);
@@ -678,15 +714,43 @@
         <script>
             
         $(document).ready(function() {
-            $('.table').DataTable({
-                paging: false, 
-                searching: false, 
-                info: false, 
-                order: [],
-                responsive: true
-            });
+            // Function to initialize DataTables on visible tables only
+            function initializeVisibleDataTables() {
+                // Only initialize on tables that are visible and not already initialized
+                $('.tab-content.active table.table:visible').each(function() {
+                    var $table = $(this);
+                    
+                    // Skip if already initialized
+                    if ($.fn.DataTable.isDataTable(this)) {
+                        return;
+                    }
+                    
+                    // Validate table structure before initialization
+                    var headerCount = $table.find('thead tr:first th').length;
+                    var bodyRowCount = $table.find('tbody tr').length;
+                    
+                    // Only initialize if table has proper structure
+                    if (headerCount > 0 && bodyRowCount > 0) {
+                        try {
+                            $table.DataTable({
+                                paging: false, 
+                                searching: false, 
+                                info: false, 
+                                order: [],
+                                responsive: true,
+                                autoWidth: false,
+                                columnDefs: [
+                                    { targets: '_all', className: 'text-center' }
+                                ]
+                            });
+                        } catch (e) {
+                            console.warn('DataTable initialization failed for table:', e);
+                        }
+                    }
+                });
+            }
             
-            // Tab functionality
+            // Tab functionality with minimal DataTable interference
             $('.tab-button').click(function() {
                 var targetTab = $(this).data('tab');
                 var container = $(this).closest('.tabbed-container');
@@ -698,12 +762,31 @@
                 // Add active class to clicked button and corresponding content
                 $(this).addClass('active');
                 container.find('.tab-content[data-tab="' + targetTab + '"]').addClass('active');
+                
+                // Initialize DataTables for newly visible tables
+                setTimeout(function() {
+                    initializeVisibleDataTables();
+                }, 100);
             });
             
             // Activate first tab by default
             $('.tabbed-container').each(function() {
                 $(this).find('.tab-button:first').addClass('active');
                 $(this).find('.tab-content:first').addClass('active');
+            });
+            
+            // Initialize DataTables for initially visible tables after DOM is ready
+            setTimeout(function() {
+                initializeVisibleDataTables();
+            }, 150);
+            
+            // Handle window resize to adjust responsive features
+            $(window).on('resize', function() {
+                $('.tab-content.active table.table').each(function() {
+                    if ($.fn.DataTable.isDataTable(this)) {
+                        $(this).DataTable().columns.adjust().responsive.recalc();
+                    }
+                });
             });
         });
     
@@ -719,7 +802,7 @@
                 <h1>Substitute Paraprofessional Jobs Report</h1>
                 <h2>Borough: Staten Island</h2>
                 <div class="date-info">Job dates: September 03, 2024 to June 26, 2025</div>
-                <p>Generated on: August 08, 2025 at 06:55 PM</p>
+                <p>Generated on: August 13, 2025 at 06:13 PM</p>
             </div>
             <div class="header-logo">
                 <img src="../Horizontal_logo_White_PublicSchools.png" alt="NYC Public Schools" class="logo">
@@ -735,16 +818,71 @@
     </div>
     
             
+            <!-- SECTION 1: Overall Summary (Borough vs Citywide) -->
             <div class="section">
-                <h3>Summary Statistics</h3>
+                <h3>1. Overall Summary - Staten Island vs. Citywide</h3>
+                <p><em>Comparison frames everything else you will see on this page</em></p>
+                <div class="comparison-grid">
+    <div class="comparison-card citywide">
+        <h4>Citywide Statistics</h4>
+        <ul>
+            <li><strong>Total Jobs:</strong> 1,388,769</li><li><strong>Overall Fill Rate:</strong> 80.2%</li><li><strong>Vacancy Fill Rate:</strong> 84.5%</li><li><strong>Absence Fill Rate:</strong> 28.7%</li><li><strong>Average Match %:</strong> 64.0%</li><li><strong>Number of Schools:</strong> 1519</li>
+        </ul>
+    </div>
+    
+    <div class="comparison-card borough">
+        <h4>This Borough</h4>
+        <ul>
+            <li><strong>Total Jobs:</strong> 96,420</li><li><strong>Overall Fill Rate:</strong> 83.9%</li><li><strong>Vacancy Fill Rate:</strong> 89.4%</li><li><strong>Absence Fill Rate:</strong> 45.8%</li><li><strong>Average Match %:</strong> 66.1%</li><li><strong>Number of Schools:</strong> 77</li>
+        </ul>
+    </div>
+    </div>
+            </div>
+
+            <!-- SECTION 2: Match Payroll Analysis -->
+            
+                <div class="section">
+                    <h3>SubCentral vs Payroll Analysis (District Level)</h3>
+                    <p><em>This analysis shows district-level matching within Staten Island borough.</em></p>
+                    
+                    <div class="summary-box">
+                        <h4>Borough Matching Summary</h4>
+                        <ul>
+                            <li><strong>Total SubCentral Records:</strong> 99,268</li>
+                            <li><strong>Total Payroll Records:</strong> 114,586</li>
+                            <li><strong>Total Matched Records:</strong> 79,198</li>
+                            <li><strong>Average Match Rate:</strong> 66.1%</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <p><em><strong>Note:</strong> Data is sorted from lowest to highest Match % to identify districts needing attention.</em></p>
+                        
+    <div class="tab-content active">
+        <div class="table-responsive">
+    <table class="table table-striped">
+        <tr><th>District</th><th>SubCentral Job Days</th><th>Payroll Job Days</th><th>Matched Jobs</th><th>Match Percentage</th></tr><tr><td>District 97</td><td>33,546</td><td>37,232</td><td>26,073</td><td style="background-color: #fff3cd; color: #856404;">77.7%</td></tr><tr><td>District 62</td><td>6,668</td><td>6,888</td><td>5,347</td><td style="background-color: #fff3cd; color: #856404;">80.2%</td></tr><tr><td>District 31</td><td>59,054</td><td>70,466</td><td>47,778</td><td style="background-color: #fff3cd; color: #856404;">80.9%</td></tr>
+    </table>
+    </div>
+    </div>
+    
+                    </div>
+                </div>
+                
+
+            <!-- SECTION 3: Classification Information -->
+            <div class="section">
+                <h3>3. Classification Information (Borough Level)</h3>
+                <h4>Summary Statistics</h4>
+                <p><em>Data sorted from highest to lowest total jobs</em></p>
                 
     <div class="tabbed-container">
         <div class="tab-buttons">
-            <button class="tab-button" data-tab="combined">Combined Totals</button>
+            <button class="tab-button active" data-tab="combined">Combined Totals</button>
             <button class="tab-button" data-tab="details">Vacancy and Absence Details</button>
         </div>
         
-        <div class="tab-content" data-tab="combined" data-tab-title="Combined Totals">
+        <div class="tab-content active" data-tab="combined" data-tab-title="Combined Totals">
             <div class="table-responsive"><table border="1" class="dataframe table table-striped">
   <thead>
     <tr style="text-align: right;">
@@ -757,18 +895,32 @@
   </thead>
   <tbody>
     <tr>
-      <td>ABAZA SPEAKING PARA</td>
-      <td>0</td>
-      <td>114</td>
-      <td>114</td>
-      <td>0.0%</td>
+      <td>PARAPROFESSIONAL</td>
+      <td>78,800</td>
+      <td>13,637</td>
+      <td>92,437</td>
+      <td>85.2%</td>
     </tr>
     <tr>
-      <td>AKAN SPEAKING PARA</td>
-      <td>0</td>
-      <td>6</td>
-      <td>6</td>
-      <td>0.0%</td>
+      <td>SPANISH SPEAKING PARA</td>
+      <td>982</td>
+      <td>534</td>
+      <td>1,516</td>
+      <td>64.8%</td>
+    </tr>
+    <tr>
+      <td>MANDARIN SPEAKING PARA</td>
+      <td>316</td>
+      <td>743</td>
+      <td>1,059</td>
+      <td>29.8%</td>
+    </tr>
+    <tr>
+      <td>RUSSIAN SPEAKING PARA</td>
+      <td>327</td>
+      <td>339</td>
+      <td>666</td>
+      <td>49.1%</td>
     </tr>
     <tr>
       <td>ALBANIAN SPEAKING PARA</td>
@@ -785,10 +937,17 @@
       <td>83.1%</td>
     </tr>
     <tr>
-      <td>BENGALI SPEAKING PARA</td>
+      <td>UKRAINIAN SPEAKING PARA</td>
+      <td>39</td>
+      <td>95</td>
+      <td>134</td>
+      <td>29.1%</td>
+    </tr>
+    <tr>
+      <td>ABAZA SPEAKING PARA</td>
       <td>0</td>
-      <td>2</td>
-      <td>2</td>
+      <td>114</td>
+      <td>114</td>
       <td>0.0%</td>
     </tr>
     <tr>
@@ -799,39 +958,11 @@
       <td>54.1%</td>
     </tr>
     <tr>
-      <td>MANDARIN SPEAKING PARA</td>
-      <td>316</td>
-      <td>743</td>
-      <td>1,059</td>
-      <td>29.8%</td>
-    </tr>
-    <tr>
-      <td>PARAPROFESSIONAL</td>
-      <td>78,800</td>
-      <td>13,637</td>
-      <td>92,437</td>
-      <td>85.2%</td>
-    </tr>
-    <tr>
-      <td>RUSSIAN SPEAKING PARA</td>
-      <td>327</td>
-      <td>339</td>
-      <td>666</td>
-      <td>49.1%</td>
-    </tr>
-    <tr>
-      <td>SPANISH SPEAKING PARA</td>
-      <td>982</td>
-      <td>534</td>
-      <td>1,516</td>
-      <td>64.8%</td>
-    </tr>
-    <tr>
-      <td>UKRAINIAN SPEAKING PARA</td>
-      <td>39</td>
-      <td>95</td>
-      <td>134</td>
-      <td>29.1%</td>
+      <td>AKAN SPEAKING PARA</td>
+      <td>0</td>
+      <td>6</td>
+      <td>6</td>
+      <td>0.0%</td>
     </tr>
     <tr>
       <td>URDU SPEAKING PARA</td>
@@ -839,6 +970,13 @@
       <td>1</td>
       <td>6</td>
       <td>83.3%</td>
+    </tr>
+    <tr>
+      <td>BENGALI SPEAKING PARA</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0.0%</td>
     </tr>
   </tbody>
 </table></div>
@@ -860,83 +998,6 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>ABAZA SPEAKING PARA</td>
-      <td>0</td>
-      <td>114</td>
-      <td>114</td>
-      <td>0.0%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>AKAN SPEAKING PARA</td>
-      <td>0</td>
-      <td>6</td>
-      <td>6</td>
-      <td>0.0%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>ALBANIAN SPEAKING PARA</td>
-      <td>238</td>
-      <td>33</td>
-      <td>271</td>
-      <td>87.8%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>ARABIC SPEAKING PARA</td>
-      <td>143</td>
-      <td>29</td>
-      <td>172</td>
-      <td>83.1%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>BENGALI SPEAKING PARA</td>
-      <td>0</td>
-      <td>2</td>
-      <td>2</td>
-      <td>0.0%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>CANTONESE SPEAKING PARA</td>
-      <td>20</td>
-      <td>17</td>
-      <td>37</td>
-      <td>54.1%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>MANDARIN SPEAKING PARA</td>
-      <td>316</td>
-      <td>743</td>
-      <td>1,059</td>
-      <td>29.8%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
     <tr>
       <td>PARAPROFESSIONAL</td>
       <td>73,176</td>
@@ -949,6 +1010,28 @@
       <td>45.8%</td>
     </tr>
     <tr>
+      <td>SPANISH SPEAKING PARA</td>
+      <td>982</td>
+      <td>534</td>
+      <td>1,516</td>
+      <td>64.8%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>MANDARIN SPEAKING PARA</td>
+      <td>316</td>
+      <td>743</td>
+      <td>1,059</td>
+      <td>29.8%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
       <td>RUSSIAN SPEAKING PARA</td>
       <td>327</td>
       <td>339</td>
@@ -960,11 +1043,22 @@
       <td>0.0%</td>
     </tr>
     <tr>
-      <td>SPANISH SPEAKING PARA</td>
-      <td>982</td>
-      <td>534</td>
-      <td>1,516</td>
-      <td>64.8%</td>
+      <td>ALBANIAN SPEAKING PARA</td>
+      <td>238</td>
+      <td>33</td>
+      <td>271</td>
+      <td>87.8%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>ARABIC SPEAKING PARA</td>
+      <td>143</td>
+      <td>29</td>
+      <td>172</td>
+      <td>83.1%</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -982,11 +1076,55 @@
       <td>0.0%</td>
     </tr>
     <tr>
+      <td>ABAZA SPEAKING PARA</td>
+      <td>0</td>
+      <td>114</td>
+      <td>114</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>CANTONESE SPEAKING PARA</td>
+      <td>20</td>
+      <td>17</td>
+      <td>37</td>
+      <td>54.1%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>AKAN SPEAKING PARA</td>
+      <td>0</td>
+      <td>6</td>
+      <td>6</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
       <td>URDU SPEAKING PARA</td>
       <td>5</td>
       <td>1</td>
       <td>6</td>
       <td>83.3%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>BENGALI SPEAKING PARA</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0.0%</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -1000,7 +1138,21 @@
             </div>
 
             <div class="section">
-                <h3>Summary by District</h3>
+                <h4>Jobs by Classification Type</h4>
+                <div class="chart-container">
+                    <iframe src="Staten_Island_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
+                </div>
+            </div>
+
+            <div class="section">
+                <h4>Breakdown by Classification</h4>
+                <div class="pie-container"><iframe src="Staten_Island_PARAPROFESSIONAL_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_SPANISH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_MANDARIN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_RUSSIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_ALBANIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_ARABIC_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_UKRAINIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_ABAZA_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_CANTONESE_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_AKAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_URDU_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_BENGALI_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe></div>
+            </div>
+
+            <!-- SECTION 4: District Level Fill Rates -->
+            <div class="section">
+                <h3>4. District Level Fill Rates</h3>
+                <p><em><strong>Note:</strong> Data is sorted from lowest to highest overall fill rate to identify districts needing attention. This data is based on SubCentral data only. Use the tabs below to switch between different views. Click on district links for detailed reports.</em></p>
                 
     <div class="tabbed-container">
         <div class="tab-buttons">
@@ -1009,7 +1161,7 @@
         </div>
         
         <div class="tab-content" data-tab="combined" data-tab-title="Combined Totals">
-            <div class="table-responsive"><table border="1" class="dataframe table table-striped">
+            <div class="table-responsive"><table border="1" class="table table-striped">
   <thead>
     <tr style="text-align: right;">
       <th>District</th>
@@ -1021,32 +1173,32 @@
   </thead>
   <tbody>
     <tr>
-      <td>D31</td>
+      <td>97</td>
+      <td>27,464</td>
+      <td>6,514</td>
+      <td>33,978</td>
+      <td>80.8%</td>
+    </tr>
+    <tr>
+      <td>31</td>
       <td>47,928</td>
       <td>8,539</td>
       <td>56,467</td>
       <td>84.9%</td>
     </tr>
     <tr>
-      <td>D62</td>
+      <td>62</td>
       <td>5,478</td>
       <td>497</td>
       <td>5,975</td>
       <td>91.7%</td>
-    </tr>
-    <tr>
-      <td>D97</td>
-      <td>27,464</td>
-      <td>6,514</td>
-      <td>33,978</td>
-      <td>80.8%</td>
     </tr>
   </tbody>
 </table></div>
         </div>
         
         <div class="tab-content" data-tab="details" data-tab-title="Vacancy and Absence Details">
-            <div class="table-responsive"><table border="1" class="dataframe table table-striped">
+            <div class="table-responsive"><table border="1" class="table table-striped">
   <thead>
     <tr style="text-align: right;">
       <th>District</th>
@@ -1062,7 +1214,18 @@
   </thead>
   <tbody>
     <tr>
-      <td>D31</td>
+      <td>97</td>
+      <td>25,931</td>
+      <td>3,259</td>
+      <td>29,190</td>
+      <td>88.8%</td>
+      <td>1,533</td>
+      <td>3,255</td>
+      <td>4,788</td>
+      <td>32.0%</td>
+    </tr>
+    <tr>
+      <td>31</td>
       <td>44,079</td>
       <td>5,299</td>
       <td>49,378</td>
@@ -1073,7 +1236,7 @@
       <td>54.3%</td>
     </tr>
     <tr>
-      <td>D62</td>
+      <td>62</td>
       <td>5,236</td>
       <td>342</td>
       <td>5,578</td>
@@ -1083,57 +1246,14 @@
       <td>397</td>
       <td>61.0%</td>
     </tr>
-    <tr>
-      <td>D97</td>
-      <td>25,931</td>
-      <td>3,259</td>
-      <td>29,190</td>
-      <td>88.8%</td>
-      <td>1,533</td>
-      <td>3,255</td>
-      <td>4,788</td>
-      <td>32.0%</td>
-    </tr>
   </tbody>
 </table></div>
         </div>
     </div>
     
-            </div>
-
-            <div class="section">
-                <h3>Jobs by Classification and Type</h3>
-                <div class="chart-container">
-                    <iframe src="Staten_Island_bar_chart.html" width="1200" height="580" frameborder="0"></iframe>
-                </div>
-            </div>
-
-            <div class="section">
-                <h3>Breakdown by Classification</h3>
-                <div class="pie-container"><iframe src="Staten_Island_ABAZA_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_AKAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_ALBANIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_ARABIC_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_BENGALI_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_CANTONESE_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_MANDARIN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_PARAPROFESSIONAL_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_RUSSIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_SPANISH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_UKRAINIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Staten_Island_URDU_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe></div>
-            </div>
-
-            <div class="section">
-                <h3>Comparison: Staten Island vs. Citywide</h3>
-                <div class="comparison-grid">
-    <div class="comparison-card citywide">
-        <h4>Citywide Statistics</h4>
-        <ul>
-            <li><strong>Total Jobs:</strong> 1,388,769</li><li><strong>Overall Fill Rate:</strong> 80.2%</li><li><strong>Vacancy Fill Rate:</strong> 84.5%</li><li><strong>Absence Fill Rate:</strong> 28.7%</li><li><strong>Number of Schools:</strong> 1519</li>
-        </ul>
-    </div>
-    
-    <div class="comparison-card borough">
-        <h4>This Borough</h4>
-        <ul>
-            <li><strong>Total Jobs:</strong> 96,420</li><li><strong>Overall Fill Rate:</strong> 83.9%</li><li><strong>Vacancy Fill Rate:</strong> 89.4%</li><li><strong>Absence Fill Rate:</strong> 45.8%</li><li><strong>Number of Schools:</strong> 77</li>
-        </ul>
-    </div>
-    </div>
-            </div>
-            
-            <div class="section">
-                <h3>Individual District Reports</h3>
+                
+                <h4>Individual District Reports</h4>
+                <p><em><strong>Note:</strong> Click on district links below for detailed district-level reports. Links are ordered by district number.</em></p>
                 <div class="district-links"><ul><li><a href="../District_31/31_report.html">District 31 Report</a> - 56,467 total jobs</li>
 <li><a href="../District_62/62_report.html">District 62 Report</a> - 5,975 total jobs</li>
 <li><a href="../District_97/97_report.html">District 97 Report</a> - 33,978 total jobs</li>

@@ -218,7 +218,7 @@
             }
 
             .table th { 
-                background: var(--primary-color);
+                background: #6c757d;
                 color: white;
                 font-weight: 600;
                 font-size: 1.1em;
@@ -384,6 +384,42 @@
             }
 
             .district-links a:hover {
+                background: var(--primary-color);
+                color: white;
+                transform: translateX(5px);
+            }
+
+            .borough-links {
+                background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                padding: 25px;
+                border-radius: 15px;
+                box-shadow: var(--card-shadow);
+                border: 1px solid #e0e0e0;
+            }
+
+            .borough-links ul {
+                list-style: none;
+                padding: 0;
+                columns: 2;
+                column-gap: 30px;
+            }
+
+            .borough-links li {
+                padding: 8px 0;
+                break-inside: avoid;
+            }
+
+            .borough-links a {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                display: inline-block;
+                padding: 5px 10px;
+                border-radius: 5px;
+            }
+
+            .borough-links a:hover {
                 background: var(--primary-color);
                 color: white;
                 transform: translateX(5px);
@@ -678,15 +714,43 @@
         <script>
             
         $(document).ready(function() {
-            $('.table').DataTable({
-                paging: false, 
-                searching: false, 
-                info: false, 
-                order: [],
-                responsive: true
-            });
+            // Function to initialize DataTables on visible tables only
+            function initializeVisibleDataTables() {
+                // Only initialize on tables that are visible and not already initialized
+                $('.tab-content.active table.table:visible').each(function() {
+                    var $table = $(this);
+                    
+                    // Skip if already initialized
+                    if ($.fn.DataTable.isDataTable(this)) {
+                        return;
+                    }
+                    
+                    // Validate table structure before initialization
+                    var headerCount = $table.find('thead tr:first th').length;
+                    var bodyRowCount = $table.find('tbody tr').length;
+                    
+                    // Only initialize if table has proper structure
+                    if (headerCount > 0 && bodyRowCount > 0) {
+                        try {
+                            $table.DataTable({
+                                paging: false, 
+                                searching: false, 
+                                info: false, 
+                                order: [],
+                                responsive: true,
+                                autoWidth: false,
+                                columnDefs: [
+                                    { targets: '_all', className: 'text-center' }
+                                ]
+                            });
+                        } catch (e) {
+                            console.warn('DataTable initialization failed for table:', e);
+                        }
+                    }
+                });
+            }
             
-            // Tab functionality
+            // Tab functionality with minimal DataTable interference
             $('.tab-button').click(function() {
                 var targetTab = $(this).data('tab');
                 var container = $(this).closest('.tabbed-container');
@@ -698,12 +762,31 @@
                 // Add active class to clicked button and corresponding content
                 $(this).addClass('active');
                 container.find('.tab-content[data-tab="' + targetTab + '"]').addClass('active');
+                
+                // Initialize DataTables for newly visible tables
+                setTimeout(function() {
+                    initializeVisibleDataTables();
+                }, 100);
             });
             
             // Activate first tab by default
             $('.tabbed-container').each(function() {
                 $(this).find('.tab-button:first').addClass('active');
                 $(this).find('.tab-content:first').addClass('active');
+            });
+            
+            // Initialize DataTables for initially visible tables after DOM is ready
+            setTimeout(function() {
+                initializeVisibleDataTables();
+            }, 150);
+            
+            // Handle window resize to adjust responsive features
+            $(window).on('resize', function() {
+                $('.tab-content.active table.table').each(function() {
+                    if ($.fn.DataTable.isDataTable(this)) {
+                        $(this).DataTable().columns.adjust().responsive.recalc();
+                    }
+                });
             });
         });
     
@@ -719,7 +802,7 @@
                 <h1>Substitute Paraprofessional Jobs Report</h1>
                 <h2>District: 12</h2>
                 <div class="date-info">Job dates: September 03, 2024 to June 26, 2025</div>
-                <p>Generated on: August 08, 2025 at 06:36 PM</p>
+                <p>Generated on: August 13, 2025 at 05:47 PM</p>
             </div>
             <div class="header-logo">
                 <img src="../Horizontal_logo_White_PublicSchools.png" alt="NYC Public Schools" class="logo">
@@ -736,15 +819,72 @@
     
             
             <div class="section">
-                <h3>Summary Statistics</h3>
+                <h3>District Overview: Comparison</h3>
+                <div class="comparison-grid">
+    <div class="comparison-card citywide">
+        <h4>Citywide Statistics</h4>
+        <ul>
+            <li><strong>Total Jobs:</strong> 1,388,769</li><li><strong>Overall Fill Rate:</strong> 80.2%</li><li><strong>Vacancy Fill Rate:</strong> 84.5%</li><li><strong>Absence Fill Rate:</strong> 28.7%</li><li><strong>Average Match %:</strong> 64.0%</li><li><strong>Number of Districts:</strong> 36</li><li><strong>Number of Schools:</strong> 1519</li>
+        </ul>
+    </div>
+    
+    <div class="comparison-card borough">
+        <h4>Bronx Statistics</h4>
+        <ul>
+            <li><strong>Total Jobs:</strong> 319,739</li><li><strong>Overall Fill Rate:</strong> 79.6%</li><li><strong>Vacancy Fill Rate:</strong> 83.3%</li><li><strong>Absence Fill Rate:</strong> 24.1%</li><li><strong>Average Match %:</strong> 61.1%</li><li><strong>Number of Schools:</strong> 338</li>
+        </ul>
+    </div>
+    
+    <div class="comparison-card district">
+        <h4>This District (12)</h4>
+        <ul>
+            <li><strong>Total Jobs:</strong> 18,909</li><li><strong>Overall Fill Rate:</strong> 75.3%</li><li><strong>Vacancy Fill Rate:</strong> 78.2%</li><li><strong>Absence Fill Rate:</strong> 31.4%</li><li><strong>Average Match %:</strong> 53.4%</li><li><strong>Number of Schools:</strong> 42</li>
+        </ul>
+    </div>
+    </div>
+            </div>
+
+            
+        <div class="section">
+            <h3>SubCentral vs Payroll Analysis</h3>
+            <p><em>This analysis matches individual jobs using Location + EIS ID + Date between SubCentral and SREPP payroll systems.</em></p>
+            
+            <div class="summary-box">
+                <h4>District Matching Summary</h4>
+                <ul>
+                    <li><strong>Total SubCentral Records:</strong> 17,211</li>
+                    <li><strong>Total Payroll Records:</strong> 18,008</li>
+                    <li><strong>Total Matched Records:</strong> 11,111</li>
+                    <li><strong>Average Match Rate:</strong> 53.4%</li>
+                </ul>
+            </div>
+            
+            <div class="table-responsive">
+                <p><em><strong>Note:</strong> Data is sorted from lowest to highest Match % to identify schools needing attention.</em></p>
+                
+    <div class="tab-content active">
+        <div class="table-responsive">
+    <table class="table table-striped">
+        <tr><th>Location</th><th>SubCentral Job Days</th><th>Payroll Job Days</th><th>Matched Jobs</th><th>Match Percentage</th></tr><tr><td>X341</td><td>45</td><td>106</td><td>0</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">0.0%</td></tr><tr><td>X550</td><td>52</td><td>0</td><td>0</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">0.0%</td></tr><tr><td>X458</td><td>59</td><td>434</td><td>0</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">0.0%</td></tr><tr><td>X286</td><td>50</td><td>27</td><td>0</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">0.0%</td></tr><tr><td>X463</td><td>7</td><td>98</td><td>2</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">2.0%</td></tr><tr><td>X057</td><td>73</td><td>332</td><td>48</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">14.5%</td></tr><tr><td>X446</td><td>103</td><td>251</td><td>37</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">14.7%</td></tr><tr><td>X316</td><td>47</td><td>103</td><td>18</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">17.5%</td></tr><tr><td>X190</td><td>12</td><td>56</td><td>10</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">17.9%</td></tr><tr><td>X595</td><td>224</td><td>279</td><td>63</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">22.6%</td></tr><tr><td>X134</td><td>402</td><td>774</td><td>230</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">29.7%</td></tr><tr><td>X273</td><td>243</td><td>203</td><td>69</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">34.0%</td></tr><tr><td>X006</td><td>609</td><td>750</td><td>303</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">40.4%</td></tr><tr><td>X066</td><td>778</td><td>1,049</td><td>472</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">45.0%</td></tr><tr><td>X242</td><td>39</td><td>52</td><td>24</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">46.2%</td></tr><tr><td>X196</td><td>347</td><td>366</td><td>183</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">50.0%</td></tr><tr><td>X383</td><td>204</td><td>253</td><td>131</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">51.8%</td></tr><tr><td>X044</td><td>156</td><td>190</td><td>106</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">55.8%</td></tr><tr><td>X214</td><td>391</td><td>327</td><td>183</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">56.0%</td></tr><tr><td>X479</td><td>349</td><td>285</td><td>168</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">58.9%</td></tr><tr><td>X211</td><td>511</td><td>426</td><td>260</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">61.0%</td></tr><tr><td>X641</td><td>17</td><td>22</td><td>14</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">63.6%</td></tr><tr><td>XP12</td><td>891</td><td>931</td><td>593</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">63.7%</td></tr><tr><td>X248</td><td>1,490</td><td>1,391</td><td>903</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">64.9%</td></tr><tr><td>X047</td><td>1,415</td><td>1,555</td><td>1,018</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">65.5%</td></tr><tr><td>X521</td><td>553</td><td>502</td><td>333</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">66.3%</td></tr><tr><td>X217</td><td>525</td><td>470</td><td>312</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">66.4%</td></tr><tr><td>X251</td><td>603</td><td>516</td><td>345</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">66.9%</td></tr><tr><td>X511</td><td>256</td><td>220</td><td>157</td><td style="background-color: #fff3cd; color: #856404;">71.4%</td></tr><tr><td>X129</td><td>227</td><td>217</td><td>155</td><td style="background-color: #fff3cd; color: #856404;">71.4%</td></tr><tr><td>X300</td><td>538</td><td>467</td><td>351</td><td style="background-color: #fff3cd; color: #856404;">75.2%</td></tr><tr><td>X267</td><td>54</td><td>54</td><td>42</td><td style="background-color: #fff3cd; color: #856404;">77.8%</td></tr><tr><td>X531</td><td>311</td><td>311</td><td>249</td><td style="background-color: #fff3cd; color: #856404;">80.1%</td></tr><tr><td>X691</td><td>343</td><td>339</td><td>275</td><td style="background-color: #fff3cd; color: #856404;">81.1%</td></tr><tr><td>X150</td><td>573</td><td>545</td><td>455</td><td style="background-color: #fff3cd; color: #856404;">83.5%</td></tr><tr><td>X271</td><td>1,546</td><td>1,386</td><td>1,165</td><td style="background-color: #fff3cd; color: #856404;">84.1%</td></tr><tr><td>X684</td><td>516</td><td>344</td><td>294</td><td style="background-color: #fff3cd; color: #856404;">85.5%</td></tr><tr><td>X061</td><td>124</td><td>104</td><td>90</td><td style="background-color: #fff3cd; color: #856404;">86.5%</td></tr><tr><td>X195</td><td>1,077</td><td>924</td><td>829</td><td style="background-color: #fff3cd; color: #856404;">89.7%</td></tr><tr><td>X314</td><td>1,288</td><td>1,199</td><td>1,082</td><td style="background-color: #d4edda; color: #155724;">90.2%</td></tr><tr><td>X536</td><td>100</td><td>93</td><td>86</td><td style="background-color: #d4edda; color: #155724;">92.5%</td></tr><tr><td>X067</td><td>63</td><td>57</td><td>56</td><td style="background-color: #d4edda; color: #155724;">98.2%</td></tr>
+    </table>
+    </div>
+    </div>
+    
+            </div>
+        </div>
+        
+
+            <div class="section">
+                <h3>Classification Information</h3>
+                <p><em><strong>Note:</strong> Use the tabs below to switch between different views of the data. Data sorted by highest to lowest total jobs.</em></p>
                 
     <div class="tabbed-container">
         <div class="tab-buttons">
-            <button class="tab-button" data-tab="combined">Combined Totals</button>
+            <button class="tab-button active" data-tab="combined">Combined Totals</button>
             <button class="tab-button" data-tab="details">Vacancy and Absence Details</button>
         </div>
         
-        <div class="tab-content" data-tab="combined" data-tab-title="Combined Totals">
+        <div class="tab-content active" data-tab="combined" data-tab-title="Combined Totals">
             <div class="table-responsive"><table border="1" class="dataframe table table-striped">
   <thead>
     <tr style="text-align: right;">
@@ -756,13 +896,6 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>ARABIC SPEAKING PARA</td>
-      <td>43</td>
-      <td>141</td>
-      <td>184</td>
-      <td>23.4%</td>
-    </tr>
     <tr>
       <td>PARAPROFESSIONAL</td>
       <td>13,401</td>
@@ -776,6 +909,13 @@
       <td>471</td>
       <td>1,257</td>
       <td>62.5%</td>
+    </tr>
+    <tr>
+      <td>ARABIC SPEAKING PARA</td>
+      <td>43</td>
+      <td>141</td>
+      <td>184</td>
+      <td>23.4%</td>
     </tr>
   </tbody>
 </table></div>
@@ -797,17 +937,6 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>ARABIC SPEAKING PARA</td>
-      <td>43</td>
-      <td>141</td>
-      <td>184</td>
-      <td>23.4%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
     <tr>
       <td>PARAPROFESSIONAL</td>
       <td>13,027</td>
@@ -830,6 +959,17 @@
       <td>0</td>
       <td>0.0%</td>
     </tr>
+    <tr>
+      <td>ARABIC SPEAKING PARA</td>
+      <td>43</td>
+      <td>141</td>
+      <td>184</td>
+      <td>23.4%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
   </tbody>
 </table></div>
         </div>
@@ -838,15 +978,28 @@
             </div>
 
             <div class="section">
-                <h3>Summary by School</h3>
+                <h3>Jobs by Classification and Type</h3>
+                <div class="chart-container">
+                    <iframe src="12_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Breakdown by Classification</h3>
+                <div class="pie-container"><iframe src="District_12_PARAPROFESSIONAL_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_12_SPANISH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_12_ARABIC_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe></div>
+            </div>
+            
+            <div class="section">
+                <h3>School Level Fill Rates</h3>
+                <p><em><strong>Note:</strong> This data is based on SubCentral data only. Data is sorted from lowest to highest overall fill rate to identify schools needing attention. Use the tabs below to switch between different views. Click on school codes for detailed reports.</em></p>
                 
     <div class="tabbed-container">
         <div class="tab-buttons">
-            <button class="tab-button" data-tab="combined">Combined Totals</button>
+            <button class="tab-button active" data-tab="combined">Combined Totals</button>
             <button class="tab-button" data-tab="details">Vacancy and Absence Details</button>
         </div>
         
-        <div class="tab-content" data-tab="combined" data-tab-title="Combined Totals">
+        <div class="tab-content active" data-tab="combined" data-tab-title="Combined Totals">
             <div class="table-responsive"><table border="1" class="dataframe table table-striped">
   <thead>
     <tr style="text-align: right;">
@@ -859,158 +1012,11 @@
   </thead>
   <tbody>
     <tr>
-      <td>X006</td>
-      <td>536</td>
-      <td>146</td>
-      <td>682</td>
-      <td>78.6%</td>
-    </tr>
-    <tr>
-      <td>X044</td>
-      <td>156</td>
-      <td>30</td>
-      <td>186</td>
-      <td>83.9%</td>
-    </tr>
-    <tr>
-      <td>X047</td>
-      <td>1,091</td>
-      <td>395</td>
-      <td>1,486</td>
-      <td>73.4%</td>
-    </tr>
-    <tr>
-      <td>X057</td>
-      <td>71</td>
-      <td>78</td>
-      <td>149</td>
-      <td>47.7%</td>
-    </tr>
-    <tr>
-      <td>X061</td>
-      <td>120</td>
-      <td>12</td>
-      <td>132</td>
-      <td>90.9%</td>
-    </tr>
-    <tr>
-      <td>X066</td>
-      <td>609</td>
-      <td>118</td>
-      <td>727</td>
-      <td>83.8%</td>
-    </tr>
-    <tr>
-      <td>X067</td>
-      <td>58</td>
-      <td>37</td>
-      <td>95</td>
-      <td>61.1%</td>
-    </tr>
-    <tr>
-      <td>X129</td>
-      <td>186</td>
-      <td>56</td>
-      <td>242</td>
-      <td>76.9%</td>
-    </tr>
-    <tr>
-      <td>X134</td>
-      <td>375</td>
-      <td>259</td>
-      <td>634</td>
-      <td>59.1%</td>
-    </tr>
-    <tr>
-      <td>X150</td>
-      <td>490</td>
-      <td>58</td>
-      <td>548</td>
-      <td>89.4%</td>
-    </tr>
-    <tr>
-      <td>X190</td>
-      <td>12</td>
-      <td>1</td>
-      <td>13</td>
-      <td>92.3%</td>
-    </tr>
-    <tr>
-      <td>X195</td>
-      <td>902</td>
-      <td>135</td>
-      <td>1,037</td>
-      <td>87.0%</td>
-    </tr>
-    <tr>
-      <td>X196</td>
-      <td>274</td>
-      <td>61</td>
-      <td>335</td>
-      <td>81.8%</td>
-    </tr>
-    <tr>
-      <td>X211</td>
-      <td>395</td>
-      <td>246</td>
-      <td>641</td>
-      <td>61.6%</td>
-    </tr>
-    <tr>
-      <td>X214</td>
-      <td>321</td>
-      <td>69</td>
-      <td>390</td>
-      <td>82.3%</td>
-    </tr>
-    <tr>
-      <td>X217</td>
-      <td>420</td>
-      <td>13</td>
-      <td>433</td>
-      <td>97.0%</td>
-    </tr>
-    <tr>
-      <td>X242</td>
-      <td>21</td>
-      <td>11</td>
-      <td>32</td>
-      <td>65.6%</td>
-    </tr>
-    <tr>
-      <td>X248</td>
-      <td>1,187</td>
-      <td>362</td>
-      <td>1,549</td>
-      <td>76.6%</td>
-    </tr>
-    <tr>
-      <td>X251</td>
-      <td>487</td>
-      <td>164</td>
-      <td>651</td>
-      <td>74.8%</td>
-    </tr>
-    <tr>
-      <td>X267</td>
-      <td>54</td>
-      <td>4</td>
-      <td>58</td>
-      <td>93.1%</td>
-    </tr>
-    <tr>
-      <td>X271</td>
-      <td>1,276</td>
-      <td>332</td>
-      <td>1,608</td>
-      <td>79.4%</td>
-    </tr>
-    <tr>
-      <td>X273</td>
-      <td>206</td>
-      <td>37</td>
-      <td>243</td>
-      <td>84.8%</td>
+      <td>X463</td>
+      <td>7</td>
+      <td>29</td>
+      <td>36</td>
+      <td>19.4%</td>
     </tr>
     <tr>
       <td>X286</td>
@@ -1020,25 +1026,32 @@
       <td>24.5%</td>
     </tr>
     <tr>
+      <td>X458</td>
+      <td>59</td>
+      <td>70</td>
+      <td>129</td>
+      <td>45.7%</td>
+    </tr>
+    <tr>
+      <td>X057</td>
+      <td>71</td>
+      <td>78</td>
+      <td>149</td>
+      <td>47.7%</td>
+    </tr>
+    <tr>
+      <td>X550</td>
+      <td>52</td>
+      <td>56</td>
+      <td>108</td>
+      <td>48.1%</td>
+    </tr>
+    <tr>
       <td>X300</td>
       <td>485</td>
       <td>455</td>
       <td>940</td>
       <td>51.6%</td>
-    </tr>
-    <tr>
-      <td>X314</td>
-      <td>1,070</td>
-      <td>87</td>
-      <td>1,157</td>
-      <td>92.5%</td>
-    </tr>
-    <tr>
-      <td>X316</td>
-      <td>33</td>
-      <td>24</td>
-      <td>57</td>
-      <td>57.9%</td>
     </tr>
     <tr>
       <td>X341</td>
@@ -1048,11 +1061,11 @@
       <td>52.6%</td>
     </tr>
     <tr>
-      <td>X383</td>
-      <td>134</td>
-      <td>49</td>
-      <td>183</td>
-      <td>73.2%</td>
+      <td>X316</td>
+      <td>33</td>
+      <td>24</td>
+      <td>57</td>
+      <td>57.9%</td>
     </tr>
     <tr>
       <td>X446</td>
@@ -1062,18 +1075,46 @@
       <td>58.5%</td>
     </tr>
     <tr>
-      <td>X458</td>
-      <td>59</td>
-      <td>70</td>
-      <td>129</td>
-      <td>45.7%</td>
+      <td>X134</td>
+      <td>375</td>
+      <td>259</td>
+      <td>634</td>
+      <td>59.1%</td>
     </tr>
     <tr>
-      <td>X463</td>
-      <td>7</td>
-      <td>29</td>
-      <td>36</td>
-      <td>19.4%</td>
+      <td>X067</td>
+      <td>58</td>
+      <td>37</td>
+      <td>95</td>
+      <td>61.1%</td>
+    </tr>
+    <tr>
+      <td>X211</td>
+      <td>395</td>
+      <td>246</td>
+      <td>641</td>
+      <td>61.6%</td>
+    </tr>
+    <tr>
+      <td>X691</td>
+      <td>298</td>
+      <td>174</td>
+      <td>472</td>
+      <td>63.1%</td>
+    </tr>
+    <tr>
+      <td>X684</td>
+      <td>430</td>
+      <td>248</td>
+      <td>678</td>
+      <td>63.4%</td>
+    </tr>
+    <tr>
+      <td>X242</td>
+      <td>21</td>
+      <td>11</td>
+      <td>32</td>
+      <td>65.6%</td>
     </tr>
     <tr>
       <td>X479</td>
@@ -1083,11 +1124,25 @@
       <td>72.6%</td>
     </tr>
     <tr>
-      <td>X511</td>
-      <td>221</td>
-      <td>25</td>
-      <td>246</td>
-      <td>89.8%</td>
+      <td>X383</td>
+      <td>134</td>
+      <td>49</td>
+      <td>183</td>
+      <td>73.2%</td>
+    </tr>
+    <tr>
+      <td>X047</td>
+      <td>1,091</td>
+      <td>395</td>
+      <td>1,486</td>
+      <td>73.4%</td>
+    </tr>
+    <tr>
+      <td>X595</td>
+      <td>189</td>
+      <td>67</td>
+      <td>256</td>
+      <td>73.8%</td>
     </tr>
     <tr>
       <td>X521</td>
@@ -1097,10 +1152,31 @@
       <td>74.4%</td>
     </tr>
     <tr>
+      <td>X251</td>
+      <td>487</td>
+      <td>164</td>
+      <td>651</td>
+      <td>74.8%</td>
+    </tr>
+    <tr>
+      <td>X248</td>
+      <td>1,187</td>
+      <td>362</td>
+      <td>1,549</td>
+      <td>76.6%</td>
+    </tr>
+    <tr>
       <td>X531</td>
       <td>249</td>
       <td>75</td>
       <td>324</td>
+      <td>76.9%</td>
+    </tr>
+    <tr>
+      <td>X129</td>
+      <td>186</td>
+      <td>56</td>
+      <td>242</td>
       <td>76.9%</td>
     </tr>
     <tr>
@@ -1111,39 +1187,25 @@
       <td>77.3%</td>
     </tr>
     <tr>
-      <td>X550</td>
-      <td>52</td>
-      <td>56</td>
-      <td>108</td>
-      <td>48.1%</td>
+      <td>X006</td>
+      <td>536</td>
+      <td>146</td>
+      <td>682</td>
+      <td>78.6%</td>
     </tr>
     <tr>
-      <td>X595</td>
-      <td>189</td>
-      <td>67</td>
-      <td>256</td>
-      <td>73.8%</td>
+      <td>X271</td>
+      <td>1,276</td>
+      <td>332</td>
+      <td>1,608</td>
+      <td>79.4%</td>
     </tr>
     <tr>
-      <td>X641</td>
-      <td>17</td>
-      <td>0</td>
-      <td>17</td>
-      <td>100.0%</td>
-    </tr>
-    <tr>
-      <td>X684</td>
-      <td>430</td>
-      <td>248</td>
-      <td>678</td>
-      <td>63.4%</td>
-    </tr>
-    <tr>
-      <td>X691</td>
-      <td>298</td>
-      <td>174</td>
-      <td>472</td>
-      <td>63.1%</td>
+      <td>X196</td>
+      <td>274</td>
+      <td>61</td>
+      <td>335</td>
+      <td>81.8%</td>
     </tr>
     <tr>
       <td>XP12</td>
@@ -1151,6 +1213,97 @@
       <td>160</td>
       <td>900</td>
       <td>82.2%</td>
+    </tr>
+    <tr>
+      <td>X214</td>
+      <td>321</td>
+      <td>69</td>
+      <td>390</td>
+      <td>82.3%</td>
+    </tr>
+    <tr>
+      <td>X066</td>
+      <td>609</td>
+      <td>118</td>
+      <td>727</td>
+      <td>83.8%</td>
+    </tr>
+    <tr>
+      <td>X044</td>
+      <td>156</td>
+      <td>30</td>
+      <td>186</td>
+      <td>83.9%</td>
+    </tr>
+    <tr>
+      <td>X273</td>
+      <td>206</td>
+      <td>37</td>
+      <td>243</td>
+      <td>84.8%</td>
+    </tr>
+    <tr>
+      <td>X195</td>
+      <td>902</td>
+      <td>135</td>
+      <td>1,037</td>
+      <td>87.0%</td>
+    </tr>
+    <tr>
+      <td>X150</td>
+      <td>490</td>
+      <td>58</td>
+      <td>548</td>
+      <td>89.4%</td>
+    </tr>
+    <tr>
+      <td>X511</td>
+      <td>221</td>
+      <td>25</td>
+      <td>246</td>
+      <td>89.8%</td>
+    </tr>
+    <tr>
+      <td>X061</td>
+      <td>120</td>
+      <td>12</td>
+      <td>132</td>
+      <td>90.9%</td>
+    </tr>
+    <tr>
+      <td>X190</td>
+      <td>12</td>
+      <td>1</td>
+      <td>13</td>
+      <td>92.3%</td>
+    </tr>
+    <tr>
+      <td>X314</td>
+      <td>1,070</td>
+      <td>87</td>
+      <td>1,157</td>
+      <td>92.5%</td>
+    </tr>
+    <tr>
+      <td>X267</td>
+      <td>54</td>
+      <td>4</td>
+      <td>58</td>
+      <td>93.1%</td>
+    </tr>
+    <tr>
+      <td>X217</td>
+      <td>420</td>
+      <td>13</td>
+      <td>433</td>
+      <td>97.0%</td>
+    </tr>
+    <tr>
+      <td>X641</td>
+      <td>17</td>
+      <td>0</td>
+      <td>17</td>
+      <td>100.0%</td>
     </tr>
   </tbody>
 </table></div>
@@ -1173,245 +1326,14 @@
   </thead>
   <tbody>
     <tr>
-      <td>X006</td>
-      <td>531</td>
-      <td>132</td>
-      <td>663</td>
-      <td>80.1%</td>
-      <td>5</td>
-      <td>14</td>
-      <td>19</td>
-      <td>26.3%</td>
-    </tr>
-    <tr>
-      <td>X044</td>
-      <td>148</td>
-      <td>13</td>
-      <td>161</td>
-      <td>91.9%</td>
-      <td>8</td>
-      <td>17</td>
-      <td>25</td>
-      <td>32.0%</td>
-    </tr>
-    <tr>
-      <td>X047</td>
-      <td>1,091</td>
-      <td>261</td>
-      <td>1,352</td>
-      <td>80.7%</td>
-      <td>0</td>
-      <td>134</td>
-      <td>134</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X057</td>
-      <td>37</td>
-      <td>31</td>
-      <td>68</td>
-      <td>54.4%</td>
-      <td>34</td>
-      <td>47</td>
-      <td>81</td>
-      <td>42.0%</td>
-    </tr>
-    <tr>
-      <td>X061</td>
-      <td>119</td>
-      <td>12</td>
-      <td>131</td>
-      <td>90.8%</td>
-      <td>1</td>
-      <td>0</td>
-      <td>1</td>
-      <td>100.0%</td>
-    </tr>
-    <tr>
-      <td>X066</td>
-      <td>608</td>
-      <td>82</td>
-      <td>690</td>
-      <td>88.1%</td>
-      <td>1</td>
-      <td>36</td>
-      <td>37</td>
-      <td>2.7%</td>
-    </tr>
-    <tr>
-      <td>X067</td>
-      <td>56</td>
-      <td>30</td>
-      <td>86</td>
-      <td>65.1%</td>
-      <td>2</td>
+      <td>X463</td>
       <td>7</td>
-      <td>9</td>
-      <td>22.2%</td>
-    </tr>
-    <tr>
-      <td>X129</td>
-      <td>182</td>
-      <td>32</td>
-      <td>214</td>
-      <td>85.0%</td>
-      <td>4</td>
-      <td>24</td>
-      <td>28</td>
-      <td>14.3%</td>
-    </tr>
-    <tr>
-      <td>X134</td>
-      <td>368</td>
-      <td>250</td>
-      <td>618</td>
-      <td>59.5%</td>
-      <td>7</td>
-      <td>9</td>
-      <td>16</td>
-      <td>43.8%</td>
-    </tr>
-    <tr>
-      <td>X150</td>
-      <td>486</td>
-      <td>36</td>
-      <td>522</td>
-      <td>93.1%</td>
-      <td>4</td>
-      <td>22</td>
       <td>26</td>
-      <td>15.4%</td>
-    </tr>
-    <tr>
-      <td>X190</td>
-      <td>12</td>
-      <td>0</td>
-      <td>12</td>
-      <td>100.0%</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X195</td>
-      <td>804</td>
-      <td>94</td>
-      <td>898</td>
-      <td>89.5%</td>
-      <td>98</td>
-      <td>41</td>
-      <td>139</td>
-      <td>70.5%</td>
-    </tr>
-    <tr>
-      <td>X196</td>
-      <td>274</td>
-      <td>58</td>
-      <td>332</td>
-      <td>82.5%</td>
-      <td>0</td>
-      <td>3</td>
-      <td>3</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X211</td>
-      <td>392</td>
-      <td>216</td>
-      <td>608</td>
-      <td>64.5%</td>
-      <td>3</td>
-      <td>30</td>
       <td>33</td>
-      <td>9.1%</td>
-    </tr>
-    <tr>
-      <td>X214</td>
-      <td>321</td>
-      <td>69</td>
-      <td>390</td>
-      <td>82.3%</td>
+      <td>21.2%</td>
       <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X217</td>
-      <td>420</td>
-      <td>12</td>
-      <td>432</td>
-      <td>97.2%</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X242</td>
-      <td>21</td>
-      <td>11</td>
-      <td>32</td>
-      <td>65.6%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X248</td>
-      <td>1,187</td>
-      <td>362</td>
-      <td>1,549</td>
-      <td>76.6%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X251</td>
-      <td>487</td>
-      <td>154</td>
-      <td>641</td>
-      <td>76.0%</td>
-      <td>0</td>
-      <td>10</td>
-      <td>10</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X267</td>
-      <td>46</td>
-      <td>1</td>
-      <td>47</td>
-      <td>97.9%</td>
-      <td>8</td>
       <td>3</td>
-      <td>11</td>
-      <td>72.7%</td>
-    </tr>
-    <tr>
-      <td>X271</td>
-      <td>1,240</td>
-      <td>263</td>
-      <td>1,503</td>
-      <td>82.5%</td>
-      <td>36</td>
-      <td>69</td>
-      <td>105</td>
-      <td>34.3%</td>
-    </tr>
-    <tr>
-      <td>X273</td>
-      <td>206</td>
-      <td>37</td>
-      <td>243</td>
-      <td>84.8%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>3</td>
       <td>0.0%</td>
     </tr>
     <tr>
@@ -1426,6 +1348,39 @@
       <td>0.0%</td>
     </tr>
     <tr>
+      <td>X458</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>59</td>
+      <td>70</td>
+      <td>129</td>
+      <td>45.7%</td>
+    </tr>
+    <tr>
+      <td>X057</td>
+      <td>37</td>
+      <td>31</td>
+      <td>68</td>
+      <td>54.4%</td>
+      <td>34</td>
+      <td>47</td>
+      <td>81</td>
+      <td>42.0%</td>
+    </tr>
+    <tr>
+      <td>X550</td>
+      <td>52</td>
+      <td>56</td>
+      <td>108</td>
+      <td>48.1%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
       <td>X300</td>
       <td>470</td>
       <td>410</td>
@@ -1435,28 +1390,6 @@
       <td>45</td>
       <td>60</td>
       <td>25.0%</td>
-    </tr>
-    <tr>
-      <td>X314</td>
-      <td>1,062</td>
-      <td>57</td>
-      <td>1,119</td>
-      <td>94.9%</td>
-      <td>8</td>
-      <td>30</td>
-      <td>38</td>
-      <td>21.1%</td>
-    </tr>
-    <tr>
-      <td>X316</td>
-      <td>33</td>
-      <td>24</td>
-      <td>57</td>
-      <td>57.9%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
     </tr>
     <tr>
       <td>X341</td>
@@ -1470,11 +1403,11 @@
       <td>0.0%</td>
     </tr>
     <tr>
-      <td>X383</td>
-      <td>134</td>
-      <td>49</td>
-      <td>183</td>
-      <td>73.2%</td>
+      <td>X316</td>
+      <td>33</td>
+      <td>24</td>
+      <td>57</td>
+      <td>57.9%</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -1492,25 +1425,69 @@
       <td>0.0%</td>
     </tr>
     <tr>
-      <td>X458</td>
+      <td>X134</td>
+      <td>368</td>
+      <td>250</td>
+      <td>618</td>
+      <td>59.5%</td>
+      <td>7</td>
+      <td>9</td>
+      <td>16</td>
+      <td>43.8%</td>
+    </tr>
+    <tr>
+      <td>X067</td>
+      <td>56</td>
+      <td>30</td>
+      <td>86</td>
+      <td>65.1%</td>
+      <td>2</td>
+      <td>7</td>
+      <td>9</td>
+      <td>22.2%</td>
+    </tr>
+    <tr>
+      <td>X211</td>
+      <td>392</td>
+      <td>216</td>
+      <td>608</td>
+      <td>64.5%</td>
+      <td>3</td>
+      <td>30</td>
+      <td>33</td>
+      <td>9.1%</td>
+    </tr>
+    <tr>
+      <td>X691</td>
+      <td>295</td>
+      <td>162</td>
+      <td>457</td>
+      <td>64.6%</td>
+      <td>3</td>
+      <td>12</td>
+      <td>15</td>
+      <td>20.0%</td>
+    </tr>
+    <tr>
+      <td>X684</td>
+      <td>430</td>
+      <td>248</td>
+      <td>678</td>
+      <td>63.4%</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
       <td>0.0%</td>
-      <td>59</td>
-      <td>70</td>
-      <td>129</td>
-      <td>45.7%</td>
     </tr>
     <tr>
-      <td>X463</td>
-      <td>7</td>
-      <td>26</td>
-      <td>33</td>
-      <td>21.2%</td>
+      <td>X242</td>
+      <td>21</td>
+      <td>11</td>
+      <td>32</td>
+      <td>65.6%</td>
       <td>0</td>
-      <td>3</td>
-      <td>3</td>
+      <td>0</td>
+      <td>0</td>
       <td>0.0%</td>
     </tr>
     <tr>
@@ -1525,58 +1502,25 @@
       <td>0.0%</td>
     </tr>
     <tr>
-      <td>X511</td>
-      <td>221</td>
-      <td>25</td>
-      <td>246</td>
-      <td>89.8%</td>
+      <td>X383</td>
+      <td>134</td>
+      <td>49</td>
+      <td>183</td>
+      <td>73.2%</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
       <td>0.0%</td>
     </tr>
     <tr>
-      <td>X521</td>
-      <td>421</td>
-      <td>143</td>
-      <td>564</td>
-      <td>74.6%</td>
+      <td>X047</td>
+      <td>1,091</td>
+      <td>261</td>
+      <td>1,352</td>
+      <td>80.7%</td>
       <td>0</td>
-      <td>2</td>
-      <td>2</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X531</td>
-      <td>191</td>
-      <td>4</td>
-      <td>195</td>
-      <td>97.9%</td>
-      <td>58</td>
-      <td>71</td>
-      <td>129</td>
-      <td>45.0%</td>
-    </tr>
-    <tr>
-      <td>X536</td>
-      <td>99</td>
-      <td>27</td>
-      <td>126</td>
-      <td>78.6%</td>
-      <td>0</td>
-      <td>2</td>
-      <td>2</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X550</td>
-      <td>52</td>
-      <td>56</td>
-      <td>108</td>
-      <td>48.1%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>134</td>
+      <td>134</td>
       <td>0.0%</td>
     </tr>
     <tr>
@@ -1591,37 +1535,103 @@
       <td>15.2%</td>
     </tr>
     <tr>
-      <td>X641</td>
-      <td>17</td>
+      <td>X521</td>
+      <td>421</td>
+      <td>143</td>
+      <td>564</td>
+      <td>74.6%</td>
       <td>0</td>
-      <td>17</td>
-      <td>100.0%</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>X251</td>
+      <td>487</td>
+      <td>154</td>
+      <td>641</td>
+      <td>76.0%</td>
+      <td>0</td>
+      <td>10</td>
+      <td>10</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>X248</td>
+      <td>1,187</td>
+      <td>362</td>
+      <td>1,549</td>
+      <td>76.6%</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
       <td>0.0%</td>
     </tr>
     <tr>
-      <td>X684</td>
-      <td>430</td>
-      <td>248</td>
-      <td>678</td>
-      <td>63.4%</td>
+      <td>X531</td>
+      <td>191</td>
+      <td>4</td>
+      <td>195</td>
+      <td>97.9%</td>
+      <td>58</td>
+      <td>71</td>
+      <td>129</td>
+      <td>45.0%</td>
+    </tr>
+    <tr>
+      <td>X129</td>
+      <td>182</td>
+      <td>32</td>
+      <td>214</td>
+      <td>85.0%</td>
+      <td>4</td>
+      <td>24</td>
+      <td>28</td>
+      <td>14.3%</td>
+    </tr>
+    <tr>
+      <td>X536</td>
+      <td>99</td>
+      <td>27</td>
+      <td>126</td>
+      <td>78.6%</td>
       <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>2</td>
+      <td>2</td>
       <td>0.0%</td>
     </tr>
     <tr>
-      <td>X691</td>
-      <td>295</td>
-      <td>162</td>
-      <td>457</td>
-      <td>64.6%</td>
+      <td>X006</td>
+      <td>531</td>
+      <td>132</td>
+      <td>663</td>
+      <td>80.1%</td>
+      <td>5</td>
+      <td>14</td>
+      <td>19</td>
+      <td>26.3%</td>
+    </tr>
+    <tr>
+      <td>X271</td>
+      <td>1,240</td>
+      <td>263</td>
+      <td>1,503</td>
+      <td>82.5%</td>
+      <td>36</td>
+      <td>69</td>
+      <td>105</td>
+      <td>34.3%</td>
+    </tr>
+    <tr>
+      <td>X196</td>
+      <td>274</td>
+      <td>58</td>
+      <td>332</td>
+      <td>82.5%</td>
+      <td>0</td>
       <td>3</td>
-      <td>12</td>
-      <td>15</td>
-      <td>20.0%</td>
+      <td>3</td>
+      <td>0.0%</td>
     </tr>
     <tr>
       <td>XP12</td>
@@ -1634,370 +1644,156 @@
       <td>83</td>
       <td>18.1%</td>
     </tr>
+    <tr>
+      <td>X214</td>
+      <td>321</td>
+      <td>69</td>
+      <td>390</td>
+      <td>82.3%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>X066</td>
+      <td>608</td>
+      <td>82</td>
+      <td>690</td>
+      <td>88.1%</td>
+      <td>1</td>
+      <td>36</td>
+      <td>37</td>
+      <td>2.7%</td>
+    </tr>
+    <tr>
+      <td>X044</td>
+      <td>148</td>
+      <td>13</td>
+      <td>161</td>
+      <td>91.9%</td>
+      <td>8</td>
+      <td>17</td>
+      <td>25</td>
+      <td>32.0%</td>
+    </tr>
+    <tr>
+      <td>X273</td>
+      <td>206</td>
+      <td>37</td>
+      <td>243</td>
+      <td>84.8%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>X195</td>
+      <td>804</td>
+      <td>94</td>
+      <td>898</td>
+      <td>89.5%</td>
+      <td>98</td>
+      <td>41</td>
+      <td>139</td>
+      <td>70.5%</td>
+    </tr>
+    <tr>
+      <td>X150</td>
+      <td>486</td>
+      <td>36</td>
+      <td>522</td>
+      <td>93.1%</td>
+      <td>4</td>
+      <td>22</td>
+      <td>26</td>
+      <td>15.4%</td>
+    </tr>
+    <tr>
+      <td>X511</td>
+      <td>221</td>
+      <td>25</td>
+      <td>246</td>
+      <td>89.8%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>X061</td>
+      <td>119</td>
+      <td>12</td>
+      <td>131</td>
+      <td>90.8%</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>100.0%</td>
+    </tr>
+    <tr>
+      <td>X190</td>
+      <td>12</td>
+      <td>0</td>
+      <td>12</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>X314</td>
+      <td>1,062</td>
+      <td>57</td>
+      <td>1,119</td>
+      <td>94.9%</td>
+      <td>8</td>
+      <td>30</td>
+      <td>38</td>
+      <td>21.1%</td>
+    </tr>
+    <tr>
+      <td>X267</td>
+      <td>46</td>
+      <td>1</td>
+      <td>47</td>
+      <td>97.9%</td>
+      <td>8</td>
+      <td>3</td>
+      <td>11</td>
+      <td>72.7%</td>
+    </tr>
+    <tr>
+      <td>X217</td>
+      <td>420</td>
+      <td>12</td>
+      <td>432</td>
+      <td>97.2%</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>X641</td>
+      <td>17</td>
+      <td>0</td>
+      <td>17</td>
+      <td>100.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
   </tbody>
 </table></div>
         </div>
     </div>
     
-            </div>
-            <div class="section">
-                <h3>SubCentral vs Payroll Analysis</h3>
-                <div class="tabbed-container">
-                    <div class="tab-content active" data-tab="matching" data-tab-title="SubCentral vs Payroll Analysis">
-                        <div class="table-responsive"><table border="1" class="dataframe table table-striped">
-  <thead>
-    <tr style="text-align: right;">
-      <th>Location</th>
-      <th>SubCentral Job Days</th>
-      <th>Payroll Job Days</th>
-      <th>Matched Jobs</th>
-      <th>Match Percentage</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>X006</td>
-      <td>609</td>
-      <td>750</td>
-      <td>303</td>
-      <td>40.4%</td>
-    </tr>
-    <tr>
-      <td>X044</td>
-      <td>156</td>
-      <td>190</td>
-      <td>106</td>
-      <td>55.8%</td>
-    </tr>
-    <tr>
-      <td>X047</td>
-      <td>1,415</td>
-      <td>1,555</td>
-      <td>1,018</td>
-      <td>65.5%</td>
-    </tr>
-    <tr>
-      <td>X057</td>
-      <td>73</td>
-      <td>332</td>
-      <td>48</td>
-      <td>14.5%</td>
-    </tr>
-    <tr>
-      <td>X061</td>
-      <td>124</td>
-      <td>104</td>
-      <td>90</td>
-      <td>86.5%</td>
-    </tr>
-    <tr>
-      <td>X066</td>
-      <td>778</td>
-      <td>1,049</td>
-      <td>472</td>
-      <td>45.0%</td>
-    </tr>
-    <tr>
-      <td>X067</td>
-      <td>63</td>
-      <td>57</td>
-      <td>56</td>
-      <td>98.2%</td>
-    </tr>
-    <tr>
-      <td>X129</td>
-      <td>227</td>
-      <td>217</td>
-      <td>155</td>
-      <td>71.4%</td>
-    </tr>
-    <tr>
-      <td>X134</td>
-      <td>402</td>
-      <td>774</td>
-      <td>230</td>
-      <td>29.7%</td>
-    </tr>
-    <tr>
-      <td>X150</td>
-      <td>573</td>
-      <td>545</td>
-      <td>455</td>
-      <td>83.5%</td>
-    </tr>
-    <tr>
-      <td>X190</td>
-      <td>12</td>
-      <td>56</td>
-      <td>10</td>
-      <td>17.9%</td>
-    </tr>
-    <tr>
-      <td>X195</td>
-      <td>1,077</td>
-      <td>924</td>
-      <td>829</td>
-      <td>89.7%</td>
-    </tr>
-    <tr>
-      <td>X196</td>
-      <td>347</td>
-      <td>366</td>
-      <td>183</td>
-      <td>50.0%</td>
-    </tr>
-    <tr>
-      <td>X211</td>
-      <td>511</td>
-      <td>426</td>
-      <td>260</td>
-      <td>61.0%</td>
-    </tr>
-    <tr>
-      <td>X214</td>
-      <td>391</td>
-      <td>327</td>
-      <td>183</td>
-      <td>56.0%</td>
-    </tr>
-    <tr>
-      <td>X217</td>
-      <td>525</td>
-      <td>470</td>
-      <td>312</td>
-      <td>66.4%</td>
-    </tr>
-    <tr>
-      <td>X242</td>
-      <td>39</td>
-      <td>52</td>
-      <td>24</td>
-      <td>46.2%</td>
-    </tr>
-    <tr>
-      <td>X248</td>
-      <td>1,490</td>
-      <td>1,391</td>
-      <td>903</td>
-      <td>64.9%</td>
-    </tr>
-    <tr>
-      <td>X251</td>
-      <td>603</td>
-      <td>516</td>
-      <td>345</td>
-      <td>66.9%</td>
-    </tr>
-    <tr>
-      <td>X267</td>
-      <td>54</td>
-      <td>54</td>
-      <td>42</td>
-      <td>77.8%</td>
-    </tr>
-    <tr>
-      <td>X271</td>
-      <td>1,546</td>
-      <td>1,386</td>
-      <td>1,165</td>
-      <td>84.1%</td>
-    </tr>
-    <tr>
-      <td>X273</td>
-      <td>243</td>
-      <td>203</td>
-      <td>69</td>
-      <td>34.0%</td>
-    </tr>
-    <tr>
-      <td>X286</td>
-      <td>50</td>
-      <td>27</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X300</td>
-      <td>538</td>
-      <td>467</td>
-      <td>351</td>
-      <td>75.2%</td>
-    </tr>
-    <tr>
-      <td>X314</td>
-      <td>1,288</td>
-      <td>1,199</td>
-      <td>1,082</td>
-      <td>90.2%</td>
-    </tr>
-    <tr>
-      <td>X316</td>
-      <td>47</td>
-      <td>103</td>
-      <td>18</td>
-      <td>17.5%</td>
-    </tr>
-    <tr>
-      <td>X341</td>
-      <td>45</td>
-      <td>106</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X383</td>
-      <td>204</td>
-      <td>253</td>
-      <td>131</td>
-      <td>51.8%</td>
-    </tr>
-    <tr>
-      <td>X446</td>
-      <td>103</td>
-      <td>251</td>
-      <td>37</td>
-      <td>14.7%</td>
-    </tr>
-    <tr>
-      <td>X458</td>
-      <td>59</td>
-      <td>434</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X463</td>
-      <td>7</td>
-      <td>98</td>
-      <td>2</td>
-      <td>2.0%</td>
-    </tr>
-    <tr>
-      <td>X479</td>
-      <td>349</td>
-      <td>285</td>
-      <td>168</td>
-      <td>58.9%</td>
-    </tr>
-    <tr>
-      <td>X511</td>
-      <td>256</td>
-      <td>220</td>
-      <td>157</td>
-      <td>71.4%</td>
-    </tr>
-    <tr>
-      <td>X521</td>
-      <td>553</td>
-      <td>502</td>
-      <td>333</td>
-      <td>66.3%</td>
-    </tr>
-    <tr>
-      <td>X531</td>
-      <td>311</td>
-      <td>311</td>
-      <td>249</td>
-      <td>80.1%</td>
-    </tr>
-    <tr>
-      <td>X536</td>
-      <td>100</td>
-      <td>93</td>
-      <td>86</td>
-      <td>92.5%</td>
-    </tr>
-    <tr>
-      <td>X550</td>
-      <td>52</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>X595</td>
-      <td>224</td>
-      <td>279</td>
-      <td>63</td>
-      <td>22.6%</td>
-    </tr>
-    <tr>
-      <td>X641</td>
-      <td>17</td>
-      <td>22</td>
-      <td>14</td>
-      <td>63.6%</td>
-    </tr>
-    <tr>
-      <td>X684</td>
-      <td>516</td>
-      <td>344</td>
-      <td>294</td>
-      <td>85.5%</td>
-    </tr>
-    <tr>
-      <td>X691</td>
-      <td>343</td>
-      <td>339</td>
-      <td>275</td>
-      <td>81.1%</td>
-    </tr>
-    <tr>
-      <td>XP12</td>
-      <td>891</td>
-      <td>931</td>
-      <td>593</td>
-      <td>63.7%</td>
-    </tr>
-  </tbody>
-</table></div>
-                    </div>
-                </div>
-                <p style="font-style: italic; color: #666; margin-top: 10px;">
-                    This analysis matches individual jobs using <strong>Location + EIS ID + Date</strong> between SubCentral and payroll systems. 
-                    Match Percentage shows what percentage of payroll records have corresponding SubCentral records.
-                </p>
-            </div>
-            <div class="section">
-                <h3>Jobs by Classification and Type</h3>
-                <div class="chart-container">
-                    <iframe src="12_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
-                </div>
-            </div>
-
-            <div class="section">
-                <h3>Breakdown by Classification</h3>
-                <div class="pie-container"><iframe src="District_12_ARABIC_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_12_PARAPROFESSIONAL_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="District_12_SPANISH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe></div>
-            </div>
-
-            <div class="section">
-                <h3>Comparison: Bronx vs. Citywide</h3>
-                <div class="comparison-grid">
-    <div class="comparison-card citywide">
-        <h4>Citywide Statistics</h4>
-        <ul>
-            <li><strong>Total Jobs:</strong> 1,388,769</li><li><strong>Overall Fill Rate:</strong> 80.2%</li><li><strong>Vacancy Fill Rate:</strong> 84.5%</li><li><strong>Absence Fill Rate:</strong> 28.7%</li><li><strong>Number of Districts:</strong> 36</li><li><strong>Number of Schools:</strong> 1519</li>
-        </ul>
-    </div>
-    
-    <div class="comparison-card borough">
-        <h4>Bronx Statistics</h4>
-        <ul>
-            <li><strong>Total Jobs:</strong> 319,739</li><li><strong>Overall Fill Rate:</strong> 79.6%</li><li><strong>Vacancy Fill Rate:</strong> 83.3%</li><li><strong>Absence Fill Rate:</strong> 24.1%</li><li><strong>Number of Schools:</strong> 338</li>
-        </ul>
-    </div>
-    
-    <div class="comparison-card district">
-        <h4>This District (12)</h4>
-        <ul>
-            <li><strong>Total Jobs:</strong> 18,909</li><li><strong>Overall Fill Rate:</strong> 75.3%</li><li><strong>Vacancy Fill Rate:</strong> 78.2%</li><li><strong>Absence Fill Rate:</strong> 31.4%</li><li><strong>Number of Schools:</strong> 42</li>
-        </ul>
-    </div>
-    </div>
-            </div>
-            
-            <div class="section">
-                <h3>Individual School Reports</h3>
+                
+                <h4>Individual School Reports</h4>
                 <div class="district-links"><ul><li><a href="Schools/School_X006/X006_report.html">X006</a> - 682 total jobs</li>
 <li><a href="Schools/School_X044/X044_report.html">X044</a> - 186 total jobs</li>
 <li><a href="Schools/School_X047/X047_report.html">X047</a> - 1,486 total jobs</li>
@@ -2014,6 +1810,7 @@
 <li><a href="Schools/School_X211/X211_report.html">X211</a> - 641 total jobs</li>
 <li><a href="Schools/School_X214/X214_report.html">X214</a> - 390 total jobs</li>
 <li><a href="Schools/School_X217/X217_report.html">X217</a> - 433 total jobs</li>
+<li><a href="Schools/School_X242/X242_report.html">X242</a> - 32 total jobs</li>
 <li><a href="Schools/School_X248/X248_report.html">X248</a> - 1,549 total jobs</li>
 <li><a href="Schools/School_X251/X251_report.html">X251</a> - 651 total jobs</li>
 <li><a href="Schools/School_X267/X267_report.html">X267</a> - 58 total jobs</li>
@@ -2026,6 +1823,7 @@
 <li><a href="Schools/School_X341/X341_report.html">X341</a> - 76 total jobs</li>
 <li><a href="Schools/School_X383/X383_report.html">X383</a> - 183 total jobs</li>
 <li><a href="Schools/School_X446/X446_report.html">X446</a> - 130 total jobs</li>
+<li><a href="Schools/School_X458/X458_report.html">X458</a> - 129 total jobs</li>
 <li><a href="Schools/School_X463/X463_report.html">X463</a> - 36 total jobs</li>
 <li><a href="Schools/School_X479/X479_report.html">X479</a> - 431 total jobs</li>
 <li><a href="Schools/School_X511/X511_report.html">X511</a> - 246 total jobs</li>

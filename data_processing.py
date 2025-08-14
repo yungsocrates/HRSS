@@ -306,18 +306,6 @@ def create_matching_analysis(main_df, srepp_df):
                             print(f"  Sample SubCentral job IDs: {list(list(subcentral_jobs.values())[0])[:3] if subcentral_jobs else []}")
                             print(f"  Top 5 SubCentral locations by job days: {dict(list(sorted(subcentral_totals.items(), key=lambda x: x[1], reverse=True)[:5]))}")
                             
-                            # Debug output for M015 specifically
-                            if 'M015' in subcentral_jobs:
-                                print(f"  DEBUG M015 SubCentral - Total unique IDs: {len(subcentral_jobs['M015'])}")
-                                print(f"  DEBUG M015 SubCentral - All unique IDs: {sorted(list(subcentral_jobs['M015']))}")
-                            elif any('M015' in location for location in subcentral_jobs.keys()):
-                                matching_locations = [loc for loc in subcentral_jobs.keys() if 'M015' in loc]
-                                print(f"  DEBUG - Found locations containing M015: {matching_locations}")
-                                for loc in matching_locations:
-                                    print(f"  DEBUG {loc} SubCentral - Total unique IDs: {len(subcentral_jobs[loc])}")
-                                    print(f"  DEBUG {loc} SubCentral - All unique IDs: {sorted(list(subcentral_jobs[loc]))}")
-                            else:
-                                print(f"  DEBUG - M015 not found in SubCentral locations. Available locations: {sorted(list(subcentral_jobs.keys())[:10])}")
         else:
             print("  No filled SubCentral jobs found")
     else:
@@ -422,22 +410,7 @@ def create_matching_analysis(main_df, srepp_df):
                             print(f"  Created {sum(len(jobs) for jobs in srepp_jobs.values())} unique SREPP job identifiers")
                             print(f"  Sample SREPP job IDs: {list(list(srepp_jobs.values())[0])[:3] if srepp_jobs else []}")
                             print(f"  Top 5 SREPP locations by job days: {dict(list(sorted(srepp_totals.items(), key=lambda x: x[1], reverse=True)[:5]))}")
-                            
-                            # Debug output for M015 specifically in SREPP
-                            if 'M015' in srepp_jobs:
-                                print(f"  DEBUG M015 SREPP - Total unique IDs: {len(srepp_jobs['M015'])}")
-                                print(f"  DEBUG M015 SREPP - All unique IDs: {sorted(list(srepp_jobs['M015']))}")
-                            elif any('M015' in location for location in srepp_jobs.keys()):
-                                matching_locations = [loc for loc in srepp_jobs.keys() if 'M015' in loc]
-                                print(f"  DEBUG - Found SREPP locations containing M015: {matching_locations}")
-                                for loc in matching_locations:
-                                    print(f"  DEBUG {loc} SREPP - Total unique IDs: {len(srepp_jobs[loc])}")
-                                    print(f"  DEBUG {loc} SREPP - All unique IDs: {sorted(list(srepp_jobs[loc]))}")
-                            else:
-                                print(f"  DEBUG - M015 not found in SREPP locations. Available locations: {sorted(list(srepp_jobs.keys())[:10])}")
-                                # Also show the mapping process
-                                print(f"  DEBUG - SREPP School_Clean values for first 10 records: {valid_srepp['School_Clean'].head(10).tolist()}")
-                                print(f"  DEBUG - Location mapping sample: {dict(list(location_mapping.items())[:10])}")
+
                         else:
                             print("  No SREPP records could be mapped to SubCentral locations")
                     else:
@@ -587,22 +560,23 @@ def get_data_date_range(df):
         print(f"Warning: Could not parse date range - {e}")
         return "Date range not available"
 
-def create_borough_summary_stats(df):
-    """
-    Create summary statistics by borough
-    """
-    return create_summary_stats(df, ['Borough'])
-
 def create_summary_stats(df, group_cols):
     """
     Create summary statistics by specified grouping columns
+    If group_cols is empty, creates citywide statistics
     """
+    # Handle citywide statistics (no grouping)
+    if not group_cols:
+        group_cols_for_processing = ['Classification']
+    else:
+        group_cols_for_processing = group_cols + ['Classification']
+    
     # Group by specified columns and Type_Fill_Status
-    summary = df.groupby(group_cols + ['Classification', 'Type_Fill_Status']).size().reset_index(name='Count')
+    summary = df.groupby(group_cols_for_processing + ['Type_Fill_Status']).size().reset_index(name='Count')
     
     # Pivot to get all combinations
     summary_pivot = summary.pivot_table(
-        index=group_cols + ['Classification'],
+        index=group_cols_for_processing,
         columns='Type_Fill_Status',
         values='Count',
         fill_value=0

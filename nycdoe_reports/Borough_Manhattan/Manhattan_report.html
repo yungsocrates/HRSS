@@ -218,7 +218,7 @@
             }
 
             .table th { 
-                background: var(--primary-color);
+                background: #6c757d;
                 color: white;
                 font-weight: 600;
                 font-size: 1.1em;
@@ -384,6 +384,42 @@
             }
 
             .district-links a:hover {
+                background: var(--primary-color);
+                color: white;
+                transform: translateX(5px);
+            }
+
+            .borough-links {
+                background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                padding: 25px;
+                border-radius: 15px;
+                box-shadow: var(--card-shadow);
+                border: 1px solid #e0e0e0;
+            }
+
+            .borough-links ul {
+                list-style: none;
+                padding: 0;
+                columns: 2;
+                column-gap: 30px;
+            }
+
+            .borough-links li {
+                padding: 8px 0;
+                break-inside: avoid;
+            }
+
+            .borough-links a {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                display: inline-block;
+                padding: 5px 10px;
+                border-radius: 5px;
+            }
+
+            .borough-links a:hover {
                 background: var(--primary-color);
                 color: white;
                 transform: translateX(5px);
@@ -678,15 +714,43 @@
         <script>
             
         $(document).ready(function() {
-            $('.table').DataTable({
-                paging: false, 
-                searching: false, 
-                info: false, 
-                order: [],
-                responsive: true
-            });
+            // Function to initialize DataTables on visible tables only
+            function initializeVisibleDataTables() {
+                // Only initialize on tables that are visible and not already initialized
+                $('.tab-content.active table.table:visible').each(function() {
+                    var $table = $(this);
+                    
+                    // Skip if already initialized
+                    if ($.fn.DataTable.isDataTable(this)) {
+                        return;
+                    }
+                    
+                    // Validate table structure before initialization
+                    var headerCount = $table.find('thead tr:first th').length;
+                    var bodyRowCount = $table.find('tbody tr').length;
+                    
+                    // Only initialize if table has proper structure
+                    if (headerCount > 0 && bodyRowCount > 0) {
+                        try {
+                            $table.DataTable({
+                                paging: false, 
+                                searching: false, 
+                                info: false, 
+                                order: [],
+                                responsive: true,
+                                autoWidth: false,
+                                columnDefs: [
+                                    { targets: '_all', className: 'text-center' }
+                                ]
+                            });
+                        } catch (e) {
+                            console.warn('DataTable initialization failed for table:', e);
+                        }
+                    }
+                });
+            }
             
-            // Tab functionality
+            // Tab functionality with minimal DataTable interference
             $('.tab-button').click(function() {
                 var targetTab = $(this).data('tab');
                 var container = $(this).closest('.tabbed-container');
@@ -698,12 +762,31 @@
                 // Add active class to clicked button and corresponding content
                 $(this).addClass('active');
                 container.find('.tab-content[data-tab="' + targetTab + '"]').addClass('active');
+                
+                // Initialize DataTables for newly visible tables
+                setTimeout(function() {
+                    initializeVisibleDataTables();
+                }, 100);
             });
             
             // Activate first tab by default
             $('.tabbed-container').each(function() {
                 $(this).find('.tab-button:first').addClass('active');
                 $(this).find('.tab-content:first').addClass('active');
+            });
+            
+            // Initialize DataTables for initially visible tables after DOM is ready
+            setTimeout(function() {
+                initializeVisibleDataTables();
+            }, 150);
+            
+            // Handle window resize to adjust responsive features
+            $(window).on('resize', function() {
+                $('.tab-content.active table.table').each(function() {
+                    if ($.fn.DataTable.isDataTable(this)) {
+                        $(this).DataTable().columns.adjust().responsive.recalc();
+                    }
+                });
             });
         });
     
@@ -719,7 +802,7 @@
                 <h1>Substitute Paraprofessional Jobs Report</h1>
                 <h2>Borough: Manhattan</h2>
                 <div class="date-info">Job dates: September 03, 2024 to June 26, 2025</div>
-                <p>Generated on: August 08, 2025 at 06:55 PM</p>
+                <p>Generated on: August 13, 2025 at 06:13 PM</p>
             </div>
             <div class="header-logo">
                 <img src="../Horizontal_logo_White_PublicSchools.png" alt="NYC Public Schools" class="logo">
@@ -735,16 +818,71 @@
     </div>
     
             
+            <!-- SECTION 1: Overall Summary (Borough vs Citywide) -->
             <div class="section">
-                <h3>Summary Statistics</h3>
+                <h3>1. Overall Summary - Manhattan vs. Citywide</h3>
+                <p><em>Comparison frames everything else you will see on this page</em></p>
+                <div class="comparison-grid">
+    <div class="comparison-card citywide">
+        <h4>Citywide Statistics</h4>
+        <ul>
+            <li><strong>Total Jobs:</strong> 1,388,769</li><li><strong>Overall Fill Rate:</strong> 80.2%</li><li><strong>Vacancy Fill Rate:</strong> 84.5%</li><li><strong>Absence Fill Rate:</strong> 28.7%</li><li><strong>Average Match %:</strong> 64.0%</li><li><strong>Number of Schools:</strong> 1519</li>
+        </ul>
+    </div>
+    
+    <div class="comparison-card borough">
+        <h4>This Borough</h4>
+        <ul>
+            <li><strong>Total Jobs:</strong> 205,458</li><li><strong>Overall Fill Rate:</strong> 79.8%</li><li><strong>Vacancy Fill Rate:</strong> 83.7%</li><li><strong>Absence Fill Rate:</strong> 20.0%</li><li><strong>Average Match %:</strong> 63.8%</li><li><strong>Number of Schools:</strong> 265</li>
+        </ul>
+    </div>
+    </div>
+            </div>
+
+            <!-- SECTION 2: Match Payroll Analysis -->
+            
+                <div class="section">
+                    <h3>SubCentral vs Payroll Analysis (District Level)</h3>
+                    <p><em>This analysis shows district-level matching within Manhattan borough.</em></p>
+                    
+                    <div class="summary-box">
+                        <h4>Borough Matching Summary</h4>
+                        <ul>
+                            <li><strong>Total SubCentral Records:</strong> 202,908</li>
+                            <li><strong>Total Payroll Records:</strong> 212,202</li>
+                            <li><strong>Total Matched Records:</strong> 149,148</li>
+                            <li><strong>Average Match Rate:</strong> 63.8%</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <p><em><strong>Note:</strong> Data is sorted from lowest to highest Match % to identify districts needing attention.</em></p>
+                        
+    <div class="tab-content active">
+        <div class="table-responsive">
+    <table class="table table-striped">
+        <tr><th>District</th><th>SubCentral Job Days</th><th>Payroll Job Days</th><th>Matched Jobs</th><th>Match Percentage</th></tr><tr><td>District 79</td><td>63</td><td>44</td><td>34</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">54.0%</td></tr><tr><td>District 4</td><td>20,082</td><td>19,949</td><td>13,965</td><td style="background-color: #f8d7da; color: #721c24; font-weight: bold;">69.5%</td></tr><tr><td>District 3</td><td>20,895</td><td>21,876</td><td>14,621</td><td style="background-color: #fff3cd; color: #856404;">70.0%</td></tr><tr><td>District 5</td><td>18,762</td><td>18,226</td><td>13,372</td><td style="background-color: #fff3cd; color: #856404;">71.3%</td></tr><tr><td>District 62</td><td>13,503</td><td>14,146</td><td>9,864</td><td style="background-color: #fff3cd; color: #856404;">73.1%</td></tr><tr><td>District 97</td><td>46,609</td><td>46,071</td><td>34,176</td><td style="background-color: #fff3cd; color: #856404;">73.3%</td></tr><tr><td>District 2</td><td>44,305</td><td>49,278</td><td>32,798</td><td style="background-color: #fff3cd; color: #856404;">74.0%</td></tr><tr><td>District 1</td><td>11,067</td><td>11,460</td><td>8,422</td><td style="background-color: #fff3cd; color: #856404;">76.1%</td></tr><tr><td>District 6</td><td>27,622</td><td>31,152</td><td>21,896</td><td style="background-color: #fff3cd; color: #856404;">79.3%</td></tr>
+    </table>
+    </div>
+    </div>
+    
+                    </div>
+                </div>
+                
+
+            <!-- SECTION 3: Classification Information -->
+            <div class="section">
+                <h3>3. Classification Information (Borough Level)</h3>
+                <h4>Summary Statistics</h4>
+                <p><em>Data sorted from highest to lowest total jobs</em></p>
                 
     <div class="tabbed-container">
         <div class="tab-buttons">
-            <button class="tab-button" data-tab="combined">Combined Totals</button>
+            <button class="tab-button active" data-tab="combined">Combined Totals</button>
             <button class="tab-button" data-tab="details">Vacancy and Absence Details</button>
         </div>
         
-        <div class="tab-content" data-tab="combined" data-tab-title="Combined Totals">
+        <div class="tab-content active" data-tab="combined" data-tab-title="Combined Totals">
             <div class="table-responsive"><table border="1" class="dataframe table table-striped">
   <thead>
     <tr style="text-align: right;">
@@ -757,11 +895,32 @@
   </thead>
   <tbody>
     <tr>
-      <td>ABAZA SPEAKING PARA</td>
+      <td>PARAPROFESSIONAL</td>
+      <td>159,543</td>
+      <td>37,956</td>
+      <td>197,499</td>
+      <td>80.8%</td>
+    </tr>
+    <tr>
+      <td>SPANISH SPEAKING PARA</td>
+      <td>4,231</td>
+      <td>2,687</td>
+      <td>6,918</td>
+      <td>61.2%</td>
+    </tr>
+    <tr>
+      <td>UKRAINIAN SPEAKING PARA</td>
       <td>0</td>
-      <td>1</td>
-      <td>1</td>
+      <td>288</td>
+      <td>288</td>
       <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>RUSSIAN SPEAKING PARA</td>
+      <td>4</td>
+      <td>185</td>
+      <td>189</td>
+      <td>2.1%</td>
     </tr>
     <tr>
       <td>ARABIC SPEAKING PARA</td>
@@ -771,13 +930,6 @@
       <td>72.6%</td>
     </tr>
     <tr>
-      <td>BENGALI SPEAKING PARA</td>
-      <td>2</td>
-      <td>1</td>
-      <td>3</td>
-      <td>66.7%</td>
-    </tr>
-    <tr>
       <td>CANTONESE SPEAKING PARA</td>
       <td>104</td>
       <td>12</td>
@@ -785,25 +937,11 @@
       <td>89.7%</td>
     </tr>
     <tr>
-      <td>FRENCH SPEAKING PARA</td>
-      <td>0</td>
-      <td>8</td>
-      <td>8</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>FULANI SPEAKING PARA</td>
-      <td>0</td>
-      <td>13</td>
-      <td>13</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>HAITIAN-CREOLE SPEAKING PARA</td>
-      <td>5</td>
-      <td>5</td>
-      <td>10</td>
-      <td>50.0%</td>
+      <td>TURKISH SPEAKING PARA</td>
+      <td>41</td>
+      <td>48</td>
+      <td>89</td>
+      <td>46.1%</td>
     </tr>
     <tr>
       <td>KOREAN SPEAKING PARA</td>
@@ -820,38 +958,38 @@
       <td>16.5%</td>
     </tr>
     <tr>
-      <td>PARAPROFESSIONAL</td>
-      <td>159,543</td>
-      <td>37,956</td>
-      <td>197,499</td>
-      <td>80.8%</td>
-    </tr>
-    <tr>
-      <td>RUSSIAN SPEAKING PARA</td>
-      <td>4</td>
-      <td>185</td>
-      <td>189</td>
-      <td>2.1%</td>
-    </tr>
-    <tr>
-      <td>SPANISH SPEAKING PARA</td>
-      <td>4,231</td>
-      <td>2,687</td>
-      <td>6,918</td>
-      <td>61.2%</td>
-    </tr>
-    <tr>
-      <td>TURKISH SPEAKING PARA</td>
-      <td>41</td>
-      <td>48</td>
-      <td>89</td>
-      <td>46.1%</td>
-    </tr>
-    <tr>
-      <td>UKRAINIAN SPEAKING PARA</td>
+      <td>FULANI SPEAKING PARA</td>
       <td>0</td>
-      <td>288</td>
-      <td>288</td>
+      <td>13</td>
+      <td>13</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>HAITIAN-CREOLE SPEAKING PARA</td>
+      <td>5</td>
+      <td>5</td>
+      <td>10</td>
+      <td>50.0%</td>
+    </tr>
+    <tr>
+      <td>FRENCH SPEAKING PARA</td>
+      <td>0</td>
+      <td>8</td>
+      <td>8</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>BENGALI SPEAKING PARA</td>
+      <td>2</td>
+      <td>1</td>
+      <td>3</td>
+      <td>66.7%</td>
+    </tr>
+    <tr>
+      <td>ABAZA SPEAKING PARA</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
       <td>0.0%</td>
     </tr>
   </tbody>
@@ -874,105 +1012,6 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>ABAZA SPEAKING PARA</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0.0%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>ARABIC SPEAKING PARA</td>
-      <td>114</td>
-      <td>43</td>
-      <td>157</td>
-      <td>72.6%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>BENGALI SPEAKING PARA</td>
-      <td>2</td>
-      <td>1</td>
-      <td>3</td>
-      <td>66.7%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>CANTONESE SPEAKING PARA</td>
-      <td>104</td>
-      <td>12</td>
-      <td>116</td>
-      <td>89.7%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>FRENCH SPEAKING PARA</td>
-      <td>0</td>
-      <td>8</td>
-      <td>8</td>
-      <td>0.0%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>FULANI SPEAKING PARA</td>
-      <td>0</td>
-      <td>13</td>
-      <td>13</td>
-      <td>0.0%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>HAITIAN-CREOLE SPEAKING PARA</td>
-      <td>5</td>
-      <td>5</td>
-      <td>10</td>
-      <td>50.0%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>KOREAN SPEAKING PARA</td>
-      <td>0</td>
-      <td>88</td>
-      <td>88</td>
-      <td>0.0%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
-    <tr>
-      <td>MANDARIN SPEAKING PARA</td>
-      <td>13</td>
-      <td>66</td>
-      <td>79</td>
-      <td>16.5%</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0.0%</td>
-    </tr>
     <tr>
       <td>PARAPROFESSIONAL</td>
       <td>157,038</td>
@@ -985,6 +1024,28 @@
       <td>20.0%</td>
     </tr>
     <tr>
+      <td>SPANISH SPEAKING PARA</td>
+      <td>4,231</td>
+      <td>2,687</td>
+      <td>6,918</td>
+      <td>61.2%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>UKRAINIAN SPEAKING PARA</td>
+      <td>0</td>
+      <td>288</td>
+      <td>288</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
       <td>RUSSIAN SPEAKING PARA</td>
       <td>4</td>
       <td>185</td>
@@ -996,11 +1057,22 @@
       <td>0.0%</td>
     </tr>
     <tr>
-      <td>SPANISH SPEAKING PARA</td>
-      <td>4,231</td>
-      <td>2,687</td>
-      <td>6,918</td>
-      <td>61.2%</td>
+      <td>ARABIC SPEAKING PARA</td>
+      <td>114</td>
+      <td>43</td>
+      <td>157</td>
+      <td>72.6%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>CANTONESE SPEAKING PARA</td>
+      <td>104</td>
+      <td>12</td>
+      <td>116</td>
+      <td>89.7%</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -1018,10 +1090,76 @@
       <td>0.0%</td>
     </tr>
     <tr>
-      <td>UKRAINIAN SPEAKING PARA</td>
+      <td>KOREAN SPEAKING PARA</td>
       <td>0</td>
-      <td>288</td>
-      <td>288</td>
+      <td>88</td>
+      <td>88</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>MANDARIN SPEAKING PARA</td>
+      <td>13</td>
+      <td>66</td>
+      <td>79</td>
+      <td>16.5%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>FULANI SPEAKING PARA</td>
+      <td>0</td>
+      <td>13</td>
+      <td>13</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>HAITIAN-CREOLE SPEAKING PARA</td>
+      <td>5</td>
+      <td>5</td>
+      <td>10</td>
+      <td>50.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>FRENCH SPEAKING PARA</td>
+      <td>0</td>
+      <td>8</td>
+      <td>8</td>
+      <td>0.0%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>BENGALI SPEAKING PARA</td>
+      <td>2</td>
+      <td>1</td>
+      <td>3</td>
+      <td>66.7%</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>ABAZA SPEAKING PARA</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
       <td>0.0%</td>
       <td>0</td>
       <td>0</td>
@@ -1036,7 +1174,21 @@
             </div>
 
             <div class="section">
-                <h3>Summary by District</h3>
+                <h4>Jobs by Classification Type</h4>
+                <div class="chart-container">
+                    <iframe src="Manhattan_bar_chart.html" width="1220" height="520" frameborder="0"></iframe>
+                </div>
+            </div>
+
+            <div class="section">
+                <h4>Breakdown by Classification</h4>
+                <div class="pie-container"><iframe src="Manhattan_PARAPROFESSIONAL_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_SPANISH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_UKRAINIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_RUSSIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_ARABIC_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_CANTONESE_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_TURKISH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_KOREAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_MANDARIN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_FULANI_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_HAITIAN-CREOLE_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_FRENCH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_BENGALI_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_ABAZA_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe></div>
+            </div>
+
+            <!-- SECTION 4: District Level Fill Rates -->
+            <div class="section">
+                <h3>4. District Level Fill Rates</h3>
+                <p><em><strong>Note:</strong> Data is sorted from lowest to highest overall fill rate to identify districts needing attention. This data is based on SubCentral data only. Use the tabs below to switch between different views. Click on district links for detailed reports.</em></p>
                 
     <div class="tabbed-container">
         <div class="tab-buttons">
@@ -1045,7 +1197,7 @@
         </div>
         
         <div class="tab-content" data-tab="combined" data-tab-title="Combined Totals">
-            <div class="table-responsive"><table border="1" class="dataframe table table-striped">
+            <div class="table-responsive"><table border="1" class="table table-striped">
   <thead>
     <tr style="text-align: right;">
       <th>District</th>
@@ -1057,74 +1209,74 @@
   </thead>
   <tbody>
     <tr>
-      <td>D1</td>
-      <td>9,170</td>
-      <td>1,866</td>
-      <td>11,036</td>
-      <td>83.1%</td>
-    </tr>
-    <tr>
-      <td>D2</td>
-      <td>35,882</td>
-      <td>11,778</td>
-      <td>47,660</td>
-      <td>75.3%</td>
-    </tr>
-    <tr>
-      <td>D3</td>
-      <td>16,612</td>
-      <td>4,518</td>
-      <td>21,130</td>
-      <td>78.6%</td>
-    </tr>
-    <tr>
-      <td>D4</td>
-      <td>16,230</td>
-      <td>4,753</td>
-      <td>20,983</td>
-      <td>77.3%</td>
-    </tr>
-    <tr>
-      <td>D5</td>
-      <td>15,149</td>
-      <td>3,116</td>
-      <td>18,265</td>
-      <td>82.9%</td>
-    </tr>
-    <tr>
-      <td>D6</td>
-      <td>21,979</td>
-      <td>3,104</td>
-      <td>25,083</td>
-      <td>87.6%</td>
-    </tr>
-    <tr>
-      <td>D62</td>
-      <td>10,970</td>
-      <td>2,943</td>
-      <td>13,913</td>
-      <td>78.8%</td>
-    </tr>
-    <tr>
-      <td>D79</td>
+      <td>79</td>
       <td>29</td>
       <td>104</td>
       <td>133</td>
       <td>21.8%</td>
     </tr>
     <tr>
-      <td>D97</td>
+      <td>2</td>
+      <td>35,882</td>
+      <td>11,778</td>
+      <td>47,660</td>
+      <td>75.3%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>16,230</td>
+      <td>4,753</td>
+      <td>20,983</td>
+      <td>77.3%</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>16,612</td>
+      <td>4,518</td>
+      <td>21,130</td>
+      <td>78.6%</td>
+    </tr>
+    <tr>
+      <td>62</td>
+      <td>10,970</td>
+      <td>2,943</td>
+      <td>13,913</td>
+      <td>78.8%</td>
+    </tr>
+    <tr>
+      <td>97</td>
       <td>38,036</td>
       <td>9,219</td>
       <td>47,255</td>
       <td>80.5%</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>15,149</td>
+      <td>3,116</td>
+      <td>18,265</td>
+      <td>82.9%</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>9,170</td>
+      <td>1,866</td>
+      <td>11,036</td>
+      <td>83.1%</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>21,979</td>
+      <td>3,104</td>
+      <td>25,083</td>
+      <td>87.6%</td>
     </tr>
   </tbody>
 </table></div>
         </div>
         
         <div class="tab-content" data-tab="details" data-tab-title="Vacancy and Absence Details">
-            <div class="table-responsive"><table border="1" class="dataframe table table-striped">
+            <div class="table-responsive"><table border="1" class="table table-striped">
   <thead>
     <tr style="text-align: right;">
       <th>District</th>
@@ -1140,84 +1292,7 @@
   </thead>
   <tbody>
     <tr>
-      <td>D1</td>
-      <td>9,096</td>
-      <td>1,478</td>
-      <td>10,574</td>
-      <td>86.0%</td>
-      <td>74</td>
-      <td>388</td>
-      <td>462</td>
-      <td>16.0%</td>
-    </tr>
-    <tr>
-      <td>D2</td>
-      <td>35,440</td>
-      <td>10,423</td>
-      <td>45,863</td>
-      <td>77.3%</td>
-      <td>442</td>
-      <td>1,355</td>
-      <td>1,797</td>
-      <td>24.6%</td>
-    </tr>
-    <tr>
-      <td>D3</td>
-      <td>16,419</td>
-      <td>3,696</td>
-      <td>20,115</td>
-      <td>81.6%</td>
-      <td>193</td>
-      <td>822</td>
-      <td>1,015</td>
-      <td>19.0%</td>
-    </tr>
-    <tr>
-      <td>D4</td>
-      <td>16,116</td>
-      <td>4,165</td>
-      <td>20,281</td>
-      <td>79.5%</td>
-      <td>114</td>
-      <td>588</td>
-      <td>702</td>
-      <td>16.2%</td>
-    </tr>
-    <tr>
-      <td>D5</td>
-      <td>14,954</td>
-      <td>2,707</td>
-      <td>17,661</td>
-      <td>84.7%</td>
-      <td>195</td>
-      <td>409</td>
-      <td>604</td>
-      <td>32.3%</td>
-    </tr>
-    <tr>
-      <td>D6</td>
-      <td>21,350</td>
-      <td>2,194</td>
-      <td>23,544</td>
-      <td>90.7%</td>
-      <td>629</td>
-      <td>910</td>
-      <td>1,539</td>
-      <td>40.9%</td>
-    </tr>
-    <tr>
-      <td>D62</td>
-      <td>10,796</td>
-      <td>2,001</td>
-      <td>12,797</td>
-      <td>84.4%</td>
-      <td>174</td>
-      <td>942</td>
-      <td>1,116</td>
-      <td>15.6%</td>
-    </tr>
-    <tr>
-      <td>D79</td>
+      <td>79</td>
       <td>29</td>
       <td>104</td>
       <td>133</td>
@@ -1228,7 +1303,51 @@
       <td>0.0%</td>
     </tr>
     <tr>
-      <td>D97</td>
+      <td>2</td>
+      <td>35,440</td>
+      <td>10,423</td>
+      <td>45,863</td>
+      <td>77.3%</td>
+      <td>442</td>
+      <td>1,355</td>
+      <td>1,797</td>
+      <td>24.6%</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>16,116</td>
+      <td>4,165</td>
+      <td>20,281</td>
+      <td>79.5%</td>
+      <td>114</td>
+      <td>588</td>
+      <td>702</td>
+      <td>16.2%</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>16,419</td>
+      <td>3,696</td>
+      <td>20,115</td>
+      <td>81.6%</td>
+      <td>193</td>
+      <td>822</td>
+      <td>1,015</td>
+      <td>19.0%</td>
+    </tr>
+    <tr>
+      <td>62</td>
+      <td>10,796</td>
+      <td>2,001</td>
+      <td>12,797</td>
+      <td>84.4%</td>
+      <td>174</td>
+      <td>942</td>
+      <td>1,116</td>
+      <td>15.6%</td>
+    </tr>
+    <tr>
+      <td>97</td>
       <td>37,352</td>
       <td>4,603</td>
       <td>41,955</td>
@@ -1238,46 +1357,47 @@
       <td>5,300</td>
       <td>12.9%</td>
     </tr>
+    <tr>
+      <td>5</td>
+      <td>14,954</td>
+      <td>2,707</td>
+      <td>17,661</td>
+      <td>84.7%</td>
+      <td>195</td>
+      <td>409</td>
+      <td>604</td>
+      <td>32.3%</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>9,096</td>
+      <td>1,478</td>
+      <td>10,574</td>
+      <td>86.0%</td>
+      <td>74</td>
+      <td>388</td>
+      <td>462</td>
+      <td>16.0%</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>21,350</td>
+      <td>2,194</td>
+      <td>23,544</td>
+      <td>90.7%</td>
+      <td>629</td>
+      <td>910</td>
+      <td>1,539</td>
+      <td>40.9%</td>
+    </tr>
   </tbody>
 </table></div>
         </div>
     </div>
     
-            </div>
-
-            <div class="section">
-                <h3>Jobs by Classification and Type</h3>
-                <div class="chart-container">
-                    <iframe src="Manhattan_bar_chart.html" width="1200" height="580" frameborder="0"></iframe>
-                </div>
-            </div>
-
-            <div class="section">
-                <h3>Breakdown by Classification</h3>
-                <div class="pie-container"><iframe src="Manhattan_ABAZA_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_ARABIC_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_BENGALI_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_CANTONESE_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_FRENCH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_FULANI_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_HAITIAN-CREOLE_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_KOREAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_MANDARIN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_PARAPROFESSIONAL_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_RUSSIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_SPANISH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_TURKISH_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe><iframe src="Manhattan_UKRAINIAN_SPEAKING_PARA_pie.html" width="450" height="500" frameborder="0"></iframe></div>
-            </div>
-
-            <div class="section">
-                <h3>Comparison: Manhattan vs. Citywide</h3>
-                <div class="comparison-grid">
-    <div class="comparison-card citywide">
-        <h4>Citywide Statistics</h4>
-        <ul>
-            <li><strong>Total Jobs:</strong> 1,388,769</li><li><strong>Overall Fill Rate:</strong> 80.2%</li><li><strong>Vacancy Fill Rate:</strong> 84.5%</li><li><strong>Absence Fill Rate:</strong> 28.7%</li><li><strong>Number of Schools:</strong> 1519</li>
-        </ul>
-    </div>
-    
-    <div class="comparison-card borough">
-        <h4>This Borough</h4>
-        <ul>
-            <li><strong>Total Jobs:</strong> 205,458</li><li><strong>Overall Fill Rate:</strong> 79.8%</li><li><strong>Vacancy Fill Rate:</strong> 83.7%</li><li><strong>Absence Fill Rate:</strong> 20.0%</li><li><strong>Number of Schools:</strong> 265</li>
-        </ul>
-    </div>
-    </div>
-            </div>
-            
-            <div class="section">
-                <h3>Individual District Reports</h3>
+                
+                <h4>Individual District Reports</h4>
+                <p><em><strong>Note:</strong> Click on district links below for detailed district-level reports. Links are ordered by district number.</em></p>
                 <div class="district-links"><ul><li><a href="../District_1/1_report.html">District 1 Report</a> - 11,036 total jobs</li>
 <li><a href="../District_2/2_report.html">District 2 Report</a> - 47,660 total jobs</li>
 <li><a href="../District_3/3_report.html">District 3 Report</a> - 21,130 total jobs</li>
