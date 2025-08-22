@@ -1,3 +1,6 @@
+# Ignore CSV data files (contains sensitive information)
+*.csv
+
 # Ignore LaTeX files
 *.tex
 *.aux
